@@ -1,0 +1,235 @@
+{
+
+	"projectiles":{
+		"frames":[
+			{ "id":"standard",	"name":"projectiles/projectile1.png",				"scale":{"x":1,"y":1} },
+			{ "id":"plasma",	"name":"projectiles/fireball.png",					"scale":{"x":2,"y":2} }
+		]
+	},
+
+	"grenade":{
+		"frames":[
+			{ "id":"off",		"name":"grenade/basic1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"on",		"name":"grenade/basic2.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"playa":{
+				"frames":[0,1],	"looped":true,	"fps":3
+			}
+		}
+	},
+
+	"insects":{
+		"frames":[
+			{ "id":"hive",				"name":"insects/nest.png",		        "scale":{"x":2,"y":2} },
+			{ "id":"beefly1",			"name":"insects/bee/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"beefly2",			"name":"insects/bee/frame2.png",		"scale":{"x":2,"y":2} },
+
+			{ "id":"waspfly1",			"name":"insects/wasp/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"waspfly2",			"name":"insects/wasp/frame2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"waspfly3",			"name":"insects/wasp/frame3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"waspfly4",			"name":"insects/wasp/frame4.png",		"scale":{"x":2,"y":2} },
+
+			{ "id":"ff1",			"name":"insects/firefly/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"ff2",			"name":"insects/firefly/frame2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"ff3",			"name":"insects/firefly/frame3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"ff4",			"name":"insects/firefly/frame4.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"beefly":{
+				"frames":[1,2],	"looped":true,	"fps":6
+			},
+			"waspfly":{
+				"frames":[3,4,5,6],	"looped":true,	"fps":6				
+			},
+			"firefly":{
+				"frames":[7,8,9,10],	"looped":true,	"fps":6				
+			}
+		}
+	},
+
+	"items":{
+		"frames":[
+			{ "id":"rock",			"name":"rock.png",		"scale":{"x":2,"y":2} },
+			{ "id":"blaster",		"name":"weapons/gun1.png",		"scale":{"x":1,"y":1} },
+			{ "id":"heavyblaster",	"name":"weapons/gun2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"plasma",		"name":"weapons/gun3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"gun4",			"name":"weapons/gun4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"water_container","name":"items/water_container.png",		"scale":{"x":2,"y":2} },
+			{ "id":"water_container_full","name":"items/water_container_full.png",		"scale":{"x":2,"y":2} }
+		]
+	},
+
+	"player":{
+		"frames":[
+			{ "id":"w2",		"name":"player3/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w3",		"name":"player3/frame2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w4",		"name":"player3/frame3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w5",		"name":"player3/frame4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w6",		"name":"player3/frame5.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w7",		"name":"player3/frame6.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w8",		"name":"player3/frame7.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w9",		"name":"player3/frame8.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w10",		"name":"player3/frame9.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w11",		"name":"player3/frame10.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"player3/frame11.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w13",		"name":"player3/frame12.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w14",		"name":"player3/frame13.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w15",		"name":"player3/frame14.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w16",		"name":"player3/frame15.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w17",		"name":"player3/frame16.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w18",		"name":"player3/frame17.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"idle":		{ "frames":[10],					"fps":0,	"looped":false },
+			"fly":		{ "frames":[3],					"fps":0,	"looped":false },
+			"scratch":	{ "frames":[2,1,2,1,2],			"fps":4,	"looped":false },
+			"shrug":	{ "frames":[3,3,3,3,3,3,4,3,3],	"fps":4,	"looped":false },
+			"runright":		{ "frames":[5,6,7,8,9,10,11,12,13,14,15,16],		"fps":6,	"looped":true  },
+			"runleft":		{ "frames":[6,7,8,9,10,11,12,13,14,15,16],		"fps":4,	"looped":true , "flipX":true }
+		}
+
+	},
+	"chicken":{
+		"frames":[
+			{ "id":"w1",		"name":"chicken/frame-001.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w2",		"name":"chicken/frame-002.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w3",		"name":"chicken/frame-003.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w4",		"name":"chicken/frame-004.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w5",		"name":"chicken/frame-005.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w6",		"name":"chicken/frame-006.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"walk":		{ "frames":[0,1,2,3,4,5],		"fps":4,	"looped":true }
+		}
+	},
+
+	"rabbit":{
+		"frames":[
+			{ "id":"w1",		"name":"rabbit/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w2",		"name":"rabbit/frame2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w3",		"name":"rabbit/frame3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w4",		"name":"rabbit/frame4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w5",		"name":"rabbit/frame5.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w6",		"name":"rabbit/frame6.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w7",		"name":"rabbit/frame7.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w8",		"name":"rabbit/frame8.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w9",		"name":"rabbit/frame9.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w10",		"name":"rabbit/frame10.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w11",		"name":"rabbit/frame11.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"rabbit/frame12.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"rabbit/frame13.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"rabbit/frame14.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"rabbit/frame15.png",		"scale":{"x":2,"y":2} },
+			{ "id":"w12",		"name":"rabbit/frame16.png",		"scale":{"x":2,"y":2} }
+
+		],
+		"animations":{
+			"idle":		{ "frames":[0],					"fps":0,	"looped":false },
+			"blink":	{ "frames":[0,7,0],				"fps":4,	"looped":false },
+			"jump":		{ "frames":[1,2,3,4,5,0],			"fps":4,	"looped":false },
+			"eat":		{ "frames":[7,8,9,8,9,8,9,8,9],			"fps":4,	"looped":false },
+			"listen":	{ "frames":[10,11,12,13,14,13,14,13,14,13,14,13],	"fps":4,	"looped":false }
+		}
+	},
+
+	"bat":{
+		"frames":[
+			{ "id":"fly1",		"name":"bat/bat00.png",		"scale":{"x":1.5,"y":1.5} },
+			{ "id":"fly2",		"name":"bat/bat01.png",		"scale":{"x":1.5,"y":1.5} }
+		],
+		"animations":{
+			"fly":		{ "frames":[0,1],		"fps":4,	"looped":true }
+		}
+	},
+
+	"bird":{
+		"frames":[
+			{ "id":"fly1",		"name":"bird/bird2/frame13.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly2",		"name":"bird/bird2/frame14.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly3",		"name":"bird/bird2/frame15.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly4",		"name":"bird/bird2/frame16.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly5",		"name":"bird/bird2/frame17.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly6",		"name":"bird/bird2/frame18.png",		"scale":{"x":2,"y":2} },
+			{ "id":"fly7",		"name":"bird/bird2/frame19.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"fly":		{ "frames":[0,1,2,3,4,5,6],		"fps":10,	"looped":true }
+		}
+	},
+
+	"fish2":{
+		"frames":[
+			{ "id":"swim1",		"name":"fish2/fish1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"swim2",		"name":"fish2/fish2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"swim3",		"name":"fish2/fish3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"swim4",		"name":"fish2/fish4.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"swim":		{ "frames":[0,1,2,3],		"fps":2,	"looped":true }
+		}
+	},
+
+	"blob":{
+		"frames":[
+			{ "id":"b1",		"name":"blob/green1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"b2",		"name":"blob/green2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"b3",		"name":"blob/green3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"b4",		"name":"blob/green4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"b5",		"name":"blob/green5.png",		"scale":{"x":2,"y":2} },
+			{ "id":"b6",		"name":"blob/green6.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"blob":		{ "frames":[0,1,2,3,4,5],		"fps":4,	"looped":true }
+		}
+	},
+
+	"maggot":{
+		"frames":[
+			{ "id":"stand",		"name":"maggot/maggot1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"blink1",	"name":"maggot/maggot2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"blink2",	"name":"maggot/maggot3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"jump1",		"name":"maggot/maggot4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"jump2",		"name":"maggot/maggot5.png",		"scale":{"x":2,"y":2} },
+			{ "id":"jump3",		"name":"maggot/maggot6.png",		"scale":{"x":2,"y":2} },
+			{ "id":"jump4",		"name":"maggot/maggot7.png",		"scale":{"x":2,"y":2} }
+		],
+		"animations":{
+			"idle":		{ "frames":[0],				"fps":0,	"looped":false },
+			"blink":	{ "frames":[0,1,2,1,2,0],	"fps":4,	"looped":false },
+			"jump":		{ "frames":[0,3,4,5,6,0],		"fps":4,	"looped":false }
+		}		
+	},
+
+	"explosion":{
+		"frames":[
+			{ "id":"1",		"name":"explosion/2/frame1.png",		"scale":{"x":2,"y":2} },
+			{ "id":"2",		"name":"explosion/2/frame2.png",		"scale":{"x":2,"y":2} },
+			{ "id":"3",		"name":"explosion/2/frame3.png",		"scale":{"x":2,"y":2} },
+			{ "id":"4",		"name":"explosion/2/frame4.png",		"scale":{"x":2,"y":2} },
+			{ "id":"5",		"name":"explosion/2/frame5.png",		"scale":{"x":2,"y":2} },
+
+			{ "id":"6",		"name":"explosion/2/frame6.png",		"scale":{"x":2,"y":2} },
+			{ "id":"7",		"name":"explosion/2/frame7.png",		"scale":{"x":2,"y":2} },
+			{ "id":"8",		"name":"explosion/2/frame8.png",		"scale":{"x":2,"y":2} },
+			{ "id":"9",		"name":"explosion/2/frame9.png",		"scale":{"x":2,"y":2} },
+			{ "id":"10",	"name":"explosion/2/frame10.png",		"scale":{"x":2,"y":2} },
+
+			{ "id":"11",	"name":"explosion/2/frame11.png",		"scale":{"x":2,"y":2} },
+			{ "id":"12",	"name":"explosion/2/frame12.png",		"scale":{"x":2,"y":2} },
+			{ "id":"13",	"name":"explosion/2/frame13.png",		"scale":{"x":2,"y":2} },
+			{ "id":"14",	"name":"explosion/2/frame14.png",		"scale":{"x":2,"y":2} },
+			{ "id":"15",	"name":"explosion/2/frame15.png",		"scale":{"x":2,"y":2} },
+			
+			{ "id":"15",	"name":"explosion/2/frame15.png",		"scale":{"x":2,"y":2} }
+
+		],
+		"animations":{
+			"idle":		{ "frames":[0],				"fps":0,	"looped":false },
+			"blink":	{ "frames":[0,1,2,1,2,0],	"fps":4,	"looped":false },
+			"jump":		{ "frames":[0,3,4,5,6,0],		"fps":4,	"looped":false }
+		}		
+	}
+
+
+}

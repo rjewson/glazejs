@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "target": "es6",
+        "noStrictGenericChecks": true,
+        "allowJs": true,
+    }
+}

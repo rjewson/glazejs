@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>glazeJS</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+
+    <style type="text/css">
+        * {
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        body {
+            /*width:1200px;*/
+            font-size: 12px;
+        }
+
+        h1 {
+            font-size: 14px;
+            margin: 2px;
+        }
+
+        button {
+            font-size: 12px;
+        }
+
+        #viewContainer {
+            float: left;
+            position: relative;
+            min-width: 800px;
+            min-height: 600px;
+        }
+
+        #view {
+            transform: translate3d(0.0, 0.0, 0.0);
+            image-rendering: pixelated;
+        }
+
+        #viewDebug {
+            /*display:none;*/
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        #controlPanel {
+            float: left;
+            margin: 5px;
+            width: 400px;
+        }
+
+        #playControls {}
+
+        #dataList {}
+
+        .panel {
+            padding: 10px;
+            outline: 1px solid black;
+        }
+
+        #instructions {
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>glazeJS
+        <a href="https://github.com/rjewson/glaze-engine">Github</a>
+    </h1>
+    <div id="playControls" class="">
+        <div class="play"></div>
+        <button id="startbutton">Run</button>
+        <button id="stopbutton">Pause</button>
+        <button id="debug1button">Chickens</button>
+        <button id="debug2button">Grenade</button>
+        <button id="debug3button">No Chickens</button>
+        <button id="debug4button">Shake</button>
+        <button id="debug5button">Rabbits</button>
+    </div>
+    <div id="viewContainer">
+        <canvas id="view"></canvas>
+        <!-- <canvas id="viewDebug"></canvas>     -->
+    </div>
+    <div id="controlPanel">
+
+        <table class="controls">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Key</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&nbsp;Movement</td>
+                    <td>&nbsp;WASD (S drop through some platforms)</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Fire</td>
+                    <td>&nbsp;Space</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Boost JetPack</td>
+                    <td>&nbsp;Shift</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Hold/Drop/Throw Item</td>
+                    <td>&nbsp;H/K/J</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Activate Item</td>
+                    <td>&nbsp;Q
+                        <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Aim</td>
+                    <td>&nbsp;E</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Store/Retrieve</td>
+                    <td>&nbsp;Z/X</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Select Weapon</td>
+                    <td>&nbsp;1 2</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;Release Creature</td>
+                    <td>&nbsp;U (Bees)</td>
+                </tr>
+                <tbody>
+        </table>
+
+        <div id="actionControls" class="panel">
+            <button id="entities">Entities</button>
+            <button id="systems">Systems</button>
+        </div>
+        <div id="dataList" class="panel">
+        </div>
+    </div>
+    <script type="text/javascript">
+        function writeResult(result) {
+            var target = document.getElementById("dataList");
+            target.innerHTML = result;
+        }
+    </script>
+    <script src="./dist/index.js"></script>
+</body>
+
+</html>
