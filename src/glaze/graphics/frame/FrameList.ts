@@ -1,5 +1,5 @@
 import { Frame } from "./Frame";
-import { Animation } from "../animation/Animation";
+import { Animation } from "../animation/Animaton";
 
 export class FrameList {
     public frames: Array<Frame>;

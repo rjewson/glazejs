@@ -100,7 +100,7 @@
 			{ "id":"w6",		"name":"chicken/frame-006.png",		"scale":{"x":2,"y":2} }
 		],
 		"animations":{
-			"walk":		{ "frames":[0,1,2,3,4,5],		"fps":4,	"looped":true }
+			"walk":		{ "frames":[0,1,2,3,4,5],		"fps":10,	"looped":true }
 		}
 	},
 

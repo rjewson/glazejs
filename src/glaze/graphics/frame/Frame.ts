@@ -6,7 +6,6 @@ export class Frame {
     public name: string;
     public texture: Texture;
     public scale: Vector2;
-    // public
 
     constructor(name: string, texture: Texture, scale: Vector2) {
         this.name = name;

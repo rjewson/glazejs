@@ -26,7 +26,10 @@ export class TileMap implements IRenderer {
     public quadVertBuffer: WebGLBuffer;
 
     public layers: Array<TileLayer>;
+    public layersMap: Map<string, TileLayer>;
+
     public renderLayers: Array<TileLayerRenderProxy>;
+    public renderLayersMap: Map<string, TileLayerRenderProxy>;
 
     public tilemapShader: ShaderWrapper;
 
@@ -40,7 +43,9 @@ export class TileMap implements IRenderer {
         this.tileSize = tileSize;
         this.tileScale = tileScale;
         this.layers = new Array<TileLayer>();
-        this.renderLayers = new Array<TileLayerRenderProxy>();
+        this.layersMap = new Map();
+        this.renderLayers = new Array();
+        this.renderLayersMap = new Map();
     }
 
     public Init(gl: WebGLRenderingContext, camera: Camera) {
@@ -171,7 +176,7 @@ export class TileMap implements IRenderer {
     public SetTileLayerFromData(
         data: TypedArray2D,
         sprite: BaseTexture,
-        layerId: String,
+        layerId: string,
         scrollScaleX: number,
         scrollScaleY: number,
     ) {
@@ -181,19 +186,16 @@ export class TileMap implements IRenderer {
         layer.scrollScale.x = scrollScaleX;
         layer.scrollScale.y = scrollScaleY;
         this.layers.push(layer);
+        this.layersMap.set(layerId, layer);
     }
 
-    public SetTileRenderLayer(layers: Array<number>) {
+    public SetTileRenderLayer(id:string, layers: Array<string>) {
         var tileRenderLayer = new TileLayerRenderProxy(this, layers);
         this.renderLayers.push(tileRenderLayer);
+        this.renderLayersMap.set(id,tileRenderLayer);
     }
 
-    // public  Round(v:Float):Float {
-    //     var i = Math.round(v);
-    // }
-
     public updateMap(x: number, y: number, data: Array<number>) {
-        // js.Lib.debug();
 
         var startX = data[0];
         var startY = data[1];
@@ -267,9 +269,10 @@ export class TileMap implements IRenderer {
 
         // for (i in renderLayer.layers) {
         for (var i = 0; i < renderLayer.layers.length; i++) {
-            var layer = this.layers[i];
-            var pX = renderLayer.thisSnap.x / 2;
-            var pY = renderLayer.thisSnap.y / 2;
+            // var layer = this.layers[i];
+            const layer = this.layersMap.get(renderLayer.layers[i]);
+            const pX = renderLayer.thisSnap.x / 2;
+            const pY = renderLayer.thisSnap.y / 2;
 
             this.gl.uniform2f(this.tilemapShader.uniform.viewOffset, pX, pY);
             this.gl.uniform2fv(this.tilemapShader.uniform.inverseSpriteTextureSize, layer.inverseSpriteTextureSize);

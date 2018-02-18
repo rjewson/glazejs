@@ -13,7 +13,7 @@ import { AABB2 } from "../../../geom/AABB2";
 
 export class TileLayerRenderProxy implements IRenderer {
     public tileMap: TileMap;
-    public layers: Array<number>;
+    public layers: Array<string>;
 
     public surface: BaseTexture;
     public texture: Texture;
@@ -25,7 +25,7 @@ export class TileLayerRenderProxy implements IRenderer {
 
     public size: Vector2;
 
-    constructor(tileMap: TileMap, layers: Array<number>) {
+    constructor(tileMap: TileMap, layers: Array<string>) {
         this.tileMap = tileMap;
         this.layers = layers;
 

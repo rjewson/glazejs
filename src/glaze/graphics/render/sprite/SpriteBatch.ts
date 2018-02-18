@@ -42,8 +42,8 @@ export class WebGLBatch {
         this.indices = new Uint16Array(this.dynamicSize * 6);
 
         for (let i = 0; i < this.dynamicSize; i++) {
-            var index2 = i * 6;
-            var index3 = i * 4;
+            const index2 = i * 6;
+            const index3 = i * 4;
             this.indices[index2 + 0] = index3 + 0;
             this.indices[index2 + 1] = index3 + 1;
             this.indices[index2 + 2] = index3 + 2;
@@ -69,11 +69,11 @@ export class WebGLBatch {
     }
 
     public AddSpriteToBatch(sprite: Sprite, indexRun: number) {
-        var index = indexRun * 20;
-        var frame = sprite.texture.frame;
-        var tw = sprite.texture.baseTexture.width;
-        var th = sprite.texture.baseTexture.height;
-        var uvs = sprite.texture.uvs;
+        const index = indexRun * 20;
+        const frame = sprite.texture.frame;
+        const tw = sprite.texture.baseTexture.width;
+        const th = sprite.texture.baseTexture.height;
+        const uvs = sprite.texture.uvs;
         //0
         //Verts
         this.data[index + 0] = sprite.transformedVerts[0];

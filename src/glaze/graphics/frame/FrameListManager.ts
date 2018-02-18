@@ -2,7 +2,7 @@ import { Vector2 } from "../../geom/Vector2";
 import { TextureManager } from "../texture/TextureManager";
 import { FrameList } from "./FrameList";
 import { Frame } from "./Frame";
-import { Animation } from "../animation/Animation";
+import { Animation } from "../animation/Animaton";
 
 interface JSONFrames {
     id: string;
@@ -58,9 +58,8 @@ export class FrameListManager {
                         var animation: JSONAnimation = framelistItem.animations[animationName];
                         frameList.addAnimation(
                             new Animation(
-                                null,
                                 animationName,
-                                animation.frames,
+                                animation.frames.map(frameIndex=>frameList.frames[frameIndex]),
                                 animation.fps,
                                 animation.looped,
                                 animation.flipX,
