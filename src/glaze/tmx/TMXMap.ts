@@ -103,6 +103,11 @@ export function GetLayer(map: TMXMap, name: string): TMXLayer | null {
     return layer.length === 1 ? layer[0] : null;
 }
 
+export function GetTileSet(map: TMXMap, name: string): TMXTileSet | null {
+    const tileSet = map.tilesets.filter(tileSet => tileSet.name === name);
+    return tileSet.length === 1 ? tileSet[0] : null;
+}
+
 export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
     //Assumes all tiles are from same set...function
     var tileSet: TMXTileSet = null;
@@ -132,4 +137,30 @@ export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
         }
     }
     return textureData;
+}
+
+export function LayerToCollisionData(layer: Bytes2D, guidOffset: number, tileSize: number): Bytes2D {
+    //Assumes all tiles are from same set...function
+    var collisionData = new Bytes2D(layer.width, layer.height, tileSize, 1);
+
+    for (var xp = 0; xp < layer.width; xp++) {
+        for (var yp = 0; yp < layer.height; yp++) {
+            var source = layer.get(xp, yp, 0);
+
+            if (source > 0) {
+                var relativeID = source - guidOffset; //tileSet.firstGID;
+                collisionData.set(xp, yp, 0, 1 << relativeID); //Implicit +1
+            } else {
+                collisionData.set(xp, yp, 0, 0);
+            }
+        }
+    }
+    for (var y = 0; y < 30; y++) {
+        let row = "";
+        for (var x = 0; x < 30; x++) {
+            row += collisionData.get(x, y, 0) ? "X" : "0";
+        }
+        console.log(row);
+    }
+    return collisionData;
 }

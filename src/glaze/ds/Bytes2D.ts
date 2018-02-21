@@ -42,19 +42,19 @@ export class Bytes2D
     }
 
      public set(x:number,y:number,offset:number,value:number) {
-        this.data[ (y * this.numberernalWidth) + (x * this.bytesPerCell) + offset] =  value;
+        this.data8[ (y * this.numberernalWidth) + (x * this.bytesPerCell) + offset] =  value;
     }
 
     // public getReal(x:Float,y:Float,offset:number):number {
     //     return get(Index(x),Index(y),offset);
     // }
 
-    //  public Index(value:Float):number {
-    //     //FIXME Not sure this always works...
-    //     //return Std.number(value / cellSize);
-    //     //return Math.floor(value * invCellSize);
-    //     return Std.number(value * invCellSize);
-    // }   
+     public Index(value:number):number {
+        //FIXME Not sure this always works...
+        //return Std.number(value / cellSize);
+        //return Math.floor(value * invCellSize);
+        return (value * this.invCellSize) | 0;
+    }   
 
     // public static function uncompressData(str:String,compressed:Bool=true):Bytes {
     //     var mapbytes:Bytes = haxe.crypto.Base64.decode(str);

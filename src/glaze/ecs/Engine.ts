@@ -26,6 +26,11 @@ export class Engine {
         return this.entityPool.reserve();
     }
 
+    public getComponentForEntity(entity:Entity, component:IComponentFactory) {
+        const name = component.name;
+        if (this.components.has(name)) return this.components.get(name)[entity];
+    }
+
     public addComponentsToEntity(entity: Entity, componentsToAdd: any[]) {
         componentsToAdd.forEach(component => {
             const name = component.constructor.name;
@@ -34,7 +39,16 @@ export class Engine {
         this.matchEntity(entity);
     }
 
+    public removeComponentsFromEntity(entity: Entity, componentsToRemove: any[]) {
+        componentsToRemove.forEach(component => {
+            const name = component.constructor.name;
+            if (this.components.has(name)) this.components.get(name)[entity] = null;
+        });
+        this.matchEntity(entity);
+    }
+
     public addSystemToEngine(system: System) {
+        system.engine = this;
         this.systems.push(system);
         system.components.forEach((name: string) =>
             this.components.set(name, emptyNullArray(this.entityPool.capacity)),

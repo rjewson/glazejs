@@ -5,10 +5,38 @@ import { Position } from "../glaze/core/components/Position";
 import { Graphics } from "../glaze/graphics/components/Graphics";
 import { Vector2 } from "../glaze/geom/Vector2";
 import { SpriteRenderer } from "../glaze/graphics/render/sprite/SpriteRenderer";
-import { TMXMap, TMXLayer, TMXdecodeLayer, GetLayer, LayerToCoordTexture } from "../glaze/tmx/TMXMap";
-import { TileMap } from "../glaze/graphics/render/tile/TileMap";
+import {
+    TMXMap,
+    TMXLayer,
+    TMXdecodeLayer,
+    GetLayer,
+    LayerToCoordTexture,
+    LayerToCollisionData,
+    GetTileSet,
+} from "../glaze/tmx/TMXMap";
+import { TileMapRenderer } from "../glaze/graphics/render/tile/TileMapRenderer";
 import { GraphicsAnimation } from "../glaze/graphics/components/GraphicsAnimation";
 import { AnimationSystem } from "../glaze/graphics/systems/AnimationSystem";
+import { TileMapCollision } from "../glaze/physics/collision/broadphase/TileMapCollision";
+import { BruteforceBroadphase } from "../glaze/physics/collision/broadphase/BruteforceBroadphase";
+import { PhysicsStaticSystem } from "../glaze/physics/systems/PhysicsStaticSystem";
+import { PhysicsMoveableSystem } from "../glaze/physics/systems/PhysicsMoveableSystem";
+import { PhysicsCollisionSystem } from "../glaze/physics/systems/PhysicsCollisionSystem";
+import { PhysicsMassSystem } from "../glaze/physics/systems/PhysicsMassSystem";
+import { PhysicsPositionSystem } from "../glaze/physics/systems/PhysicsPositionSystem";
+import { Extents } from "../glaze/core/components/Extents";
+import { PhysicsCollision } from "../glaze/physics/components/PhysicsCollision";
+import { Filter } from "../glaze/physics/collision/Filter";
+import { Material } from "../glaze/physics/Material";
+import { Body } from "../glaze/physics/Body";
+import { PhysicsBody } from "../glaze/physics/components/PhysicsBody";
+import { Moveable } from "../glaze/core/components/Moveable";
+import { Active } from "../glaze/core/components/Active";
+import { PhysicsUpdateSystem } from "../glaze/physics/systems/PhysicsUpdateSystem";
+import { Controllable } from "../glaze/core/components/Controllable";
+import { ControllerSystem } from "../glaze/core/systems/ControllerSystem";
+import { TileGraphicsRenderSystem } from "../glaze/graphics/systems/TileGraphicsRenderSystem";
+import { TileGraphics } from "../glaze/graphics/components/TileGraphics";
 
 interface GlazeMapLayerConfig {}
 
@@ -47,7 +75,7 @@ export class GameTestA extends GlazeEngine {
     constructor() {
         const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
         super(canvas);
-        this.loadAssets([TEXTURE_CONFIG, TEXTURE_DATA, FRAMES_CONFIG, MAP_DATA, TILE_SPRITE_SHEET]);
+        this.loadAssets([TEXTURE_CONFIG, TEXTURE_DATA, FRAMES_CONFIG, MAP_DATA, TILE_SPRITE_SHEET, TILE_FRAMES_CONFIG]);
     }
 
     initalize() {
@@ -71,28 +99,34 @@ export class GameTestA extends GlazeEngine {
         const foreground1 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground1")));
         const foreground2 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground2")));
 
-        var tileMap = new TileMap(16 / 2, 2);
+        const collisionData = LayerToCollisionData(
+            TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
+            GetTileSet(tmxMap, "Collision").firstgid,
+            TILE_SIZE,
+        );
 
-        tileMap.SetTileRenderLayer("bg", ["Background", "Foreground1"]);
-        tileMap.SetTileRenderLayer("fg", ["Foreground2"]);
+        var tileMapRenderer = new TileMapRenderer(16 / 2, 2);
 
-        this.renderSystem.renderer.AddRenderer(tileMap);
+        tileMapRenderer.SetTileRenderLayer("bg", ["Background", "Foreground1"]);
+        tileMapRenderer.SetTileRenderLayer("fg", ["Foreground2"]);
 
-        tileMap.SetTileLayerFromData(
+        this.renderSystem.renderer.AddRenderer(tileMapRenderer);
+
+        tileMapRenderer.SetTileLayerFromData(
             foreground2,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Foreground2",
             1,
             1,
         );
-        tileMap.SetTileLayerFromData(
+        tileMapRenderer.SetTileLayerFromData(
             foreground1,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Foreground1",
             1,
             1,
         );
-        tileMap.SetTileLayerFromData(
+        tileMapRenderer.SetTileLayerFromData(
             background,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Background",
@@ -104,31 +138,70 @@ export class GameTestA extends GlazeEngine {
         spriteRender.AddStage(this.renderSystem.stage);
         this.renderSystem.renderer.AddRenderer(spriteRender);
 
-        this.renderSystem.itemContainer.addChild(tileMap.renderLayersMap.get("bg").sprite);
-        // renderSystem.itemContainer.addChild(tileMap.renderLayers[1].sprite);
-        this.renderSystem.camera.addChild(tileMap.renderLayersMap.get("fg").sprite);
+        this.renderSystem.itemContainer.addChild(tileMapRenderer.renderLayersMap.get("bg").sprite);
+        this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
 
         this.engine.addSystemToEngine(this.renderSystem);
-        this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager))
+        this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
+
+        const tileMapCollision = new TileMapCollision(collisionData);
+
+        this.engine.addSystemToEngine(
+            new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision),
+        );
+
+        const broadphase = new BruteforceBroadphase(tileMapCollision);
+        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
+        this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsMassSystem());
+        this.engine.addSystemToEngine(new PhysicsPositionSystem());
+
+        this.engine.addSystemToEngine(new ControllerSystem(this.input));
 
         let x = 0;
         let y = 0;
-        for (var count=0; count<100; count++) {
+        for (var count = 0; count < 10; count++) {
             const chicken = this.engine.createEntity();
-            x+=20;
-            if (x>700) {
+            x += 20;
+            if (x > 700) {
                 x = 0;
-                y+=20;
+                y += 20;
             }
+
+            var chickenBody = new Body(Material.NORMAL);
+            chickenBody.setBounces(3);
+            chickenBody.maxScalarVelocity = 1000;
+
             this.engine.addComponentsToEntity(chicken, [
-                new Position(100+x, 100+y),
+                new Position(100 + x, 100 + y),
+                new Extents(12, 12),
                 new Graphics("chicken"),
                 new GraphicsAnimation("chicken", "walk"),
+                new PhysicsCollision(false, new Filter(), []),
+                new PhysicsBody(chickenBody, true),
+                new Moveable(),
+                new Active(),
+                new Controllable(100),
             ]);
         }
-        
+
+        const doorSwitch = this.engine.createEntity();
+        this.engine.addComponentsToEntity(doorSwitch, [
+            this.mapPosition(10.5, 18.5),
+            new Extents(8, 8),
+            new PhysicsCollision(false, null, []),
+            // new Fixed(),
+            new Active(),
+            new TileGraphics("switchOff"),
+        ]);
 
         this.loop.start();
+    }
+
+    mapPosition(xTiles: number, yTiles: number): Position {
+        return new Position(xTiles * TILE_SIZE, yTiles * TILE_SIZE);
     }
 
     preUpdate() {

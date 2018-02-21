@@ -10,7 +10,7 @@ import * as WebGLShaderUtils from "../util/WebGLShaderUtil";
 import { BaseTexture } from "../../texture/BaseTexture";
 import { AABB2 } from "../../../geom/AABB2";
 
-export class TileMap implements IRenderer {
+export class TileMapRenderer implements IRenderer {
     public gl: WebGLRenderingContext;
     public viewportSize: Vector2;
     public scaledViewportSize: Float32Array;
@@ -96,7 +96,7 @@ export class TileMap implements IRenderer {
         gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, quadVerts, WebGLRenderingContext.STATIC_DRAW);
         this.tilemapShader = new ShaderWrapper(
             gl,
-            WebGLShaderUtils.CompileProgram(gl, TileMap.TILEMAP_VERTEX_SHADER, TileMap.TILEMAP_FRAGMENT_SHADER),
+            WebGLShaderUtils.CompileProgram(gl, TileMapRenderer.TILEMAP_VERTEX_SHADER, TileMapRenderer.TILEMAP_FRAGMENT_SHADER),
         );
 
         this.flip = false;

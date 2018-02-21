@@ -63,15 +63,10 @@ export class GraphicsRenderSystem extends System {
         this.itemContainer.removeChild(graphics.sprite);
     }
 
-    public updateSystem(dt: number) {
+    updateSystem(dt: number) {
         this.camera.Focus(this._cameraTarget.x, this._cameraTarget.y);
         this.renderer.Render(this.camera.viewPortAABB);
     }
-
-    // updateEntity(entity: Entity, dt: number, position: Position, graphics: Graphics) {
-    //     this.camera.Focus(this.cameraTarget.x, this.cameraTarget.y);
-    //     this.renderer.Render(this.camera.viewPortAABB);
-    // }
 
     set cameraTarget(target: Vector2) {
         this._cameraTarget = target;

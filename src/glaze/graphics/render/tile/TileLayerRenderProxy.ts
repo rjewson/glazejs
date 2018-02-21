@@ -4,7 +4,7 @@ import { Texture } from "../../texture/Texture";
 import { Sprite } from "../../displaylist/Sprite";
 import { Vector2 } from "../../../geom/Vector2";
 import { Camera } from "../../displaylist/Camera";
-import { TileMap } from "./TileMap";
+import { TileMapRenderer } from "./TileMapRenderer";
 import { Rectangle } from "../../../geom/Rectangle";
 import { AABB2 } from "../../../geom/AABB2";
 
@@ -12,7 +12,7 @@ import { AABB2 } from "../../../geom/AABB2";
 //Its only to be able to split the tilemap renderer in the short term
 
 export class TileLayerRenderProxy implements IRenderer {
-    public tileMap: TileMap;
+    public tileMap: TileMapRenderer;
     public layers: Array<string>;
 
     public surface: BaseTexture;
@@ -25,7 +25,7 @@ export class TileLayerRenderProxy implements IRenderer {
 
     public size: Vector2;
 
-    constructor(tileMap: TileMap, layers: Array<string>) {
+    constructor(tileMap: TileMapRenderer, layers: Array<string>) {
         this.tileMap = tileMap;
         this.layers = layers;
 
