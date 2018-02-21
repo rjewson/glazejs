@@ -54,7 +54,7 @@ export class TileGraphicsRenderSystem extends System {
         this.updates.push(entity);
     }
 
-    updateSystem(dt: number) {
+    updateAllEntities() {
         while (this.updates.length > 0) {
             var entity = this.updates.pop();
             var position = this.engine.getComponentForEntity(entity, Position);

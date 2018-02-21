@@ -37,6 +37,11 @@ import { Controllable } from "../glaze/core/components/Controllable";
 import { ControllerSystem } from "../glaze/core/systems/ControllerSystem";
 import { TileGraphicsRenderSystem } from "../glaze/graphics/systems/TileGraphicsRenderSystem";
 import { TileGraphics } from "../glaze/graphics/components/TileGraphics";
+import { Fixed } from "../glaze/core/components/Fixed";
+import { BlockParticleEngine2 } from "../glaze/particle/engines/BlockParticleEngine2";
+import { ParticleSystem } from "../glaze/particle/systems/ParticleSystem";
+import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
+import { Explosion } from "../glaze/particle/emitter/Explosion";
 
 interface GlazeMapLayerConfig {}
 
@@ -150,6 +155,9 @@ export class GameTestA extends GlazeEngine {
             new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision),
         );
 
+        const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
+        this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
+
         const broadphase = new BruteforceBroadphase(tileMapCollision);
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
         this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
@@ -160,9 +168,11 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new ControllerSystem(this.input));
 
+        this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
+
         let x = 0;
         let y = 0;
-        for (var count = 0; count < 10; count++) {
+        for (var count = 0; count < 100; count++) {
             const chicken = this.engine.createEntity();
             x += 20;
             if (x > 700) {
@@ -184,6 +194,7 @@ export class GameTestA extends GlazeEngine {
                 new Moveable(),
                 new Active(),
                 new Controllable(100),
+                new ParticleEmitter([new Explosion(10,100)])
             ]);
         }
 
@@ -192,7 +203,7 @@ export class GameTestA extends GlazeEngine {
             this.mapPosition(10.5, 18.5),
             new Extents(8, 8),
             new PhysicsCollision(false, null, []),
-            // new Fixed(),
+            new Fixed(),
             new Active(),
             new TileGraphics("switchOff"),
         ]);

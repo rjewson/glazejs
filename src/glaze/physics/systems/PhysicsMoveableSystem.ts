@@ -39,5 +39,5 @@ export class PhysicsMoveableSystem extends System {
         this.broadphase.removeProxy(physicsCollision.proxy);
     }
 
-    updateSystem(dt: number) {}
+    updateAllEntities() {}
 }

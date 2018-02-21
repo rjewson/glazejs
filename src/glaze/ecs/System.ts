@@ -2,18 +2,29 @@ import { IComponentFactory } from "./Component";
 import { Entity } from "./Entity";
 import { Engine } from "./Engine";
 
+interface EntityEntry {
+    components: any[];
+    boundUpdate: () => void;
+}
 export class System {
-    public engine:Engine;
+    public engine: Engine;
     public components: string[];
-    public members: Map<Entity, any[]>;
+    public members: Map<Entity, EntityEntry>;
+    private membersAsArray: EntityEntry[];
+
+    protected dt: number;
 
     constructor(components: IComponentFactory[]) {
         this.members = new Map();
+        this.membersAsArray = new Array();
         this.components = components.map(factory => factory.name);
     }
 
     public addEntity(entity: Entity, components: any[]) {
-        this.members.set(entity, components);
+        const boundUpdate = this.updateEntity.bind(this, entity, ...components);
+        const entry = { components, boundUpdate };
+        this.members.set(entity, entry);
+        this.membersAsArray.push(entry);
         this.onEntityAdded(entity, ...components);
     }
 
@@ -21,27 +32,31 @@ export class System {
 
     public removeEntity(entity: Entity) {
         if (!this.members.has(entity)) return;
-        this.onEntityRemoved(entity, ...this.members.get(entity));
+        const entry = this.members.get(entity);
+        this.onEntityRemoved(entity, ...entry.components);
         this.members.delete(entity);
+        this.membersAsArray.splice(this.membersAsArray.indexOf(entry), 1);
     }
 
     public onEntityRemoved(entity: Entity, ...components: any[]) {}
 
     public updateSystem(dt: number) {
-        this.preUpdate(dt);
-        this.updateAllEntities(dt);
-        this.postUpdate(dt);
+        this.dt = dt;
+        this.preUpdate();
+        this.updateAllEntities();
+        this.postUpdate();
     }
 
-    public preUpdate(dt: number) {}
+    public preUpdate() {}
 
-    public updateAllEntities(dt: number) {
-        this.members.forEach((components, entity) => {
-            this.updateEntity(entity, dt, ...components);
-        });
+    public updateAllEntities() {
+        const len = this.membersAsArray.length;
+        for (let i=0; i<len; i++) {
+            this.membersAsArray[i].boundUpdate();
+        }
     }
 
-    public postUpdate(dt: number) {}
+    public postUpdate() {}
 
-    public updateEntity(entity: Entity, dt: number, ...components: any[]) {}
+    public updateEntity(entity: Entity, ...components: any[]) {}
 }

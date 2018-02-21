@@ -63,7 +63,7 @@ export class GraphicsRenderSystem extends System {
         this.itemContainer.removeChild(graphics.sprite);
     }
 
-    updateSystem(dt: number) {
+    updateSystem() {
         this.camera.Focus(this._cameraTarget.x, this._cameraTarget.y);
         this.renderer.Render(this.camera.viewPortAABB);
     }

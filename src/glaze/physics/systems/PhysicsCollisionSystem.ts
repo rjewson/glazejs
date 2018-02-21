@@ -18,7 +18,7 @@ export class PhysicsCollisionSystem extends System {
         physicsCollision.proxy.setBody(physicsBody.body);
     }
 
-    updateSystem(dt: number) {
+    updateAllEntities() {
         this.broadphase.collide();
     }
 }

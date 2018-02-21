@@ -19,8 +19,8 @@ export class PhysicsUpdateSystem extends System {
         physicsBody.body.position.copy(position.coords);
     }
 
-    updateEntity(entity: Entity, dt: number, position: Position, physicsBody: PhysicsBody, active: Active) {
-        physicsBody.body.update(dt / 1000, this.globalForce, this.globalDamping);
+    updateEntity(entity: Entity, position: Position, physicsBody: PhysicsBody, active: Active) {
+        physicsBody.body.update(this.dt / 1000, this.globalForce, this.globalDamping);
         position.direction.x = physicsBody.body.velocity.x > 0 ? 1 : -1;
     }
 }

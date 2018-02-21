@@ -19,9 +19,9 @@ export class AnimationSystem extends System {
         animation.animationController = new AnimationController(newAnimation);
     }
 
-    updateEntity(entity: Entity, dt: number, position: Position, graphics: Graphics, animation: GraphicsAnimation) {
+    updateEntity(entity: Entity, position: Position, graphics: Graphics, animation: GraphicsAnimation) {
         animation.animationController
-            .update(dt)
+            .update(this.dt)
             .updateSprite(graphics.sprite, position.direction.x, position.direction.y);
     }
 }

@@ -41,7 +41,7 @@ export class PhysicsStaticSystem extends System {
         this.broadphase.removeProxy(physicsCollision.proxy);
     }
 
-    updateSystem(dt: number) {}
+    updateAllEntities() {}
 
     // public function setPosition(entity:Entity,position:Vector2) {
     //     var bfp = entity.getComponent(PhysicsCollision).proxy;

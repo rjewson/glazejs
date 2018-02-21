@@ -8,7 +8,7 @@ export class PhysicsPositionSystem extends System {
         super([Position, PhysicsBody]);
     }
 
-    updateEntity(entity: Entity, dt: number, position: Position, physicsBody: PhysicsBody) {
+    updateEntity(entity: Entity, position: Position, physicsBody: PhysicsBody) {
         physicsBody.body.updatePosition();
         position.update(physicsBody.body.position);
     }
