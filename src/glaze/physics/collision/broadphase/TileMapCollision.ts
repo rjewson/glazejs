@@ -75,8 +75,8 @@ export class TileMapCollision {
         if (body.isBullet) {
             this.plane.setFromSegment(body.predictedPosition, body.position);
             this.closestContact.time = Number.POSITIVE_INFINITY;
-            for (var x = startX; x < endX; x++) {
-                for (var y = startY; y < endY; y++) {
+            for (var y = startY; y < endY; y++) {
+                for (var x = startX; x < endX; x++) {
                     var cell = this.data.get(x, y, 0);
                     //Bullets dont collide with 1 ways at all
                     if ((cell & SOLID) == 1 && (cell & ONE_WAY) == 0) {
@@ -108,8 +108,8 @@ export class TileMapCollision {
             }
         } else {
             // plane.setFromSegment(body.predictedPosition,body.position);
-            for (var x = startX; x < endX; x++) {
-                for (var y = startY; y < endY; y++) {
+            for (var y = startY; y < endY; y++) {
+                for (var x = startX; x < endX; x++) {
                     var cell = this.data.get(x, y, 0);
                     if ((cell & AABBCOLLIDABLE) > 0) {
                         this.tilePosition.x = x * this.tileSize + this.tileHalfSize;

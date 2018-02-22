@@ -39,9 +39,9 @@ export class Engine {
         this.matchEntity(entity);
     }
 
-    public removeComponentsFromEntity(entity: Entity, componentsToRemove: any[]) {
+    public removeComponentsFromEntity(entity: Entity, componentsToRemove: IComponentFactory[]) {
         componentsToRemove.forEach(component => {
-            const name = component.constructor.name;
+            const name = component.name;
             if (this.components.has(name)) this.components.get(name)[entity] = null;
         });
         this.matchEntity(entity);

@@ -42,6 +42,7 @@ import { BlockParticleEngine2 } from "../glaze/particle/engines/BlockParticleEng
 import { ParticleSystem } from "../glaze/particle/systems/ParticleSystem";
 import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
 import { Explosion } from "../glaze/particle/emitter/Explosion";
+import { FixedViewManagementSystem } from "../glaze/space/systems/FixedViewManagementSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -97,8 +98,6 @@ export class GameTestA extends GlazeEngine {
 
         this.renderSystem.textureManager.ParseTexturePackerJSON(this.assets.assets.get(TEXTURE_CONFIG), TEXTURE_DATA);
         this.renderSystem.frameListManager.ParseFrameListJSON(this.assets.assets.get(FRAMES_CONFIG));
-
-        this.renderSystem.cameraTarget = new Vector2(400, 400);
 
         const background = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Background")));
         const foreground1 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground1")));
@@ -170,10 +169,16 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
 
+        this.engine.addSystemToEngine(new FixedViewManagementSystem(this.renderSystem.camera));
+
         let x = 0;
         let y = 0;
-        for (var count = 0; count < 100; count++) {
+        let player = null;
+        for (var count = 0; count < 1; count++) {
             const chicken = this.engine.createEntity();
+            if (player==null) {
+                player = chicken;
+            }
             x += 20;
             if (x > 700) {
                 x = 0;
@@ -193,10 +198,13 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
-                new Controllable(100),
-                new ParticleEmitter([new Explosion(10,100)])
+                new Controllable(150),
+                // new ParticleEmitter([new Explosion(10,100)])
             ]);
         }
+
+        const pos:Position = this.engine.getComponentForEntity(player,Position);
+        this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
 
         const doorSwitch = this.engine.createEntity();
         this.engine.addComponentsToEntity(doorSwitch, [
