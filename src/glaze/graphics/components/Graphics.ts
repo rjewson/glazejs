@@ -9,7 +9,7 @@ export class Graphics {
     public frame: Frame;
     public frameList: FrameList;
 
-    constructor(frameListId: string) {
+    constructor(frameListId: string, initialFrameId:string=null) {
         this.frameListId = frameListId;
         this.initialFrameId = null;
     }

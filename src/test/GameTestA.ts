@@ -43,6 +43,12 @@ import { ParticleSystem } from "../glaze/particle/systems/ParticleSystem";
 import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
 import { Explosion } from "../glaze/particle/emitter/Explosion";
 import { FixedViewManagementSystem } from "../glaze/space/systems/FixedViewManagementSystem";
+import { AgeSystem } from "../glaze/core/systems/AgeSystem";
+import { Health } from "../glaze/core/components/Health";
+import { HealthSystem } from "../glaze/core/systems/HealthSystem";
+import { CollsionCountSystem } from "../glaze/core/systems/CollisionCountSystem";
+import { TestFilters } from "./config/Filters";
+import { StandardBullet } from "./factories/projectile/StandardBullet";
 
 interface GlazeMapLayerConfig {}
 
@@ -171,12 +177,16 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new FixedViewManagementSystem(this.renderSystem.camera));
 
+        this.engine.addSystemToEngine(new AgeSystem());
+        this.engine.addSystemToEngine(new HealthSystem());
+        this.engine.addSystemToEngine(new CollsionCountSystem());
+
         let x = 0;
         let y = 0;
         let player = null;
         for (var count = 0; count < 1; count++) {
             const chicken = this.engine.createEntity();
-            if (player==null) {
+            if (player == null) {
                 player = chicken;
             }
             x += 20;
@@ -190,7 +200,7 @@ export class GameTestA extends GlazeEngine {
             chickenBody.maxScalarVelocity = 1000;
 
             this.engine.addComponentsToEntity(chicken, [
-                new Position(100 + x, 100 + y),
+                new Position(100 + x, 200 + y),
                 new Extents(12, 12),
                 new Graphics("chicken"),
                 new GraphicsAnimation("chicken", "walk"),
@@ -203,7 +213,7 @@ export class GameTestA extends GlazeEngine {
             ]);
         }
 
-        const pos:Position = this.engine.getComponentForEntity(player,Position);
+        const pos: Position = this.engine.getComponentForEntity(player, Position);
         this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
 
         const doorSwitch = this.engine.createEntity();
@@ -216,11 +226,19 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff"),
         ]);
 
+        this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
+
         this.loop.start();
     }
 
     mapPosition(xTiles: number, yTiles: number): Position {
         return new Position(xTiles * TILE_SIZE, yTiles * TILE_SIZE);
+    }
+
+    fireBullet(position: Vector2, target: Vector2) {
+        var filter = new Filter();
+        filter.groupIndex = TestFilters.TURRET_GROUP;
+        var bullet = StandardBullet.create(this.engine, new Position(position.x, position.y), filter, target);
     }
 
     preUpdate() {
