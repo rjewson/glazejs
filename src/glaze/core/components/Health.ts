@@ -1,4 +1,5 @@
 import { Entity } from "../../ecs/Entity";
+import { EntityCb } from "../../GlazeEngine";
 
 export class Health {
     public maxHealth: number;
@@ -6,13 +7,13 @@ export class Health {
     public recoveryPerSecond: number;
     public recoveryPerMs: number;
 
-    public onNoHealth: (entity: Entity) => void;
+    public onNoHealth: EntityCb;
 
     constructor(
         maxHealth: number,
         currentHealth: number,
         recoveryPerSecond: number,
-        onNoHealth: (entity: Entity) => void,
+        onNoHealth: EntityCb,
     ) {
         this.maxHealth = maxHealth;
         this.currentHealth = currentHealth;

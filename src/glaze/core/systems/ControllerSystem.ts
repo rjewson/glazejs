@@ -15,9 +15,9 @@ export class ControllerSystem extends System {
     onEntityAdded(entity: Entity, physicsBody: PhysicsBody, controllable: Controllable) {}
 
     updateEntity(entity: Entity, physicsBody: PhysicsBody, controllable: Controllable) {
-        this.input.JustPressed(38) ? (physicsBody.body.velocity.y -= controllable.force) : 0;
-        this.input.JustPressed(40) ? (physicsBody.body.velocity.y += controllable.force) : 0;
-        this.input.JustPressed(37) ? (physicsBody.body.velocity.x -= controllable.force) : 0;
-        this.input.JustPressed(39) ? (physicsBody.body.velocity.x += controllable.force) : 0;
+        this.input.Pressed(38) ? (physicsBody.body.velocity.y -= controllable.force) : 0;
+        this.input.Pressed(40) ? (physicsBody.body.velocity.y += controllable.force) : 0;
+        this.input.Pressed(37) ? (physicsBody.body.velocity.x -= controllable.force) : 0;
+        this.input.Pressed(39) ? (physicsBody.body.velocity.x += controllable.force) : 0;
     }
 }

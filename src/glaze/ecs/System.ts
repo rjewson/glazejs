@@ -10,21 +10,20 @@ export class System {
     public engine: Engine;
     public components: string[];
     public members: Map<Entity, EntityEntry>;
-    // private membersAsArray: EntityEntry[];
 
     protected dt: number;
 
     constructor(components: IComponentFactory[]) {
         this.members = new Map();
-        // this.membersAsArray = new Array();
         this.components = components.map(factory => factory.name);
     }
 
     public addEntity(entity: Entity, components: any[]) {
+        if (this.members.has(entity)) return;
+        // console.log("adding "+this.constructor.name+" "+entity);
         const boundUpdate = this.updateEntity.bind(this, entity, ...components);
         const entry = { components, boundUpdate };
         this.members.set(entity, entry);
-        // this.membersAsArray.push(entry);
         this.onEntityAdded(entity, ...components);
     }
 
@@ -35,7 +34,6 @@ export class System {
         const entry = this.members.get(entity);
         this.onEntityRemoved(entity, ...entry.components);
         this.members.delete(entity);
-        // this.membersAsArray.splice(this.membersAsArray.indexOf(entry), 1);
     }
 
     public onEntityRemoved(entity: Entity, ...components: any[]) {}
@@ -53,10 +51,6 @@ export class System {
         for(let i of this.members.keys()) {
             this.members.get(i).boundUpdate();
         }
-        // const len = this.membersAsArray.length;
-        // for (let i=0; i<len; i++) {
-        //     this.membersAsArray[i].boundUpdate();
-        // }
     }
 
     public postUpdate() {}

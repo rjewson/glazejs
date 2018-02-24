@@ -8,9 +8,7 @@ export class AnimationController {
     public accumulatedTime:number;
 
     constructor(animation:Animation) {
-        this.animation = animation;
-        this.frameIndex = 0;
-        this.accumulatedTime = 0;
+        this.play(animation);
     }
 
     public update(dt:number):Frame {
@@ -20,6 +18,12 @@ export class AnimationController {
             this.accumulatedTime = 0;
         }
         return this.animation.frames[this.frameIndex];
+    }
+
+    public play(animation:Animation) {
+        this.animation = animation;
+        this.frameIndex = 0;
+        this.accumulatedTime = 0;
     }
 
 }

@@ -22,27 +22,26 @@ export class GraphicsRenderSystem extends System {
     public frameListManager: FrameListManager;
     private _cameraTarget: Vector2;
 
-    constructor(canvas: HTMLCanvasElement, cameraRange: AABB2) {
+    constructor(canvas: HTMLCanvasElement, screenDimension:Vector2, cameraRange: AABB2) {
         super([Position, Graphics]);
         this.canvas = canvas;
         this.stage = new Stage();
         this.camera = new Camera();
         this.camera.worldExtentsAABB = cameraRange;
-        this.initalize();
-    }
-
-    initalize() {
-        // this.camera.worldExtentsAABB.expand(-16);
-
         this.stage.addChild(this.camera);
-        this.renderer = new RendererEngine(this.stage, this.camera, this.canvas, 800, 640);
+        this.renderer = new RendererEngine(this.stage, this.camera, this.canvas, screenDimension.x, screenDimension.y);
         this.camera.Resize(this.renderer.width, this.renderer.height);
         this.textureManager = new TextureManager(this.renderer.gl);
         this.frameListManager = new FrameListManager(this.textureManager);
 
         this.itemContainer = new DisplayObjectContainer();
         this.itemContainer.id = "itemContainer";
-        this.camera.addChild(this.itemContainer);
+        this.camera.addChild(this.itemContainer);    }
+
+    initalize() {
+        // this.camera.worldExtentsAABB.expand(-16);
+
+
     }
 
     onEntityAdded(entity: Entity, position: Position, graphics: Graphics) {

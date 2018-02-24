@@ -12,16 +12,26 @@ export class AnimationSystem extends System {
         super([Position, Graphics, GraphicsAnimation]);
         this.frameListManager = frameListManager;
     }
-    onEntityAdded(entity: Entity, position: Position, graphics: Graphics, animation: GraphicsAnimation) {
+    onEntityAdded(entity: Entity, position: Position, graphics: Graphics, graphicsAnimation: GraphicsAnimation) {
         const newAnimation = this.frameListManager
-            .getFrameList(animation.frameListId)
-            .getAnimation(animation.animationId);
-        animation.animationController = new AnimationController(newAnimation);
+            .getFrameList(graphicsAnimation.frameListId)
+            .getAnimation(graphicsAnimation.animationId);
+        graphicsAnimation.dirty = false;
+        graphicsAnimation.animationController = new AnimationController(newAnimation);
     }
 
-    updateEntity(entity: Entity, position: Position, graphics: Graphics, animation: GraphicsAnimation) {
-        animation.animationController
+    updateEntity(entity: Entity, position: Position, graphics: Graphics, graphicsAnimation: GraphicsAnimation) {
+        if (graphicsAnimation.dirty) this.playAnimation(graphicsAnimation);
+        graphicsAnimation.animationController
             .update(this.dt)
             .updateSprite(graphics.sprite, position.direction.x, position.direction.y);
+    }
+
+    playAnimation(graphicsAnimation: GraphicsAnimation) {
+        graphicsAnimation.dirty = false;
+        const animation = this.frameListManager
+            .getFrameList(graphicsAnimation.frameListId)
+            .getAnimation(graphicsAnimation.animationId);
+        graphicsAnimation.animationController.play(animation);
     }
 }

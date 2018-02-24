@@ -130,7 +130,9 @@ export class BaseTexture {
         this.gl.bindFramebuffer(WebGLRenderingContext.FRAMEBUFFER, null);
         this.gl.bindRenderbuffer(WebGLRenderingContext.RENDERBUFFER, null);
         // this.gl.viewport(v[0], v[1], v[2], v[3]);
-        this.gl.viewport(0, 0, 800, 640);
+        // this.gl.viewport(0, 0, 800, 640);
+        this.gl.viewport(0, 0, 1280, 720);
+
     }
 
     public UnregisterTexture(gl: WebGLRenderingContext) {

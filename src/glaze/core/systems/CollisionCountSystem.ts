@@ -41,7 +41,7 @@ export class CollsionCountSystem extends System {
 
         //This is the world
         if (b == null) {
-            if (count <= 0 && cc.onCount != null) cc.onCount(a.entity);
+            if (count <= 0 && cc.onCount != null) cc.onCount(this.engine, a.entity);
         } else {
             //Do nothing with sensor
             if (b.isSensor) return;
@@ -49,7 +49,7 @@ export class CollsionCountSystem extends System {
             //Hit Dynamic item? trigger directly
 
             if (this.engine.getComponentForEntity(b.entity, Moveable) && cc.onCount != null) {
-                cc.onCount(a.entity);
+                cc.onCount(this.engine, a.entity);
             }
         }
     }

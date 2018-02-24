@@ -13,7 +13,7 @@
         }
 
         body {
-            /*width:1200px;*/
+            min-width:1200px;
             font-size: 12px;
         }
 
@@ -68,7 +68,7 @@
 
 <body>
     <h1>glazeJS
-        <a href="https://github.com/rjewson/glaze-engine">Github</a>
+        <a href="https://github.com/rjewson/glaze-engine">glazeJS</a>
     </h1>
     <div id="playControls" class="">
         <div class="play"></div>
@@ -82,72 +82,7 @@
     </div>
     <div id="viewContainer">
         <canvas id="view"></canvas>
-        <!-- <canvas id="viewDebug"></canvas>     -->
     </div>
-    <div id="controlPanel">
-
-        <table class="controls">
-            <thead>
-                <tr>
-                    <th>Action</th>
-                    <th>Key</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>&nbsp;Movement</td>
-                    <td>&nbsp;WASD (S drop through some platforms)</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Fire</td>
-                    <td>&nbsp;Space</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Boost JetPack</td>
-                    <td>&nbsp;Shift</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Hold/Drop/Throw Item</td>
-                    <td>&nbsp;H/K/J</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Activate Item</td>
-                    <td>&nbsp;Q
-                        <br>
-                    </td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Aim</td>
-                    <td>&nbsp;E</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Store/Retrieve</td>
-                    <td>&nbsp;Z/X</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Select Weapon</td>
-                    <td>&nbsp;1 2</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;Release Creature</td>
-                    <td>&nbsp;U (Bees)</td>
-                </tr>
-                <tbody>
-        </table>
-
-        <div id="actionControls" class="panel">
-            <button id="entities">Entities</button>
-            <button id="systems">Systems</button>
-        </div>
-        <div id="dataList" class="panel">
-        </div>
-    </div>
-    <script type="text/javascript">
-        function writeResult(result) {
-            var target = document.getElementById("dataList");
-            target.innerHTML = result;
-        }
-    </script>
     <script src="./dist/index.js"></script>
 </body>
 

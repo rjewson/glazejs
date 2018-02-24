@@ -26,7 +26,13 @@ export class Engine {
         return this.entityPool.reserve();
     }
 
-    public getComponentForEntity(entity:Entity, component:IComponentFactory) {
+    public destroyEntity(entity: Entity): void {
+        this.systems.forEach(system => system.removeEntity(entity));
+        this.clearAllComponentsForEntity(entity);
+        this.entityPool.free(entity);
+    }
+
+    public getComponentForEntity(entity: Entity, component: IComponentFactory) {
         const name = component.name;
         if (this.components.has(name)) return this.components.get(name)[entity];
         return null;
@@ -79,6 +85,18 @@ export class Engine {
     private addEntitiesToComponentList(componentName: string) {
         this.components.set(componentName, emptyNullArray(this.entityPool.capacity));
     }
+
+    private clearAllComponentsForEntity(entity: Entity) {
+        this.components.forEach((entities: Entity[]) => (entities[entity] = null));
+    }
+
+    public snapshot():any {
+        return {
+            activeEntities: this.entityPool.assigned,
+            totalEntitiesCreated: this.entityPool.totalAllocations
+        }
+    }
+
 }
 
 // const setIdOnComponent = (component: IComponent<any>, id: number) => (component._id_ = id);

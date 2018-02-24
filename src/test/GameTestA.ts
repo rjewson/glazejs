@@ -49,6 +49,9 @@ import { HealthSystem } from "../glaze/core/systems/HealthSystem";
 import { CollsionCountSystem } from "../glaze/core/systems/CollisionCountSystem";
 import { TestFilters } from "./config/Filters";
 import { StandardBullet } from "./factories/projectile/StandardBullet";
+import { DestroySystem } from "../glaze/core/systems/DestroySystem";
+import { PlayerFactory } from "./factories/character/PlayerFactory";
+import { PlayerSystem } from "./systems/PlayerSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -93,12 +96,14 @@ export class GameTestA extends GlazeEngine {
     initalize() {
         this.engine.addCapacityToEngine(1000);
 
+        this.engine.addSystemToEngine(new DestroySystem());
+
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
         cameraRange.expand(-TILE_SIZE * 2);
 
-        this.renderSystem = new GraphicsRenderSystem(this.canvas, cameraRange);
+        this.renderSystem = new GraphicsRenderSystem(this.canvas, new Vector2(1280,720), cameraRange);
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
         this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
 
@@ -163,6 +168,8 @@ export class GameTestA extends GlazeEngine {
         const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
 
+        this.engine.addSystemToEngine(new PlayerSystem(this.input,blockParticleEngine));
+
         const broadphase = new BruteforceBroadphase(tileMapCollision);
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
         this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
@@ -208,8 +215,8 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
-                new Controllable(150),
-                // new ParticleEmitter([new Explosion(10,100)])
+                // new Controllable(150),
+                // new ParticleEmitter([new Explosion(4,100)])
             ]);
         }
 
@@ -226,7 +233,11 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff"),
         ]);
 
-        this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
+        // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
+
+        const playerPosition = this.mapPosition(3,16);
+        PlayerFactory.create(this.engine,playerPosition);
+        this.renderSystem.cameraTarget = playerPosition.coords;
 
         this.loop.start();
     }

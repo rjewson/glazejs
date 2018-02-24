@@ -11,7 +11,7 @@ export class HealthSystem extends System {
     updateEntity(entity: Entity, health: Health, active: Active) {
         if (health.currentHealth <= 0) {
             if (health.onNoHealth != null) {
-                health.onNoHealth(entity);
+                health.onNoHealth(this.engine, entity);
             }
         } else {
             health.currentHealth = Math.min(health.maxHealth, health.currentHealth + health.recoveryPerMs * this.dt);

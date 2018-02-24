@@ -20,6 +20,7 @@ export class BruteforceBroadphase implements IBroadphase {
     }
 
     public addProxy(proxy: BFProxy) {
+        console.log("add proxy")
         var target = proxy.isStatic ? this.staticProxies : this.dynamicProxies;
         target.push(proxy);
     }
@@ -115,16 +116,18 @@ export class BruteforceBroadphase implements IBroadphase {
     }
     
     public wake(proxy: BFProxy) {
-        this.sleepingProxies.splice(this.sleepingProxies.indexOf(proxy), 1);
-        // this.sleepingProxies.remove(proxy);
-        proxy.body.isSleeping = false;
-        this.dynamicProxies.push(proxy);
+        return;
+        // TODO fix sleeping
+        // this.sleepingProxies.splice(this.sleepingProxies.indexOf(proxy), 1);
+        // proxy.body.isSleeping = false;
+        // this.dynamicProxies.push(proxy);
     }
 
     public sleep(proxy: BFProxy) {
-        this.dynamicProxies.splice(this.dynamicProxies.indexOf(proxy), 1);
-        //this.dynamicProxies.remove(proxy);
-        proxy.body.isSleeping = true;
-        this.sleepingProxies.push(proxy);
+        return;
+        // TODO fix sleeping
+        // this.dynamicProxies.splice(this.dynamicProxies.indexOf(proxy), 1);
+        // proxy.body.isSleeping = true;
+        // this.sleepingProxies.push(proxy);
     }
 }

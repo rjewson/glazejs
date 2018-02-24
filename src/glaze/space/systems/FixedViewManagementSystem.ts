@@ -34,8 +34,10 @@ export class FixedViewManagementSystem extends System {
 
     setEntityStatus(entity: Entity, status: boolean) {
         if (status == true) {
+            console.log("add");
             this.engine.addComponentsToEntity(entity, [new Viewable()]);
         } else {
+            console.log("revmove");
             this.engine.removeComponentsFromEntity(entity, [Viewable]);
         }
     }

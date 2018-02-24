@@ -5,11 +5,13 @@ export class Pool<T> {
     private pool: T[];
     private factory: poolFactory<T>;
     private nextAvailableIndex: number;
+    private totalAllocationCount: number;
 
     constructor(factory: poolFactory<T>) {
         this.pool = [];
         this.factory = factory;
         this.nextAvailableIndex = -1;
+        this.totalAllocationCount = 0;
     }
 
     public addCapacity(capacity: number) {
@@ -21,6 +23,7 @@ export class Pool<T> {
         const item = this.pool[this.nextAvailableIndex];
         this.pool[this.nextAvailableIndex] = null;
         this.nextAvailableIndex--;
+        this.totalAllocationCount++;
         return item;
     }
 
@@ -31,6 +34,14 @@ export class Pool<T> {
 
     get capacity():number {
         return this.pool.length;
+    }
+
+    get assigned():number {
+        return this.pool.length - this.nextAvailableIndex;
+    }
+
+    get totalAllocations():number {
+        return this.totalAllocationCount;
     }
 }
 

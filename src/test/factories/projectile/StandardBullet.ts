@@ -17,6 +17,8 @@ import { Health } from "../../../glaze/core/components/Health";
 import { Age } from "../../../glaze/core/components/Age";
 import { Active } from "../../../glaze/core/components/Active";
 import { Ballistics } from "../../../glaze/util/Ballastics";
+import { Destroy } from "../../../glaze/core/components/Destroy";
+import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 
 export class StandardBullet {
     static create(engine: Engine, position: Position, filter: Filter, targetPosition: Vector2): Entity {
@@ -39,7 +41,7 @@ export class StandardBullet {
             new PhysicsBody(bulletBody, true),
             new Moveable(),
             new PhysicsCollision(false, filter, []),
-            // new ParticleEmitter([new glaze.particle.emitter.InterpolatedEmitter(0,10)]),
+            new ParticleEmitter([]),
             new CollisionCounter(3, StandardBullet.onDestroy),
             new Health(10, 10, 0, StandardBullet.onDestroy),
             new Age(1000, StandardBullet.onDestroy),
@@ -49,12 +51,10 @@ export class StandardBullet {
 
         return bullet;
     }
-    static onDestroy(entity: Entity) {
-        console.log("die");
-        // js.Lib.debug();
-        // if (entity.getComponent(Destroy)!=null)
-        //     return;
-        // entity.addComponent(new Destroy(1));
+    static onDestroy(engine: Engine, entity: Entity) {
+        if (engine.getComponentForEntity(entity, Destroy)) return;
+        engine.addComponentsToEntity(entity, [new Destroy(1)]);
+        engine.getComponentForEntity(entity,ParticleEmitter).emitters.push(new Explosion(10,50));
         // entity.getComponent(glaze.engine.components.ParticleEmitters).emitters.push(new glaze.particle.emitter.Explosion(10,50));
         // glaze.util.CombatUtils.explode(entity.getComponent(Position).coords,64,10000,entity);
     }

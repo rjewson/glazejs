@@ -10,7 +10,7 @@ export class AgeSystem extends System {
 
     updateEntity(entity: Entity, age: Age, active: Active) {
         if (age.growOlder(this.dt)) {
-            if (age.onExpire != null) age.onExpire(entity);
+            if (age.onExpire != null) age.onExpire(this.engine,entity);
         }
     }
 }

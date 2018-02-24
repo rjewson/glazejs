@@ -3,6 +3,7 @@ import { Engine } from "./ecs/Engine";
 import { AssetLoader } from "./util/AssetLoader";
 import { GameLoop } from "./util/GameLoop";
 import { Vector2 } from "./geom/Vector2";
+import { Entity } from "./ecs/Entity";
 
 export class GlazeEngine {
 
@@ -48,3 +49,5 @@ export class GlazeEngine {
     }
 
 }
+
+export type EntityCb = (engine:Engine, entity:Entity) => void;
