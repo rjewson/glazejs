@@ -6,6 +6,8 @@ import { BFProxy } from "../BFProxy";
 import { Ray } from "../Ray";
 import { StaticAABBvsSweeptAABB, IsSegVsAABB, AABBvsStaticSolidAABBFixedNormal, AABBvsStaticSolidAABB } from "../Intersect";
 import { Plane } from "../../../geom/Plane";
+import { AABB2 } from "../../../geom/AABB2";
+import { AABB } from "../../../geom/AABB";
 
 const SOLID: number = 0x1 << 0;
 const ONE_WAY: number = 0x1 << 1;
@@ -249,26 +251,29 @@ export class TileMapCollision {
         // }
     }
 
-    // public iterateCells(aabb:glaze.geom.AABB2,cb:glaze.geom.AABB->Void) {
-    //     var startX = data.Index(aabb.l);
-    //     var startY = data.Index(aabb.t);
+    public iterateCells(aabb:AABB2,cb:(aabb:AABB)=>void) {
+        var startX = this.data.Index(aabb.l);
+        var startY = this.data.Index(aabb.t);
 
-    //     var endX = data.Index(aabb.r) + 1;
-    //     var endY = data.Index(aabb.b) + 1;
+        var endX = this.data.Index(aabb.r) + 1;
+        var endY = this.data.Index(aabb.b) + 1;
 
-    //     var aabbArg = new glaze.geom.AABB();
-    //     aabbArg.extents.setTo(tileHalfSize,tileHalfSize);
+        var aabbArg = new AABB();
+        aabbArg.extents.setTo(this.tileHalfSize,this.tileHalfSize);
 
-    //     for (x in startX...endX) {
-    //         for (y in startY...endY) {
-    //             var cell = data.get(x,y,0);
-    //             if (cell&SOLID==SOLID) {
-    //                 aabbArg.position.setTo((x*tileSize)+tileHalfSize,(y*tileSize)+tileHalfSize);
-    //                 cb(aabbArg);
-    //             }
-    //         }
-    //     }
-    // }
+        for (var y = startY; y < endY; y++) {
+            for (var x = startX; x < endX; x++) {
+
+        // for (x in startX...endX) {
+        //     for (y in startY...endY) {
+                var cell = this.data.get(x,y,0);
+                if ((cell&SOLID)==SOLID) {
+                    aabbArg.position.setTo((x*this.tileSize)+this.tileHalfSize,(y*this.tileSize)+this.tileHalfSize);
+                    cb(aabbArg);
+                }
+            }
+        }
+    }
 
     public castRay(ray: Ray): boolean {
         var x = this.data.Index(ray.origin.x);

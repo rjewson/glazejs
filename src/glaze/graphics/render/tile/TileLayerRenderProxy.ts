@@ -53,16 +53,9 @@ export class TileLayerRenderProxy implements IRenderer {
 
     public calcSnap(cameraPos: Vector2): boolean {
         this.lastSnap.copy(this.thisSnap);
-
         this.thisSnap.x = (Math.floor(cameraPos.x / -16) - 1) * 16;
-        // thisSnap.x*=16;
-        // thisSnap.x-=16;
         this.thisSnap.y = (Math.floor(cameraPos.y / -16) - 1) * 16;
-        // thisSnap.y*=16;
-        // thisSnap.y-=16;
-
         this.snapChanged = this.lastSnap.x != this.thisSnap.x || this.lastSnap.y != this.thisSnap.y;
-
         return this.snapChanged;
     }
 

@@ -52,6 +52,9 @@ import { StandardBullet } from "./factories/projectile/StandardBullet";
 import { DestroySystem } from "../glaze/core/systems/DestroySystem";
 import { PlayerFactory } from "./factories/character/PlayerFactory";
 import { PlayerSystem } from "./systems/PlayerSystem";
+import { EnvironmentForceSystem } from "../glaze/physics/systems/EnvironmentForceSystem";
+import { createTMXLayerEntities } from "../glaze/tmx/TMXFactory";
+import { ForceFactory } from "../glaze/tmx/factories/ForceFactory";
 
 interface GlazeMapLayerConfig {}
 
@@ -103,7 +106,7 @@ export class GameTestA extends GlazeEngine {
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
         cameraRange.expand(-TILE_SIZE * 2);
 
-        this.renderSystem = new GraphicsRenderSystem(this.canvas, new Vector2(1280,720), cameraRange);
+        this.renderSystem = new GraphicsRenderSystem(this.canvas, new Vector2(1280, 720), cameraRange);
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
         this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
 
@@ -168,7 +171,7 @@ export class GameTestA extends GlazeEngine {
         const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
 
-        this.engine.addSystemToEngine(new PlayerSystem(this.input,blockParticleEngine));
+        this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
 
         const broadphase = new BruteforceBroadphase(tileMapCollision);
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
@@ -187,6 +190,7 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new AgeSystem());
         this.engine.addSystemToEngine(new HealthSystem());
         this.engine.addSystemToEngine(new CollsionCountSystem());
+        this.engine.addSystemToEngine(new EnvironmentForceSystem());
 
         let x = 0;
         let y = 0;
@@ -219,6 +223,7 @@ export class GameTestA extends GlazeEngine {
                 // new ParticleEmitter([new Explosion(4,100)])
             ]);
         }
+        createTMXLayerEntities(this.engine, GetLayer(tmxMap, "Objects"), [new ForceFactory()]);
 
         const pos: Position = this.engine.getComponentForEntity(player, Position);
         this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
@@ -235,8 +240,8 @@ export class GameTestA extends GlazeEngine {
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 
-        const playerPosition = this.mapPosition(3,16);
-        PlayerFactory.create(this.engine,playerPosition);
+        const playerPosition = this.mapPosition(3, 16);
+        PlayerFactory.create(this.engine, playerPosition);
         this.renderSystem.cameraTarget = playerPosition.coords;
 
         this.loop.start();

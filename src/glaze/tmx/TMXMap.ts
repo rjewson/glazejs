@@ -25,7 +25,7 @@ export interface TMXLayer {
     height: number;
     layers: TMXLayer[];
     name: string;
-    objects: object;
+    objects: TMXObject[];
     opacity: number;
     properties: TMXProperty;
     type: string;
@@ -66,6 +66,25 @@ export interface TMXTile {
 export interface TMXTerrain {
     name: string;
     tile: number;
+}
+
+export interface TMXObject {
+    ellipse: boolean;
+    gid: number;
+    height: number;
+    id: number;
+    name: string;
+    point: boolean;
+    polygon: number[];
+    polyline: number[];
+    properties: number[];
+    rotation: number;
+    text: object;
+    type: string;
+    visible: boolean;
+    width: number;
+    x: number;
+    y: number;
 }
 
 const decodeBase64 = function(input) {
