@@ -13,6 +13,7 @@ import { Explosion } from "../../glaze/particle/emitter/Explosion";
 import { Extents } from "../../glaze/core/components/Extents";
 import { RandomFloat } from "../../glaze/util/Random";
 import { StandardBullet } from "../factories/projectile/StandardBullet";
+import { BeeFactory } from "../factories/character/BeeFactory";
 
 /*
 backspace   8
@@ -186,9 +187,9 @@ export class PlayerSystem extends System {
         //         playerLight.addComponent(new Viewable());
         // }
         // TODO
-        // if (this.input.Pressed(85)) {
-        //     exile.entities.creatures.BeeFactory.create(engine,position.clone());
-        // }
+        if (this.input.Pressed(85)) {
+            BeeFactory.create(this.engine,position.clone());
+        }
         // TODO
         // holder.activate = this.input.JustPressed(72);
         // trace("x");

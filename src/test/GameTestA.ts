@@ -55,6 +55,10 @@ import { PlayerSystem } from "./systems/PlayerSystem";
 import { EnvironmentForceSystem } from "../glaze/physics/systems/EnvironmentForceSystem";
 import { createTMXLayerEntities } from "../glaze/tmx/TMXFactory";
 import { ForceFactory } from "../glaze/tmx/factories/ForceFactory";
+import { PointLightingSystem } from "../glaze/graphics/systems/PointLightingSystem";
+import { Light } from "../glaze/graphics/components/Light";
+import { Viewable } from "../glaze/core/components/Viewable";
+import { SteeringSystem } from "../glaze/ai/steering/systems/SteeringSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -173,7 +177,14 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
 
+        // const lightSystem = new PointLightingSystem(tileMapCollision);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // this.engine.addSystemToEngine(lightSystem);
+
         const broadphase = new BruteforceBroadphase(tileMapCollision);
+
+        this.engine.addSystemToEngine(new SteeringSystem());
+
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
         this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
         this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
@@ -219,6 +230,8 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
+                new Light(64,1,1,1,255,255,255),
+                new Viewable(),
                 // new Controllable(150),
                 // new ParticleEmitter([new Explosion(4,100)])
             ]);
