@@ -4,7 +4,7 @@ export function SetPseudoRandomSeed(seed: number) {
     PseudoRandomSeed = seed;
 }
 
-export function Randomnumber(min: number, max: number): number {
+export function RandomFloat(min: number, max: number): number {
     return Math.random() * (max - min) + min;
 }
 
@@ -17,7 +17,7 @@ export function RandomSign(chance: number = 0.5): number {
 }
 
 export function Randomnumbereger(min: number, max: number): number {
-    return Math.floor(Randomnumber(min, max));
+    return Math.floor(RandomFloat(min, max));
 }
 
 export function Pseudonumber(): number {

@@ -1,7 +1,7 @@
 import { Behavior } from "./Behavior";
 import { Vector2 } from "../../../geom/Vector2";
 import { SteeringSettings } from "../SteeringSettings";
-import { Randomnumber } from "../../../util/Random";
+import { RandomFloat } from "../../../util/Random";
 import { SteeringAgentParameters } from "../SteeringAgentParameters";
 import { Body } from "../../../physics/Body";
 import { Seek } from "./Seek";
@@ -19,12 +19,12 @@ export class Wander extends Behavior {
         super(SteeringSettings.wanderWeight, SteeringSettings.wanderPriority);
         this.circleRadius = circleRadius;
         this.circleDistance = circleDistance;
-        this.wanderAngle = Randomnumber(0, Math.PI * 2);
+        this.wanderAngle = RandomFloat(0, Math.PI * 2);
         this.wanderChange = wanderChange;
     }
 
     public calculate(agent: Body, params: SteeringAgentParameters, result: Vector2) {
-        this.wanderAngle += Randomnumber(-this.wanderChange, this.wanderChange);
+        this.wanderAngle += RandomFloat(-this.wanderChange, this.wanderChange);
 
         this.circleCenter.copy(agent.velocity);
         this.circleCenter.normalize();

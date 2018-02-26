@@ -7,7 +7,7 @@ import { Vector2 } from "../../geom/Vector2";
 import { Entity } from "../../ecs/Entity";
 import { BFProxy } from "../collision/BFProxy";
 import { Contact } from "../collision/Contact";
-import { Randomnumber } from "../../util/Random";
+import { RandomFloat } from "../../util/Random";
 
 export class EnvironmentForceSystem extends System {
     public temp: Vector2 = new Vector2();
@@ -53,7 +53,7 @@ export class EnvironmentForceSystem extends System {
         var item = envForce.data[index];
         envForce.direction.copy(item.direction);
         envForce.power = item.maxForce;
-        envForce.ttl = item.minDuration == 0 ? -1 : Randomnumber(item.minDuration * 1000, item.maxDuration * 1000);
+        envForce.ttl = item.minDuration == 0 ? -1 : RandomFloat(item.minDuration * 1000, item.maxDuration * 1000);
     }
 
     public callback(a: BFProxy, b: BFProxy, contact: Contact) {

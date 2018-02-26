@@ -1,71 +1,59 @@
-package glaze.ai.navigation;
-import glaze.geom.Vector2;
-import haxe.ds.StringMap;
+import { IPathfinder } from "./IPathfinder";
+import { Node } from "./Node";
+import { Vector2 } from "../../geom/Vector2";
 
+export class Graph {
+    public nodes: Array<Node>;
+    public nodeLookup: Map<string, Node>;
 
-/**
- * ...
- * @author rje
- */
+    public pathfinder: IPathfinder;
 
-class Graph 
-{
+    constructor() {
+        this.nodes = new Array<Node>();
+        this.nodeLookup = new Map();
+    }
 
-	public var nodes : Array<Node>;
-	public var nodeLookup : StringMap<Node>;
-	
-	public var pathfinder:IPathfinder;
-	
-	public function new() 
-	{
-		nodes = new Array<Node>();
-		nodeLookup = new StringMap<Node>();
-	}
-	
-	public function Reset():Void {
-		for (node in nodes) {
-			node.reset();
-		} 
-	}
-	
-	public function GetCreateNode(x:Int, y:Int):Node {
-		var hash = HashCoords(x, y);
-		var node = nodeLookup.get(hash);
-				
-		if (node == null) {
-			node = new Node(x, y);
-			nodes.push(node);
-			nodeLookup.set(hash, node);
-		}		
-		
-		return node;
-	}
-	
-	public function GetNode(x:Int, y:Int):Node {
-		return nodeLookup.get(HashCoords(x, y));
-	}
-	
-	public function HashCoords(x:Int, y:Int):String {
-		return x + ":" + y;
-	}
-	
-	public function Search(start:Node, finish:Node):Array<Node> {
-		Reset();
-		return (pathfinder != null) ? pathfinder.FindPath(nodes, start, finish) : null;
-	}
-	
-	public static function ConvertNodeListToWorldCoords(nodes:Array<Node>, tileSize:Int):Array<Vector2> {
-		var result = new Array<Vector2>();
-		var count = nodes.length;
-		var tileHalfSize = new Vector2(tileSize / 2, tileSize / 2);
-		
-		for (i in 0...count) {
-			var coord = nodes[count - 1 - i].position.clone();
-			coord.multEquals(tileSize);
-			coord.plusEquals(tileHalfSize);
-			result.push(coord);
-		}
-		return result;
-	}
-	
+    public Reset() {
+        this.nodes.forEach(node => node.reset());
+    }
+
+    public GetCreateNode(x: number, y: number): Node {
+        var hash = this.HashCoords(x, y);
+        var node = this.nodeLookup.get(hash);
+
+        if (node == null) {
+            node = new Node(x, y);
+            this.nodes.push(node);
+            this.nodeLookup.set(hash, node);
+        }
+
+        return node;
+    }
+
+    public GetNode(x: number, y: number): Node {
+        return this.nodeLookup.get(this.HashCoords(x, y));
+    }
+
+    public HashCoords(x: number, y: number): string {
+        return x + ":" + y;
+    }
+
+    public Search(start: Node, finish: Node): Array<Node> {
+        this.Reset();
+        return this.pathfinder != null ? this.pathfinder.FindPath(this.nodes, start, finish) : null;
+    }
+
+    public static ConvertNodeListToWorldCoords(nodes: Array<Node>, tileSize: number): Array<Vector2> {
+        var result = new Array<Vector2>();
+        var count = nodes.length;
+        var tileHalfSize = new Vector2(tileSize / 2, tileSize / 2);
+
+        for (var i = 0; i < count; i++) {
+            var coord = nodes[count - 1 - i].position.clone();
+            coord.multEquals(tileSize);
+            coord.plusEquals(tileHalfSize);
+            result.push(coord);
+        }
+        return result;
+    }
 }

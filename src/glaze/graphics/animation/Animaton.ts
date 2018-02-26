@@ -1,4 +1,3 @@
-import { Randomnumber } from "../../util/Random";
 import { Frame } from "../frame/Frame";
 
 export class Animation {

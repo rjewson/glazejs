@@ -11,7 +11,7 @@ import { Player } from "../components/Player";
 import { PhysicsCollision } from "../../glaze/physics/components/PhysicsCollision";
 import { Explosion } from "../../glaze/particle/emitter/Explosion";
 import { Extents } from "../../glaze/core/components/Extents";
-import { Randomnumber } from "../../glaze/util/Random";
+import { RandomFloat } from "../../glaze/util/Random";
 import { StandardBullet } from "../factories/projectile/StandardBullet";
 
 /*
@@ -266,13 +266,13 @@ export class PlayerSystem extends System {
         if (this.characterController.burn > 0) {
             var ttl = 280;
             var offsetx = position.coords.x - 8 * position.direction.x;
-            var velocity = 200 + Randomnumber(-150, 150); // + physicsBody.body.velocity.y;
+            var velocity = 200 + RandomFloat(-150, 150); // + physicsBody.body.velocity.y;
             var count = Math.floor((this.characterController.burn + 500) / 1000);
             if (count > 0)
                 this.particleEngine.EmitParticle(
                     offsetx,
                     position.coords.y + 6,
-                    Randomnumber(-10, 10),
+                    RandomFloat(-10, 10),
                     velocity,
                     0,
                     0,
@@ -291,7 +291,7 @@ export class PlayerSystem extends System {
                 this.particleEngine.EmitParticle(
                     offsetx,
                     position.coords.y + 6,
-                    Randomnumber(-50, 50),
+                    RandomFloat(-50, 50),
                     velocity,
                     0,
                     0,

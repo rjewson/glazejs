@@ -2,7 +2,7 @@ import { IParticleEmitter } from "./IParticleEmitter";
 import { IParticleEngine } from "../engines/IParticleEngine";
 import { Entity } from "../../ecs/Entity";
 import { Vector2 } from "../../geom/Vector2";
-import { Randomnumber } from "../../util/Random";
+import { RandomFloat } from "../../util/Random";
 
 export class Explosion implements IParticleEmitter {
     public mass: number;
@@ -15,8 +15,8 @@ export class Explosion implements IParticleEmitter {
 
     public update(time: number, position: Vector2, engine: IParticleEngine): void {
         for (let i = 0; i < this.mass; i++) {
-            var angle = Randomnumber(0, Math.PI * 2);
-            var p = Randomnumber(0, this.power * 2);
+            var angle = RandomFloat(0, Math.PI * 2);
+            var p = RandomFloat(0, this.power * 2);
             var vx = Math.cos(angle) * p;
             var vy = Math.sin(angle) * p;
             engine.EmitParticle(
@@ -26,7 +26,7 @@ export class Explosion implements IParticleEmitter {
                 vy,
                 0,
                 1,
-                Randomnumber(50, 200),
+                RandomFloat(50, 200),
                 0.99,
                 false,
                 true,
