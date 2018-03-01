@@ -59,6 +59,11 @@ import { PointLightingSystem } from "../glaze/graphics/systems/PointLightingSyst
 import { Light } from "../glaze/graphics/components/Light";
 import { Viewable } from "../glaze/core/components/Viewable";
 import { SteeringSystem } from "../glaze/ai/steering/systems/SteeringSystem";
+import { BeeHive } from "./components/BeeHive";
+import { BeeHiveSystem } from "./systems/BeeHiveSystem";
+import { BirdNest } from "./components/BirdNest";
+import { BirdNestSystem } from "./systems/BirdNestSystem";
+import { CombatUtils } from "../glaze/util/CombatUtils";
 
 interface GlazeMapLayerConfig {}
 
@@ -183,6 +188,8 @@ export class GameTestA extends GlazeEngine {
 
         const broadphase = new BruteforceBroadphase(tileMapCollision);
 
+        CombatUtils.setup(this.engine,broadphase);
+
         this.engine.addSystemToEngine(new SteeringSystem());
 
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
@@ -202,6 +209,9 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new HealthSystem());
         this.engine.addSystemToEngine(new CollsionCountSystem());
         this.engine.addSystemToEngine(new EnvironmentForceSystem());
+
+        this.engine.addSystemToEngine(new BeeHiveSystem());
+        this.engine.addSystemToEngine(new BirdNestSystem());
 
         let x = 0;
         let y = 0;
@@ -250,6 +260,26 @@ export class GameTestA extends GlazeEngine {
             new Active(),
             new TileGraphics("switchOff"),
         ]);
+
+        const beeHive = this.engine.createEntity();
+        this.engine.addComponentsToEntity(beeHive, [
+            this.mapPosition(20.5,17),
+            new Extents(16,16),
+            new Graphics("insects","hive"), 
+            new PhysicsCollision(false,null,[]),
+            new Fixed(),
+            new Active(),
+            new BeeHive(5)
+        ]);    
+
+        const birdNest = this.engine.createEntity();
+        this.engine.addComponentsToEntity(birdNest, [
+            this.mapPosition(34,30),
+            new Extents(7,7), 
+            new Fixed(),
+            new BirdNest(5),
+            new Active(),
+        ]);    
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 

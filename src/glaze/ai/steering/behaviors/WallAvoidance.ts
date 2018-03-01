@@ -9,7 +9,7 @@ import { AABB2 } from "../../../geom/AABB2";
 import { toRad } from "../../../util/Maths";
 import { AABB } from "../../../geom/AABB";
 
-class WallAvoidance extends Behavior {
+export class WallAvoidance extends Behavior {
     public feelerLength: number;
 
     feelers: Array<Feeler>;
