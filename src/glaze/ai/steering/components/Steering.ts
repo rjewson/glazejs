@@ -1,5 +1,6 @@
 import { Behavior } from "../behaviors/Behavior";
 import { SteeringAgentParameters, DEFAULT_STEERING_PARAMS } from "../SteeringAgentParameters";
+import { IComponentFactory } from "../../../ecs/Component";
 
 export class Steering  {
     
@@ -30,14 +31,8 @@ export class Steering  {
 		this.hasChanged = true;
 	}
 
-	// public getBehaviour(type:Class<Behavior>):Behavior {
-	// 	for (var i=0; i<this.behaviors.length; i++) {
-	// 	// for (behavior in behaviors) {
-	// 		if (Std.is(behavior,type)) {
-	// 			return behavior;
-	// 		}
-	// 	}
-	// 	return null;
-	// }
+	public getBehaviour(type:IComponentFactory):Behavior {
+		return this.behaviors.find(behaviour=>(behaviour as any).constructor.name === type.name);
+	}
 
 }

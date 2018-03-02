@@ -63,7 +63,7 @@ export class Engine {
     }
 
     public update(dt: number, timestamp: number) {
-        this.systems.forEach(system => system.updateSystem(dt));
+        this.systems.forEach(system => system.updateSystem(dt, timestamp));
     }
 
     private matchEntity(entity: Entity) {

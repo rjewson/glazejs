@@ -1,4 +1,3 @@
-import { IEntityFactory } from "../IEntityFactory";
 import { TMXObject } from "../TMXMap";
 import { Engine } from "../../ecs/Engine";
 import { TMXObjectPosition, TMXObjectExtents } from "../TMXComponentUtils";
@@ -6,17 +5,16 @@ import { PhysicsCollision } from "../../physics/components/PhysicsCollision";
 import { Fixed } from "../../core/components/Fixed";
 import { Active } from "../../core/components/Active";
 import { ForceData, EnvironmentForce } from "../../physics/components/EnvironmentForce";
+import { Wind } from "../../core/components/Wind";
+import { Entity } from "../../ecs/Entity";
 
-export class ForceFactory implements IEntityFactory {
+export class ForceFactory {
     static FORCE_SCALE: number = 1 / 100;
 
-    constructor() {}
+    static mapping: string = "Force";
 
-    public mapping(): string {
-        return "Force";
-    }
-
-    public createEntity(object: TMXObject): any[] {
+    static createTMXEntity(engine:Engine, object: TMXObject): Entity {
+        const entity = engine.createEntity();
         var components = [];
         components.push(TMXObjectPosition(object));
         components.push(TMXObjectExtents(object));
@@ -42,9 +40,8 @@ export class ForceFactory implements IEntityFactory {
         }
 
         components.push(new EnvironmentForce(forceDataArray));
-        // components.push(new Wind(1/1000));
-        // const force = engine.createEntity();
-        // engine.addComponentsToEntity(force,components)
-        return components;
+        components.push(new Wind(1/1000));
+        engine.addComponentsToEntity(entity, components);
+        return entity;
     }
 }

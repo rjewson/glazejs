@@ -23,6 +23,7 @@ export class BruteforceBroadphase implements IBroadphase {
         console.log("add proxy")
         var target = proxy.isStatic ? this.staticProxies : this.dynamicProxies;
         target.push(proxy);
+        console.log(this.staticProxies);
     }
 
     public removeProxy(proxy: BFProxy) {

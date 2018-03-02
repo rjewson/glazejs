@@ -13,3 +13,18 @@ export function TMXObjectExtents(tmxObject: TMXObject): Extents {
 export function SCALE(v: number): number {
     return v * 2;
 }
+
+export function TMXObjectGetCSVParams(csv: String): Array<any> {
+    var parsedParams = new Array();
+    if (csv == null) return parsedParams;
+    var params = csv.split(",");
+    params.forEach(param => {
+        var f = parseFloat(param);
+        if (f != null) {
+            parsedParams.push(f);
+            return;
+        }
+        parsedParams.push(param);
+    });
+    return parsedParams;
+}

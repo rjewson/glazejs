@@ -12,6 +12,7 @@ export class System {
     public members: Map<Entity, EntityEntry>;
 
     protected dt: number;
+    protected timestamp: number;
 
     constructor(components: IComponentFactory[]) {
         this.members = new Map();
@@ -38,8 +39,9 @@ export class System {
 
     public onEntityRemoved(entity: Entity, ...components: any[]) {}
 
-    public updateSystem(dt: number) {
+    public updateSystem(dt: number, timestamp: number) {
         this.dt = dt;
+        this.timestamp = timestamp;
         this.preUpdate();
         this.updateAllEntities();
         this.postUpdate();

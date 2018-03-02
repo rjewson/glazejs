@@ -10,6 +10,7 @@ import { LWFSME } from "../../glaze/ai/fsm/StackFSM";
 import { CombatUtils, EntityFilterOptions } from "../../glaze/util/CombatUtils";
 import { Arrival } from "../../glaze/ai/steering/behaviors/Arrival";
 import { Wander } from "../../glaze/ai/steering/behaviors/Wander";
+import { Position } from "../../glaze/core/components/Position";
 
 export class BirdSystem extends System {
     bfAreaQuery: BroadphaseAreaQuery;
@@ -17,13 +18,17 @@ export class BirdSystem extends System {
     constructor(bfAreaQuery: BroadphaseAreaQuery) {
         super([Bird, PhysicsCollision, Health, Steering]);
         this.bfAreaQuery = bfAreaQuery;
+        this.baseState = this.baseState.bind(this);
+        this.seekState = this.seekState.bind(this);
     }
 
     onEntityAdded(entity: Entity, bird: Bird, physicsCollision: PhysicsCollision, health: Health, steering: Steering) {
         bird.ai.pushState(this.baseState);
     }
 
-    updateEntity(entity: Entity, bird: Bird, physicsCollision: PhysicsCollision, health: Health, steering: Steering) {}
+    updateEntity(entity: Entity, bird: Bird, physicsCollision: PhysicsCollision, health: Health, steering: Steering) {
+        bird.ai.update(entity,this.dt);
+    }
 
     baseState(entity: Entity, fsm: LWFSME, delta: number) {
         const bird = this.engine.getComponentForEntity(entity, Bird);

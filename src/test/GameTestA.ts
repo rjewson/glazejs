@@ -64,6 +64,11 @@ import { BeeHiveSystem } from "./systems/BeeHiveSystem";
 import { BirdNest } from "./components/BirdNest";
 import { BirdNestSystem } from "./systems/BirdNestSystem";
 import { CombatUtils } from "../glaze/util/CombatUtils";
+import { BirdSystem } from "./systems/BirdSystem";
+import { WaterSystem } from "../glaze/core/systems/WaterSystem";
+import { WindSystem } from "../glaze/core/systems/WindSystem";
+import { WaterFactory } from "../glaze/tmx/factories/WaterFactory";
+import { DoorFactory } from "./factories/item/DoorFactory";
 
 interface GlazeMapLayerConfig {}
 
@@ -188,7 +193,7 @@ export class GameTestA extends GlazeEngine {
 
         const broadphase = new BruteforceBroadphase(tileMapCollision);
 
-        CombatUtils.setup(this.engine,broadphase);
+        CombatUtils.setup(this.engine, broadphase);
 
         this.engine.addSystemToEngine(new SteeringSystem());
 
@@ -212,6 +217,10 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new BeeHiveSystem());
         this.engine.addSystemToEngine(new BirdNestSystem());
+        this.engine.addSystemToEngine(new BirdSystem(CombatUtils.bfAreaQuery));
+
+        this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
+        this.engine.addSystemToEngine(new WindSystem(blockParticleEngine,16));
 
         let x = 0;
         let y = 0;
@@ -240,13 +249,19 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
-                new Light(64,1,1,1,255,255,255),
+                new Light(64, 1, 1, 1, 255, 255, 255),
                 new Viewable(),
                 // new Controllable(150),
                 // new ParticleEmitter([new Explosion(4,100)])
             ]);
         }
-        createTMXLayerEntities(this.engine, GetLayer(tmxMap, "Objects"), [new ForceFactory()]);
+
+        const factories = new Map<string,any>();
+        factories.set(ForceFactory.mapping,ForceFactory.createTMXEntity);
+        factories.set(WaterFactory.mapping,WaterFactory.createTMXEntity);
+        factories.set(DoorFactory.mapping,DoorFactory.createTMXEntity);
+
+        createTMXLayerEntities(this.engine, GetLayer(tmxMap, "Objects"), factories);
 
         const pos: Position = this.engine.getComponentForEntity(player, Position);
         this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
@@ -263,28 +278,29 @@ export class GameTestA extends GlazeEngine {
 
         const beeHive = this.engine.createEntity();
         this.engine.addComponentsToEntity(beeHive, [
-            this.mapPosition(20.5,17),
-            new Extents(16,16),
-            new Graphics("insects","hive"), 
-            new PhysicsCollision(false,null,[]),
+            this.mapPosition(20.5, 17),
+            new Extents(16, 16),
+            new Graphics("insects", "hive"),
+            new PhysicsCollision(false, null, []),
             new Fixed(),
             new Active(),
-            new BeeHive(5)
-        ]);    
+            new BeeHive(5),
+        ]);
 
         const birdNest = this.engine.createEntity();
         this.engine.addComponentsToEntity(birdNest, [
-            this.mapPosition(34,30),
-            new Extents(7,7), 
+            this.mapPosition(34, 30),
+            new Extents(7, 7),
             new Fixed(),
             new BirdNest(5),
             new Active(),
-        ]);    
+        ]);
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 
-        const playerPosition = this.mapPosition(3, 16);
+        const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
         PlayerFactory.create(this.engine, playerPosition);
+        
         this.renderSystem.cameraTarget = playerPosition.coords;
 
         this.loop.start();

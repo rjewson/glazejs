@@ -1,15 +1,11 @@
 import { TMXLayer } from "./TMXMap";
 import { Engine } from "../ecs/Engine";
-import { IEntityFactory } from "./IEntityFactory";
 
-export function createTMXLayerEntities(engine: Engine, layer: TMXLayer, factories: IEntityFactory[]) {
-    const factoryMap: Map<string, IEntityFactory> = new Map();
-    factories.forEach(factory => factoryMap.set(factory.mapping(), factory));
+export function createTMXLayerEntities(engine: Engine, layer: TMXLayer, factories:  Map<string,any>) {
     layer.objects.forEach(object => {
-        const factory = factoryMap.get(object.name);
+        const factory = factories.get(object.type);
         if (factory) {
-            const entity = engine.createEntity();
-            engine.addComponentsToEntity(entity, factory.createEntity(object));
+            factory(engine, object);
         }
     });
 }

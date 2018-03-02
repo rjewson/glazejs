@@ -16,7 +16,7 @@ export function RandomSign(chance: number = 0.5): number {
     return Math.random() < chance ? 1 : -1;
 }
 
-export function Randomnumbereger(min: number, max: number): number {
+export function RandomInteger(min: number, max: number): number {
     return Math.floor(RandomFloat(min, max));
 }
 

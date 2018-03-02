@@ -11,7 +11,7 @@ export class PhysicsUpdateSystem extends System {
 
     constructor() {
         super([Position, PhysicsBody, Active]);
-        this.globalForce = new Vector2(0, 10);
+        this.globalForce = new Vector2(0, 30);
         this.globalDamping = 0.99;
     }
 
