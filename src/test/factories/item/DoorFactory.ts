@@ -13,6 +13,7 @@ import { Filter } from "../../../glaze/physics/collision/Filter";
 import { TestFilters } from "../../config/Filters";
 import { State } from "../../../glaze/core/components/State";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
+import { StateUpdater } from "../../../glaze/core/components/StateUpdater";
 
 export class DoorFactory {
     static mapping: string = "door";
@@ -48,7 +49,8 @@ export class DoorFactory {
             new Fixed(),
             new Door("door", false, ""),
             // new State(['closed','open'],0,["doorA"]),
-            new State(DoorFactory.states, "open", ["open", "close"],["doorA"]),
+            new State(DoorFactory.states, "open", true), // ["open", "close"],["doorA"]),
+            new StateUpdater("doorA",["open", "close"]),
             new Active(),
         ]);
 

@@ -71,6 +71,8 @@ import { WaterFactory } from "../glaze/tmx/factories/WaterFactory";
 import { DoorFactory } from "./factories/item/DoorFactory";
 import { StateSystem } from "../glaze/core/systems/StateSystem";
 import { MessageBus } from "../glaze/util/MessageBus";
+import { StateUpdater } from "../glaze/core/components/StateUpdater";
+import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -226,7 +228,9 @@ export class GameTestA extends GlazeEngine {
 
         const messageBus = new MessageBus();
         (window as any).mb = messageBus;
-        this.engine.addSystemToEngine(new StateSystem(messageBus));
+        this.engine.addSystemToEngine(new StateSystem());
+        this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
+
 
         let x = 0;
         let y = 0;

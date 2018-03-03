@@ -5,28 +5,30 @@ import { MessageBus } from "../../util/MessageBus";
 import { Engine } from "../../ecs/Engine";
 
 export class StateSystem extends System {
-    public bus: MessageBus;
-    
-    constructor(bus: MessageBus) {
+    public updates: Array<Entity>;
+
+    constructor() {
         super([State]);
-        this.bus = bus;
+        this.updates = new Array();
     }
 
     onEntityAdded(entity: Entity, state: State) {
-        if (state.channels) {
-            state.callback = this.updateEntity.bind(this,entity,state);
-            this.bus.registerChannels(state.channels, state.callback);
-        }
+        state.onChange = this.onChange.bind(this, entity);
     }
-    onEntityRemoved(entity: Entity, state: State) {
-        if (state.channels) {
-            this.bus.unregisterChannels(state.channels, state.callback);
+
+    onEntityRemoved(entity: Entity, state: State) {}
+
+    updateAllEntities() {
+        while (this.updates.length > 0) {
+            var entity = this.updates.pop();
+            var state = this.engine.getComponentForEntity(entity, State);
+            state.states[state.currentState](this.engine, entity);
+            state.messages.dispatch(state.currentState);
         }
     }
 
-    updateAllEntities() {}
-
-    updateEntity(entity:Entity, state:State) {
-        state.state.incrementState(this.engine,entity);
+    public onChange(entity: Entity) {
+        this.updates.push(entity);
     }
+
 }

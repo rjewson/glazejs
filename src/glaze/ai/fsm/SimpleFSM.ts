@@ -29,6 +29,7 @@ export class SimpleFSM {
         this.currentState = newState;
 
         this.states[newState](engine, owner);
+        this.messages.dispatch(owner, )
 
         return this.currentState;
     }
