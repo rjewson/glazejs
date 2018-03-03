@@ -41,7 +41,10 @@ export class Engine {
     public addComponentsToEntity(entity: Entity, componentsToAdd: any[]) {
         componentsToAdd.forEach(component => {
             const name = component.constructor.name;
-            if (this.components.has(name)) this.components.get(name)[entity] = component;
+            if (!this.components.has(name)) {
+                this.createComponentEntry(name);
+            }
+            this.components.get(name)[entity] = component;
         });
         this.matchEntity(entity);
     }
@@ -58,12 +61,16 @@ export class Engine {
         system.engine = this;
         this.systems.push(system);
         system.components.forEach((name: string) =>
-            this.components.set(name, emptyNullArray(this.entityPool.capacity)),
+            this.createComponentEntry(name)
         );
     }
 
     public update(dt: number, timestamp: number) {
         this.systems.forEach(system => system.updateSystem(dt, timestamp));
+    }
+
+    private createComponentEntry(name:string) {
+        this.components.set(name, emptyNullArray(this.entityPool.capacity));
     }
 
     private matchEntity(entity: Entity) {

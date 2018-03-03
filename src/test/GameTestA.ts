@@ -69,6 +69,8 @@ import { WaterSystem } from "../glaze/core/systems/WaterSystem";
 import { WindSystem } from "../glaze/core/systems/WindSystem";
 import { WaterFactory } from "../glaze/tmx/factories/WaterFactory";
 import { DoorFactory } from "./factories/item/DoorFactory";
+import { StateSystem } from "../glaze/core/systems/StateSystem";
+import { MessageBus } from "../glaze/util/MessageBus";
 
 interface GlazeMapLayerConfig {}
 
@@ -222,6 +224,10 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
         this.engine.addSystemToEngine(new WindSystem(blockParticleEngine,16));
 
+        const messageBus = new MessageBus();
+        (window as any).mb = messageBus;
+        this.engine.addSystemToEngine(new StateSystem(messageBus));
+
         let x = 0;
         let y = 0;
         let player = null;
@@ -300,7 +306,7 @@ export class GameTestA extends GlazeEngine {
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
         PlayerFactory.create(this.engine, playerPosition);
-        
+
         this.renderSystem.cameraTarget = playerPosition.coords;
 
         this.loop.start();
