@@ -7,10 +7,11 @@ import { PhysicsCollision } from "../../physics/components/PhysicsCollision";
 import { BFProxy } from "../../physics/collision/BFProxy";
 import { Contact } from "../../physics/collision/Contact";
 import { Moveable } from "../components/Moveable";
+import { State } from "../components/State";
 
 export class CollsionCountSystem extends System {
     constructor() {
-        super([CollisionCounter, PhysicsCollision, Active]);
+        super([CollisionCounter, PhysicsCollision, State, Active]);
         this.callback = this.callback.bind(this);
     }
 
@@ -18,6 +19,7 @@ export class CollsionCountSystem extends System {
         entity: Entity,
         collisionCounter: CollisionCounter,
         physicsCollision: PhysicsCollision,
+        state: State,
         active: Active,
     ) {
         physicsCollision.proxy.contactCallbacks.push(this.callback);
@@ -26,6 +28,7 @@ export class CollsionCountSystem extends System {
         entity: Entity,
         collisionCounter: CollisionCounter,
         physicsCollision: PhysicsCollision,
+        state: State,
         active: Active,
     ) {
         physicsCollision.proxy.contactCallbacks.splice(
@@ -37,11 +40,16 @@ export class CollsionCountSystem extends System {
 
     callback(a: BFProxy, b: BFProxy, contact: Contact) {
         var cc = this.engine.getComponentForEntity(a.entity, CollisionCounter);
+
         var count = --cc.count;
 
         //This is the world
         if (b == null) {
-            if (count <= 0 && cc.onCount != null) cc.onCount(this.engine, a.entity);
+            if (count <= 0 && cc.onCount != null) {
+                var state:State = this.engine.getComponentForEntity(a.entity, State);
+                state.setState(cc.onCount);
+                // cc.onCount(this.engine, a.entity);
+            }
         } else {
             //Do nothing with sensor
             if (b.isSensor) return;
@@ -49,7 +57,9 @@ export class CollsionCountSystem extends System {
             //Hit Dynamic item? trigger directly
 
             if (this.engine.getComponentForEntity(b.entity, Moveable) && cc.onCount != null) {
-                cc.onCount(this.engine, a.entity);
+                var state:State = this.engine.getComponentForEntity(a.entity, State);
+                state.setState(cc.onCount);
+                // cc.onCount(this.engine, a.entity);
             }
         }
     }

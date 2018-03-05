@@ -11,6 +11,7 @@ import { BFProxy } from "../../glaze/physics/collision/BFProxy";
 import { Contact } from "../../glaze/physics/collision/Contact";
 import { BirdFactory } from "../factories/character/BirdFactory";
 import { EntityFilterOptions, CombatUtils } from "../../glaze/util/CombatUtils";
+import { State } from "../../glaze/core/components/State";
 
 export class BirdNestSystem extends System {
     constructor() {
@@ -59,7 +60,8 @@ export class BirdNestSystem extends System {
         if (nest.group.hasCapacity()) {
             const position = this.engine.getComponentForEntity(entity, Position);
             var bird = BirdFactory.create(this.engine, position.clone(), position, entity);
-            nest.group.addMember(bird);
+            const state = this.engine.getComponentForEntity(bird,State)
+            nest.group.addMember(entity,state);
             // nest.birds.push(bird);
         }
     }

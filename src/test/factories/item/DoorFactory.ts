@@ -59,7 +59,7 @@ export class DoorFactory {
     static onDestroy(engine: Engine, entity: Entity) {}
     static createTMXEntity(engine: Engine, object: TMXObject): Entity {
         const extents = TMXObjectExtents(object);
-        extents.halfWidths.y /= 2;
+        extents.halfWidths.x /= 2;
         return DoorFactory.create(engine, TMXObjectPosition(object), extents, "doorOpen", "doorClosed");
     }
 }

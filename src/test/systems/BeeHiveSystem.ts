@@ -6,6 +6,8 @@ import { Entity } from "../../glaze/ecs/Entity";
 import { RandomBoolean } from "../../glaze/util/Random";
 import { BeeFactory } from "../factories/character/BeeFactory";
 import { Position } from "../../glaze/core/components/Position";
+import { State } from "../../glaze/core/components/State";
+import { EntityState } from "../../glaze/core/state/EntityStates";
 
 export class BeeHiveSystem extends System {
     constructor() {
@@ -13,7 +15,12 @@ export class BeeHiveSystem extends System {
     }
 
     onEntityRemoved(entity: Entity, beehive: BeeHive, viewable: Viewable, active: Active) {
-        beehive.group.members.forEach(bee => this.engine.destroyEntity(bee));
+        beehive.group.members.forEach(bee => {
+            // this.engine.destroyEntity(bee);
+            const state:State = this.engine.getComponentForEntity(bee,State);
+            state.setState(EntityState.Destroy);
+
+        });
     }
 
     updateEntity(entity: Entity, beehive: BeeHive, viewable: Viewable, active: Active) {
@@ -23,8 +30,9 @@ export class BeeHiveSystem extends System {
                     this.engine,
                     this.engine.getComponentForEntity(entity, Position).clone(),
                 );
+                const state = this.engine.getComponentForEntity(newBee,State)
                 // newBee.parent = entity;
-                beehive.group.addMember(newBee);
+                beehive.group.addMember(newBee, state);
             }
         }
     }

@@ -22,8 +22,13 @@ export class StateSystem extends System {
         while (this.updates.length > 0) {
             var entity = this.updates.pop();
             var state = this.engine.getComponentForEntity(entity, State);
-            state.states[state.currentState](this.engine, entity);
-            state.messages.dispatch(state.currentState);
+            if (state === null || state.currentState === null) return;
+            // if (state.states[state.currentState]) {
+                state.states[state.currentState](this.engine, entity);
+                state.messages.dispatch(entity, state.currentState);
+            // } else {
+            //     debugger;
+            // }
         }
     }
 

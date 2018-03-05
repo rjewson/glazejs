@@ -19,8 +19,20 @@ import { Active } from "../../../glaze/core/components/Active";
 import { Ballistics } from "../../../glaze/util/Ballastics";
 import { Destroy } from "../../../glaze/core/components/Destroy";
 import { Explosion } from "../../../glaze/particle/emitter/Explosion";
+import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
+import { State } from "../../../glaze/core/components/State";
 
 export class StandardBullet {
+    static states: SimpleFSMStates = {
+        alive: function(engine: Engine, entity: Entity) {
+            console.log("hmmm");
+        },
+        destroy: function(engine: Engine, entity: Entity) {
+            if (engine.getComponentForEntity(entity, Destroy)) return;
+            engine.addComponentsToEntity(entity, [new Destroy(1)]);
+            engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
+        },
+    };
     static create(engine: Engine, position: Position, filter: Filter, targetPosition: Vector2): Entity {
         var bulletBody = new Body(Material.LIGHTMETAL);
         bulletBody.setMass(16 + 8);
@@ -42,9 +54,10 @@ export class StandardBullet {
             new Moveable(),
             new PhysicsCollision(false, filter, []),
             new ParticleEmitter([]),
-            new CollisionCounter(3, StandardBullet.onDestroy),
-            new Health(10, 10, 0, StandardBullet.onDestroy),
-            new Age(1000, StandardBullet.onDestroy),
+            new State(StandardBullet.states, null, false),
+            new CollisionCounter(3, "destroy"),
+            new Health(10, 10, 0, "destroy"),
+            new Age(1000, "destroy"),
             new Active(),
         ]);
         Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2500);
@@ -54,7 +67,7 @@ export class StandardBullet {
     static onDestroy(engine: Engine, entity: Entity) {
         if (engine.getComponentForEntity(entity, Destroy)) return;
         engine.addComponentsToEntity(entity, [new Destroy(1)]);
-        engine.getComponentForEntity(entity,ParticleEmitter).emitters.push(new Explosion(10,50));
+        engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
         // entity.getComponent(glaze.engine.components.ParticleEmitters).emitters.push(new glaze.particle.emitter.Explosion(10,50));
         // glaze.util.CombatUtils.explode(entity.getComponent(Position).coords,64,10000,entity);
     }

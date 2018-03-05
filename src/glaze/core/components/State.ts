@@ -17,6 +17,10 @@ export class State {
     }
 
     public setState(state:string) {
+        if (state=="alive") {
+            debugger;
+        }
+        console.log(state);
         this.currentState = state;
         if (this.onChange != null) {
             this.onChange();

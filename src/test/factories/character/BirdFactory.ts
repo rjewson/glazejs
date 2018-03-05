@@ -25,8 +25,18 @@ import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 import { Bird } from "../../components/Bird";
 import { Arrival } from "../../../glaze/ai/steering/behaviors/Arrival";
 import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidance";
+import { State } from "../../../glaze/core/components/State";
+import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 
 export class BirdFactory {
+
+    static states: SimpleFSMStates = {
+        destroy: function(engine: Engine, entity: Entity) {
+            if (engine.getComponentForEntity(entity, Destroy)) return;
+            engine.addComponentsToEntity(entity, [new Destroy(1)]);
+        }
+    };
+
     static create(engine: Engine, position: Position, follow: Position, nest: Entity): Entity {
         var birdBody = new Body(new Material());
         birdBody.setMass(1);
@@ -53,8 +63,9 @@ export class BirdFactory {
                 // new WallAvoidance(map, 60),
                 // ,new Seperation(nest.getComponent(BirdNest).group.members,20)
             ]),
-            new Age(15000, BirdFactory.onDestroy),
-            new Health(10, 10, 0, BirdFactory.onDestroy),
+            new State(BirdFactory.states, null, false),
+            new Age(15000, "destroy"),
+            new Health(10, 10, 0, "destroy"),
             new Active(),
         ]);
 

@@ -22,8 +22,18 @@ import { Health } from "../../../glaze/core/components/Health";
 import { Destroy } from "../../../glaze/core/components/Destroy";
 import { ParticleEmitter } from "../../../glaze/particle/components/ParticleEmitter";
 import { Explosion } from "../../../glaze/particle/emitter/Explosion";
+import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
+import { State } from "../../../glaze/core/components/State";
 
 export class BeeFactory {
+
+    static states: SimpleFSMStates = {
+        destroy: function(engine: Engine, entity: Entity) {
+            if (engine.getComponentForEntity(entity, Destroy)) return;
+            engine.addComponentsToEntity(entity, [new Destroy(1)]);
+        }
+    };
+
     static create(engine: Engine, position: Position): Entity {
         var beeBody = new Body(new Material(0.1, 0.3, 0));
         beeBody.setMass(0.1);
@@ -48,8 +58,9 @@ export class BeeFactory {
                 ],
                 HEAVY_STEERING_PARAMS,
             ),
-            new Age(10000, BeeFactory.onDestroy),
-            new Health(10, 10, 0, BeeFactory.onDestroy),
+            new State(BeeFactory.states, null, false),
+            new Age(10000, "destroy"),
+            new Health(10, 10, 0, "destroy"),
             new Active(),
         ]);
 

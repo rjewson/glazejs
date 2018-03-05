@@ -4,10 +4,9 @@ import { Pool } from "../util/Pool";
 import { System } from "./System";
 
 export class Engine {
-    private components: Map<string, any[]>;
-    private entities: Entity[];
-    private systems: System[];
-    private entityPool: Pool<Entity>;
+    public components: Map<string, any[]>;
+    public systems: System[];
+    public entityPool: Pool<Entity>;
 
     constructor() {
         this.components = new Map();
@@ -60,16 +59,24 @@ export class Engine {
     public addSystemToEngine(system: System) {
         system.engine = this;
         this.systems.push(system);
-        system.components.forEach((name: string) =>
-            this.createComponentEntry(name)
-        );
+        system.components.forEach((name: string) => this.createComponentEntry(name));
     }
 
     public update(dt: number, timestamp: number) {
         this.systems.forEach(system => system.updateSystem(dt, timestamp));
     }
 
-    private createComponentEntry(name:string) {
+    public query(query: IComponentFactory[]): Entity[] {
+        const result = [];
+        for (let i = 0; i < this.entityPool.capacity; i++) {
+            if (query.every(component => this.components.get(component.name)[i] !== null)) {
+                result.push(i);
+            }
+        }
+        return result;
+    }
+
+    private createComponentEntry(name: string) {
         this.components.set(name, emptyNullArray(this.entityPool.capacity));
     }
 
@@ -97,13 +104,12 @@ export class Engine {
         this.components.forEach((entities: Entity[]) => (entities[entity] = null));
     }
 
-    public snapshot():any {
+    public snapshot(): any {
         return {
             activeEntities: this.entityPool.assigned,
-            totalEntitiesCreated: this.entityPool.totalAllocations
-        }
+            totalEntitiesCreated: this.entityPool.totalAllocations,
+        };
     }
-
 }
 
 // const setIdOnComponent = (component: IComponent<any>, id: number) => (component._id_ = id);

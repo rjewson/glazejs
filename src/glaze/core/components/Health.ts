@@ -7,13 +7,13 @@ export class Health {
     public recoveryPerSecond: number;
     public recoveryPerMs: number;
 
-    public onNoHealth: EntityCb;
+    public onNoHealth: string;
 
     constructor(
         maxHealth: number,
         currentHealth: number,
         recoveryPerSecond: number,
-        onNoHealth: EntityCb,
+        onNoHealth: string,
     ) {
         this.maxHealth = maxHealth;
         this.currentHealth = currentHealth;

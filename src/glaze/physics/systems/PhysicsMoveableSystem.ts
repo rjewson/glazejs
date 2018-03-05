@@ -25,7 +25,7 @@ export class PhysicsMoveableSystem extends System {
         physicsCollision.proxy.isStatic = false;
         physicsCollision.proxy.entity = entity;
         physicsCollision.proxy.aabb.position = position.coords; //Because its not linked to a body BUT it could cause an issue?
-
+        physicsCollision.proxy.userData1 = entity;
         this.broadphase.addProxy(physicsCollision.proxy);
     }
 

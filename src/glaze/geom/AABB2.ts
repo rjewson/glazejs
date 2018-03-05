@@ -55,6 +55,12 @@ export class AABB2 {
         if (aabb.l < this.l) this.l = aabb.l;
     }
 
+    combine(aabb: AABB2): AABB2 {
+        const result = this.clone();
+        result.addAABB(aabb);
+        return result;
+    }
+
     addPoint(x: number, y: number) {
         if (x < this.l) this.l = x;
         if (x > this.r) this.r = x;
@@ -81,5 +87,23 @@ export class AABB2 {
         this.r -= width / 2;
         this.t += height / 2;
         this.b -= height / 2;
+    }
+
+    contains(aabb: AABB2): boolean {
+        if (this.l < aabb.l && this.t < aabb.t && aabb.b < this.b && aabb.r < this.r) {
+            return false;
+        }
+        return true;
+    }
+
+    copy(aabb:AABB2) {
+        this.l = aabb.l;
+        this.r = aabb.r;
+        this.t = aabb.t;
+        this.b = aabb.b;
+    }
+
+    perimeter(): number {
+        return 2 * (this.width + this.height);
     }
 }

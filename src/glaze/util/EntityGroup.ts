@@ -1,5 +1,7 @@
 import { Entity } from "../ecs/Entity";
 import { Signal } from "../signals/Signal";
+import { State } from "../core/components/State";
+import { EntityState } from "../core/state/EntityStates";
 
 // enum GroupEvent {
 // 	MemberAdded;
@@ -17,28 +19,28 @@ export class EntityGroup {
         this.maxMembers = maxMembers;
         this.members = new Set();
         this.messages = new Signal();
+        this.onMemberMessage = this.onMemberMessage.bind(this);
     }
 
-    public  addMember(entity:Entity) {
+    public addMember(entity:Entity, state:State) {
     	if (!this.hasCapacity())
     		return;
-    	this.members.add(entity);
+        this.members.add(entity);
+        state.messages.add(this.onMemberMessage);
     	// entity.messages.add(this.onMemberMessage);
     	// this.messages.dispatch(GroupEvent.MemberAdded,entity);
     }
 
     public  removeMember(entity:Entity) {
         this.members.delete(entity);
-    	//  if (members.remove(entity))
-    	//  	messages.dispatch(GroupEvent.MemberRemoved,entity);
     }
 
-    // public  onMemberMessage(e:Entity,type:String,data:Dynamic) {
-    // 	switch (type) {
-    // 		case Entity.DESTROY:
-    // 			removeMember(e);
-    // 	}
-    // }
+    public  onMemberMessage(entity:Entity, state:string) {
+    	switch (state) {
+    		case EntityState.Destroy:
+    			this.removeMember(entity);
+    	}
+    }
 
     public  hasCapacity():boolean {
     	return this.members.size<this.maxMembers;

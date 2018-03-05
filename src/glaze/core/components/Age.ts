@@ -5,11 +5,11 @@ export class Age {
     public ttl: number;
     public age: number;
 
-    public onExpire: EntityCb;
+    public onExpire: string;
 
     // public var stateOnExpired:String = EngineLifecycle.DESTROY;
 
-    constructor(ttl: number, onExpire: EntityCb) {
+    constructor(ttl: number, onExpire: string) {
         this.ttl = ttl;
         this.age = 0;
         this.onExpire = onExpire;

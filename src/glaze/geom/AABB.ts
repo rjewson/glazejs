@@ -1,4 +1,5 @@
 import { Vector2 } from "./Vector2";
+import { AABB2 } from "./AABB2";
 
 export class AABB {
     public position: Vector2 = new Vector2();
@@ -48,6 +49,17 @@ export class AABB {
 
     area(): number {
         return this.extents.x * this.extents.y * 4;
+    }
+
+    toAABB2(): AABB2 {
+        return new AABB2(this.t,this.r,this.b,this.l);
+    }
+
+    copyToAABB2(aabb2:AABB2) {
+        aabb2.t = this.t;
+        aabb2.r = this.r;
+        aabb2.b = this.b;
+        aabb2.l = this.l;
     }
 
     clone(aabb: AABB): AABB {

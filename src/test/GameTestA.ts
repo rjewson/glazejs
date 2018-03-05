@@ -73,6 +73,8 @@ import { StateSystem } from "../glaze/core/systems/StateSystem";
 import { MessageBus } from "../glaze/util/MessageBus";
 import { StateUpdater } from "../glaze/core/components/StateUpdater";
 import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
+import { listenDebugButtons } from "../glaze/tools/HTMLDevTools";
+import { DynamicTreeBroadphase } from "../glaze/physics/collision/broadphase/DynamicTreeBroadphase";
 
 interface GlazeMapLayerConfig {}
 
@@ -195,7 +197,9 @@ export class GameTestA extends GlazeEngine {
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
-        const broadphase = new BruteforceBroadphase(tileMapCollision);
+        // const broadphase = new BruteforceBroadphase(tileMapCollision);
+        const broadphase = new DynamicTreeBroadphase(tileMapCollision);
+
 
         CombatUtils.setup(this.engine, broadphase);
 
@@ -212,6 +216,7 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
 
+        // TODO Temp
         this.engine.addSystemToEngine(new FixedViewManagementSystem(this.renderSystem.camera));
 
         this.engine.addSystemToEngine(new AgeSystem());
@@ -286,25 +291,25 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff"),
         ]);
 
-        const beeHive = this.engine.createEntity();
-        this.engine.addComponentsToEntity(beeHive, [
-            this.mapPosition(20.5, 17),
-            new Extents(16, 16),
-            new Graphics("insects", "hive"),
-            new PhysicsCollision(false, null, []),
-            new Fixed(),
-            new Active(),
-            new BeeHive(5),
-        ]);
+        // const beeHive = this.engine.createEntity();
+        // this.engine.addComponentsToEntity(beeHive, [
+        //     this.mapPosition(20.5, 17),
+        //     new Extents(16, 16),
+        //     new Graphics("insects", "hive"),
+        //     new PhysicsCollision(false, null, []),
+        //     new Fixed(),
+        //     new Active(),
+        //     new BeeHive(5),
+        // ]);
 
-        const birdNest = this.engine.createEntity();
-        this.engine.addComponentsToEntity(birdNest, [
-            this.mapPosition(34, 30),
-            new Extents(7, 7),
-            new Fixed(),
-            new BirdNest(5),
-            new Active(),
-        ]);
+        // const birdNest = this.engine.createEntity();
+        // this.engine.addComponentsToEntity(birdNest, [
+        //     this.mapPosition(34, 30),
+        //     new Extents(7, 7),
+        //     new Fixed(),
+        //     new BirdNest(5),
+        //     new Active(),
+        // ]);
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 
@@ -314,6 +319,7 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.cameraTarget = playerPosition.coords;
 
         this.loop.start();
+        listenDebugButtons(this.engine);
     }
 
     mapPosition(xTiles: number, yTiles: number): Position {

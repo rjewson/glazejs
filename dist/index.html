@@ -6,6 +6,7 @@
     <title>glazeJS</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+    <link rel="stylesheet" href="main.css">
 
     <style type="text/css">
         * {
@@ -13,7 +14,7 @@
         }
 
         body {
-            min-width:1200px;
+            min-width: 1200px;
             font-size: 12px;
         }
 
@@ -70,15 +71,13 @@
         <div class="play"></div>
         <button id="startbutton">Run</button>
         <button id="stopbutton">Pause</button>
-        <button id="debug1button">Chickens</button>
-        <button id="debug2button">Grenade</button>
-        <button id="debug3button">No Chickens</button>
-        <button id="debug4button">Shake</button>
-        <button id="debug5button">Rabbits</button>
+        <button id="debugChickens">Chickens</button>
+        <button id="debugDump">Dump</button>
     </div>
     <div id="viewContainer">
         <canvas id="view"></canvas>
     </div>
+    <div id="debugResult"></div>
     <script src="./dist/index.js"></script>
 </body>
 

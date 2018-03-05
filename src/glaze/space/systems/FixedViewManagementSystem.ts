@@ -19,7 +19,7 @@ export class FixedViewManagementSystem extends System {
         this.camera = camera;
         this.spaceManager = new RegularGridSpaceManager(10, 10, 500);
         this.activeSpaceAABB = new AABB();
-        this.activeSpaceAABB.extents.setTo(800 / 2, 600 / 2);
+        this.activeSpaceAABB.extents.setTo(camera.viewportSize.x, camera.viewportSize.y); //800 / 2, 600 / 2);
         this.setEntityStatus = this.setEntityStatus.bind(this);
     }
 
@@ -34,10 +34,8 @@ export class FixedViewManagementSystem extends System {
 
     setEntityStatus(entity: Entity, status: boolean) {
         if (status == true) {
-            console.log("add");
             this.engine.addComponentsToEntity(entity, [new Viewable()]);
         } else {
-            console.log("revmove");
             this.engine.removeComponentsFromEntity(entity, [Viewable]);
         }
     }
