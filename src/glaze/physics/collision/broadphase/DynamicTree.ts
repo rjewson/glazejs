@@ -1,16 +1,20 @@
 import { AABB2 } from "../../../geom/AABB2";
 import { BFProxy } from "../BFProxy";
+import { Ray } from "../Ray";
+import { RayAABB, Collide } from "../Intersect";
 
 const boundsPadding: number = 5;
 const dynamicTreeVelocityMultiplyer: number = 2;
 
 export class TreeNode {
+    public parent: TreeNode;
     public left: TreeNode;
     public right: TreeNode;
     public bounds: AABB2;
     public height: number;
     public body: BFProxy;
-    constructor(public parent?: TreeNode) {
+
+    constructor(parent?: TreeNode) {
         this.parent = parent || null;
         this.body = null;
         this.bounds = new AABB2();
@@ -26,17 +30,17 @@ export class TreeNode {
 
 export class DynamicTree {
     public root: TreeNode;
-    public nodes: { [key: number]: TreeNode };
-    public tempBounds : AABB2;
+    public nodes: Map<number, TreeNode>; //{ [key: number]: TreeNode };
+    public tempBounds: AABB2;
     constructor(
         public worldBounds: AABB2 = new AABB2(-Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE),
     ) {
         this.root = null;
-        this.nodes = {};
+        this.nodes = new Map(); //{};
         this.tempBounds = new AABB2();
     }
 
-    private _insert(leaf: TreeNode): void {
+    private insertNode(leaf: TreeNode): void {
         // If there are no nodes in the tree, make this the root leaf
         if (this.root === null) {
             this.root = leaf;
@@ -129,7 +133,7 @@ export class DynamicTree {
         // Walk up the tree fixing heights and AABBs
         var currentNode = leaf.parent;
         while (currentNode) {
-            currentNode = this._balance(currentNode);
+            currentNode = this.balanceNode(currentNode);
 
             if (!currentNode.left) {
                 throw new Error("Parent of current leaf cannot have a null left child" + currentNode);
@@ -144,7 +148,8 @@ export class DynamicTree {
             currentNode = currentNode.parent;
         }
     }
-    private _remove(leaf: TreeNode) {
+
+    private removeNode(leaf: TreeNode) {
         if (leaf === this.root) {
             this.root = null;
             return;
@@ -169,7 +174,7 @@ export class DynamicTree {
 
             var currentNode = grandParent;
             while (currentNode) {
-                currentNode = this._balance(currentNode);
+                currentNode = this.balanceNode(currentNode);
                 currentNode.bounds = currentNode.left.bounds.combine(currentNode.right.bounds);
                 currentNode.height = 1 + Math.max(currentNode.left.height, currentNode.right.height);
 
@@ -189,13 +194,14 @@ export class DynamicTree {
         var node = new TreeNode();
         node.body = body;
         // node.bounds = body.aabb.toAABB2();
-        body.aabb.copyToAABB2(node.bounds);
+        // body.aabb.copyToAABB2(node.bounds);
+        node.bounds.copyAABB(body.aabb);
         node.bounds.l -= 2;
         node.bounds.t -= 2;
         node.bounds.r += 2;
         node.bounds.b += 2;
-        this.nodes[body.id] = node;
-        this._insert(node);
+        this.nodes.set(body.id, node);
+        this.insertNode(node);
     }
 
     /**
@@ -204,13 +210,13 @@ export class DynamicTree {
     public updateBody(body: BFProxy) {
         // console.log("check:"+body.id);
         // console.log(this.nodes);
-        var node = this.nodes[body.id];
+        var node = this.nodes.get(body.id);
         if (!node) {
             return false;
         }
         // var b = body.aabb.toAABB2();
-        body.aabb.copyToAABB2(this.tempBounds);
-
+        // body.aabb.copyToAABB2(this.tempBounds);
+        this.tempBounds.copyAABB(body.aabb);
         // if the body is outside the world no longer update it
         // console.log("a");
 
@@ -226,7 +232,7 @@ export class DynamicTree {
             return false;
         }
 
-        this._remove(node);
+        this.removeNode(node);
         this.tempBounds.l -= boundsPadding;
         this.tempBounds.t -= boundsPadding;
         this.tempBounds.r += boundsPadding;
@@ -249,7 +255,7 @@ export class DynamicTree {
 
         // node.bounds = b;
         node.bounds.copy(this.tempBounds);
-        this._insert(node);
+        this.insertNode(node);
         // console.log("rebalance");
         return true;
     }
@@ -258,19 +264,21 @@ export class DynamicTree {
      * Untracks a body from the dynamic tree
      */
     public untrackBody(body: BFProxy) {
-        var node = this.nodes[body.id];
+        var node = this.nodes.get(body.id);
         if (!node) {
             return;
         }
-        this._remove(node);
-        this.nodes[body.id] = null;
-        delete this.nodes[body.id];
+        this.removeNode(node);
+
+        // this.nodes[body.id] = null;
+        // delete this.nodes[body.id];
+        this.nodes.delete(body.id);
     }
 
     /**
      * Balances the tree about a node
      */
-    private _balance(node: TreeNode) {
+    private balanceNode(node: TreeNode) {
         if (node === null) {
             throw new Error("Cannot balance at null node");
         }
@@ -403,20 +411,33 @@ export class DynamicTree {
      */
     public query(body: BFProxy, callback: (other: BFProxy) => boolean): void {
         var bounds = body.aabb.toAABB2();
-        var helper = (currentNode: TreeNode): boolean => {
-            // console.log(currentNode && currentNode.body ? currentNode.body.userData1 : "?", currentNode.bounds, body.userData1, bounds);
-            if (currentNode && currentNode.bounds.intersect(bounds)) {
-                if (currentNode.isLeaf() && currentNode.body !== body) {
-                    if (callback.call(body, currentNode.body)) {
-                        return true;
-                    }
-                } else {
-                    return helper(currentNode.left) || helper(currentNode.right);
-                }
+        // var helper = (currentNode: TreeNode): boolean => {
+        //     // console.log(currentNode && currentNode.body ? currentNode.body.userData1 : "?", currentNode.bounds, body.userData1, bounds);
+        //     if (currentNode && currentNode.bounds.intersect(bounds)) {
+        //         if (currentNode.isLeaf() && currentNode.body !== body) {
+        //             if (callback.call(body, currentNode.body)) {
+        //                 return true;
+        //             }
+        //         } else {
+        //             return helper(currentNode.left) || helper(currentNode.right);
+        //         }
+        //     }
+        //     return false;
+        // };
+        // helper(this.root);
+        DynamicTree.queryHelper(body,bounds,this.root);
+    }
+
+    static queryHelper(body:BFProxy, bounds:AABB2, currentNode: TreeNode): boolean {
+        if (currentNode && currentNode.bounds.intersect(bounds)) {
+            if (currentNode.isLeaf() && currentNode.body !== body) {
+                Collide(body, currentNode.body);
+                return true;
+            } else {
+                return DynamicTree.queryHelper(body, bounds, currentNode.left) || DynamicTree.queryHelper(body, bounds, currentNode.right);
             }
-            return false;
-        };
-        helper(this.root);
+        }
+        return false;
     }
 
     //  /**
@@ -427,23 +448,41 @@ export class DynamicTree {
     //   * callback indicates that your are complete with your query and do not want to continue. Return false will continue searching
     //   * the tree until all possible bodies that would intersect with the ray have been returned.
     //   */
-    //  public rayCastQuery(ray: Ray, max: number = Infinity, callback: (other: Body) => boolean): void {
-    //     var helper = (currentNode: TreeNode): boolean => {
-    //        if (currentNode && currentNode.bounds.rayCast(ray, max)) {
-    //           if (currentNode.isLeaf()) {
-    //              if (callback.call(ray, currentNode.body)) {
-    //                 // ray hit a leaf! return the body
-    //                 return true;
-    //              }
-    //           } else {
-    //              // ray hit but not at a leaf, recurse deeper
-    //              return helper(currentNode.left) || helper(currentNode.right);
-    //           }
-    //        }
-    //        return false; // ray missed
-    //     };
-    //     helper(this.root);
-    //  }
+    public rayCastQuery(ray: Ray, max: number = Infinity, callback: (other: BFProxy) => boolean): void {
+        var helper = (currentNode: TreeNode): boolean => {
+            if (currentNode && RayAABB(ray, currentNode.body)) {
+                //if (currentNode && currentNode.bounds.rayCast(ray, max)) {
+
+                if (currentNode.isLeaf()) {
+                    if (callback.call(ray, currentNode.body)) {
+                        // ray hit a leaf! return the body
+                        return true;
+                    }
+                } else {
+                    // ray hit but not at a leaf, recurse deeper
+                    return helper(currentNode.left) || helper(currentNode.right);
+                }
+            }
+            return false; // ray missed
+        };
+        helper(this.root);
+    }
+
+    public queryArea(area:AABB2,callback: (other: BFProxy) => boolean): void {
+        var helper = (currentNode: TreeNode): boolean => {
+            if (currentNode && currentNode.bounds.intersect(area)) {
+                if (currentNode.isLeaf()) {
+                    callback(currentNode.body);
+                    return false;
+                } else {
+                    return helper(currentNode.left) || helper(currentNode.right);
+                }
+            }
+            return false;
+        };
+        helper(this.root);
+
+    }
 
     //  public getNodes(): TreeNode[] {
     //     var helper = (currentNode: TreeNode): TreeNode[] => {

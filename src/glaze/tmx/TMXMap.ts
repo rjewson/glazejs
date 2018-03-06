@@ -179,7 +179,6 @@ export function LayerToCollisionData(layer: Bytes2D, guidOffset: number, tileSiz
         for (var x = 0; x < 30; x++) {
             row += collisionData.get(x, y, 0) ? "X" : "0";
         }
-        console.log(row);
     }
     return collisionData;
 }

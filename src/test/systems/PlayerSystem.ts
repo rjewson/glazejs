@@ -172,7 +172,7 @@ export class PlayerSystem extends System {
 
         physicsBody.body.collideOneWay = !(this.characterController.down > 0);
 
-        var fire = this.input.Pressed(32);
+        var fire = this.input.JustPressed(32);
         var search = this.input.JustPressed(71);
         var hold = this.input.Pressed(72);
         var ray = this.input.Pressed(82);

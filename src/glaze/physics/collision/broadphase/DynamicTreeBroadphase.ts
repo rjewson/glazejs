@@ -5,6 +5,7 @@ import { TileMapCollision } from "./TileMapCollision";
 import { AABB } from "../../../geom/AABB";
 import { Ray } from "../Ray";
 import { DynamicTree } from "./DynamicTree";
+import { AABB2 } from "../../../geom/AABB2";
 
 export class DynamicTreeBroadphase implements IBroadphase {
     public staticProxies: Array<BFProxy>;
@@ -37,6 +38,8 @@ export class DynamicTreeBroadphase implements IBroadphase {
     }
 
     public collide() {
+        // console.time("Collide");
+
         //Loop back over the proxies
         var i = this.dynamicProxies.length;
         while (--i >= 0) {
@@ -54,7 +57,6 @@ export class DynamicTreeBroadphase implements IBroadphase {
             }
 
             this.tree.updateBody(dynamicProxy);
-
         }
 
         var k = this.dynamicProxies.length;
@@ -62,7 +64,7 @@ export class DynamicTreeBroadphase implements IBroadphase {
         let count = 0;
         while (--k >= 0) {
             var dynamicProxy = this.dynamicProxies[k];
-            this.tree.query(dynamicProxy, (other:BFProxy) => {
+            this.tree.query(dynamicProxy, (other: BFProxy) => {
                 Collide(dynamicProxy, other);
                 count++;
                 return false;
@@ -70,48 +72,42 @@ export class DynamicTreeBroadphase implements IBroadphase {
         }
         // console.log(count);
         // console.log("end");
+        // console.timeEnd("Collide");
 
     }
 
     public QueryArea(aabb: AABB, result: QueryCallback, checkDynamic: boolean = true, checkStatic: boolean = true) {
-        if (checkDynamic) {
-            for (let i = 0; i < this.sleepingProxies.length; i++) {
-                const proxy = this.sleepingProxies[i];
-                if (!proxy.isSensor && aabb.overlap(proxy.aabb)) result(proxy);
-            }
-            for (let i = 0; i < this.dynamicProxies.length; i++) {
-                const proxy = this.dynamicProxies[i];
-                if (!proxy.isSensor && aabb.overlap(proxy.aabb)) result(proxy);
-            }
-        }
-
-        if (checkStatic) {
-            for (let i = 0; i < this.staticProxies.length; i++) {
-                const proxy = this.staticProxies[i];
-                if (!proxy.isSensor && aabb.overlap(proxy.aabb)) result(proxy);
-            }
-        }
+        const area = new AABB2();
+        area.copyAABB(aabb);
+        this.tree.queryArea(area,result);
     }
 
     public CastRay(ray: Ray, result: QueryCallback, checkDynamic: boolean = true, checkStatic: boolean = true) {
         this.map.castRay(ray);
-        if (checkDynamic) {
-            for (let i = 0; i < this.sleepingProxies.length; i++) {
-                const proxy = this.sleepingProxies[i];
-                if (!proxy.isSensor) RayAABB(ray, proxy);
-            }
-            for (let i = 0; i < this.dynamicProxies.length; i++) {
-                const proxy = this.dynamicProxies[i];
-                if (!proxy.isSensor) RayAABB(ray, proxy);
-            }
-        }
 
-        if (checkStatic) {
-            for (let i = 0; i < this.staticProxies.length; i++) {
-                const proxy = this.staticProxies[i];
-                if (!proxy.isSensor) RayAABB(ray, proxy);
-            }
-        }
+        // TODO
+        // this.tree.rayCastQuery(ray, 1000, (other: BFProxy) => {
+        //     console.log("zap");
+        //     return false;
+        // });
+
+        // if (checkDynamic) {
+        //     for (let i = 0; i < this.sleepingProxies.length; i++) {
+        //         const proxy = this.sleepingProxies[i];
+        //         if (!proxy.isSensor) RayAABB(ray, proxy);
+        //     }
+        //     for (let i = 0; i < this.dynamicProxies.length; i++) {
+        //         const proxy = this.dynamicProxies[i];
+        //         if (!proxy.isSensor) RayAABB(ray, proxy);
+        //     }
+        // }
+
+        // if (checkStatic) {
+        //     for (let i = 0; i < this.staticProxies.length; i++) {
+        //         const proxy = this.staticProxies[i];
+        //         if (!proxy.isSensor) RayAABB(ray, proxy);
+        //     }
+        // }
     }
 
     public wake(proxy: BFProxy) {

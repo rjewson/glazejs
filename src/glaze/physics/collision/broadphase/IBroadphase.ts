@@ -3,7 +3,7 @@ import { AABB } from "../../../geom/AABB";
 import { Ray } from "../Ray";
 
 export interface QueryCallback {
-    (proxy: BFProxy): void;
+    (proxy: BFProxy): boolean;
 }
 
 export interface IBroadphase {

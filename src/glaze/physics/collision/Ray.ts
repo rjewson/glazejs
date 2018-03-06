@@ -1,6 +1,7 @@
 import { Vector2 } from "../../geom/Vector2";
 import { Contact } from "./Contact";
 import { BFProxy } from "./BFProxy";
+import { AABB2 } from "../../geom/AABB2";
 
 interface RayCallback {
     (proxy: BFProxy): number;
@@ -19,6 +20,8 @@ export class Ray {
     public hit: boolean;
 
     public callback: RayCallback;
+
+    public bounds: AABB2 = new AABB2();
 
     constructor() {}
 
@@ -41,6 +44,9 @@ export class Ray {
             this.delta.copy(this.direction);
             this.delta.multEquals(range);
         }
+
+        this.bounds.addPoint(this.origin.x, this.origin.y);
+        this.bounds.addPoint(this.origin.x + this.delta.x, this.origin.y + this.delta.y);
 
         this.callback = callback;
     }

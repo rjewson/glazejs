@@ -21,16 +21,16 @@ import { Destroy } from "../../../glaze/core/components/Destroy";
 import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { State } from "../../../glaze/core/components/State";
+import { CombatUtils } from "../../../glaze/util/CombatUtils";
 
 export class StandardBullet {
     static states: SimpleFSMStates = {
-        alive: function(engine: Engine, entity: Entity) {
-            console.log("hmmm");
-        },
+        alive: function(engine: Engine, entity: Entity) {},
         destroy: function(engine: Engine, entity: Entity) {
             if (engine.getComponentForEntity(entity, Destroy)) return;
             engine.addComponentsToEntity(entity, [new Destroy(1)]);
             engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
+            CombatUtils.explode(engine.getComponentForEntity(entity, Position).coords, 100, 10000, entity);
         },
     };
     static create(engine: Engine, position: Position, filter: Filter, targetPosition: Vector2): Entity {
@@ -60,7 +60,7 @@ export class StandardBullet {
             new Age(1000, "destroy"),
             new Active(),
         ]);
-        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2500);
+        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2000);
 
         return bullet;
     }

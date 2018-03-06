@@ -103,6 +103,13 @@ export class AABB2 {
         this.b = aabb.b;
     }
 
+    copyAABB(aabb:AABB) {
+        this.l = aabb.l;
+        this.r = aabb.r;
+        this.t = aabb.t;
+        this.b = aabb.b;
+    }
+
     perimeter(): number {
         return 2 * (this.width + this.height);
     }

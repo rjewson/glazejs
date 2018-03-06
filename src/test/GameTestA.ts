@@ -75,6 +75,7 @@ import { StateUpdater } from "../glaze/core/components/StateUpdater";
 import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
 import { listenDebugButtons } from "../glaze/tools/HTMLDevTools";
 import { DynamicTreeBroadphase } from "../glaze/physics/collision/broadphase/DynamicTreeBroadphase";
+import { ChickenSystem } from "./systems/ChickenSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -197,8 +198,8 @@ export class GameTestA extends GlazeEngine {
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
-        // const broadphase = new BruteforceBroadphase(tileMapCollision);
-        const broadphase = new DynamicTreeBroadphase(tileMapCollision);
+        const broadphase = new BruteforceBroadphase(tileMapCollision);
+        // const broadphase = new DynamicTreeBroadphase(tileMapCollision);
 
 
         CombatUtils.setup(this.engine, broadphase);
@@ -227,6 +228,9 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new BeeHiveSystem());
         this.engine.addSystemToEngine(new BirdNestSystem());
         this.engine.addSystemToEngine(new BirdSystem(CombatUtils.bfAreaQuery));
+
+        const chickenSystem = new ChickenSystem(blockParticleEngine);
+        this.engine.addSystemToEngine(chickenSystem);
 
         this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
         this.engine.addSystemToEngine(new WindSystem(blockParticleEngine,16));
@@ -314,7 +318,8 @@ export class GameTestA extends GlazeEngine {
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
-        PlayerFactory.create(this.engine, playerPosition);
+        const playerEntity = PlayerFactory.create(this.engine, playerPosition);
+        chickenSystem.scaredOf(playerEntity);
 
         this.renderSystem.cameraTarget = playerPosition.coords;
 

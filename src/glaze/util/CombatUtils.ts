@@ -6,11 +6,14 @@ import { Engine } from "../ecs/Engine";
 import { Vector2 } from "../geom/Vector2";
 import { EntityCollection } from "../ds/EntityCollection";
 import { EntityCollectionItem } from "../ds/EntityCollectionItem";
+import { Destroy } from "../core/components/Destroy";
+import { Health } from "../core/components/Health";
+import { PhysicsBody } from "../physics/components/PhysicsBody";
 
 export enum EntityFilterOptions {
     ALL,
     FRIENDLY,
-    ENEMY
+    ENEMY,
 }
 
 export class CombatUtils {
@@ -39,7 +42,7 @@ export class CombatUtils {
 
     static SearchSortAndFilter(
         position: Vector2,
-        radius:  number,
+        radius: number,
         referenceEntity: Entity,
         filterOptions: EntityFilterOptions,
     ): EntityCollection {
@@ -54,5 +57,42 @@ export class CombatUtils {
         //     CombatUtils.bfAreaQuery.entityCollection.filter(FilterFriendlyFactions);
 
         return CombatUtils.bfAreaQuery.entityCollection;
+    }
+
+    static explode(position: Vector2, radius: number, power: number, sourceEntity: Entity) {
+        debugger;
+        CombatUtils.bfAreaQuery.query(position, radius, sourceEntity, true);
+        console.log(CombatUtils.bfAreaQuery.entityCollection.entities);
+        CombatUtils.bfAreaQuery.entityCollection.entities.forEach(item => {
+            //var item = CombatUtils.bfAreaQuery.entityCollection.entities.head;
+            if (!CombatUtils.engine.getComponentForEntity(item.entity, Destroy)) {
+                // if (item.entity.getComponent(Destroy)==null) {
+
+                var health: Health = CombatUtils.engine.getComponentForEntity(item.entity, Health);
+                var body: PhysicsBody = CombatUtils.engine.getComponentForEntity(item.entity, PhysicsBody);
+
+                if (health != null || body != null) {
+                    var effect = radius / Math.sqrt(item.distance) * power;
+                    // trace(item.distance);
+                    // trace('e=$effect');
+                    if (health != null) {
+                        health.applyDamage(effect);
+                    }
+
+                    // var personality = item.entity.getComponent(Personality);
+                    // if (personality!=null) {
+                    //     personality.applyDamage(sourceEntity,"explosion",effect);
+                    // }
+
+                    if (body != null) {
+                        var delta = body.body.position.clone();
+                        delta.minusEquals(position);
+                        delta.normalize();
+                        delta.multEquals(effect);
+                        body.body.addForce(delta);
+                    }
+                }
+            }
+        });
     }
 }

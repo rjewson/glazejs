@@ -15,6 +15,7 @@ import { Active } from "../../../glaze/core/components/Active";
 import { Light } from "../../../glaze/graphics/components/Light";
 import { Viewable } from "../../../glaze/core/components/Viewable";
 import { Filter } from "../../../glaze/physics/collision/Filter";
+import { Chicken } from "../../components/Chicken";
 
 export class ChickenFactory {
     static states: SimpleFSMStates = {
@@ -27,12 +28,13 @@ export class ChickenFactory {
     static create(engine: Engine, position: Position): Entity {
         const chicken = engine.createEntity();
 
-        var chickenBody = new Body(Material.NORMAL);
+        var chickenBody = new Body(Material.RUBBER);
         chickenBody.setMass(0.1);
-        chickenBody.setBounces(3);
+        chickenBody.setBounces(7);
         chickenBody.maxScalarVelocity = 1000;
 
         engine.addComponentsToEntity(chicken, [
+            new Chicken(),
             position,
             new Extents(12, 12),
             new Graphics("chicken"),

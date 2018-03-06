@@ -41,7 +41,8 @@ export class BroadphaseAreaQuery {
         this.broadphase.QueryArea(this.aabb, this.addBroadphaseItem, true, true); //Check static and dynamic items
     }
 
-    addBroadphaseItem(bfproxy: BFProxy) {
+    addBroadphaseItem(bfproxy: BFProxy):boolean {
+        console.log("found "+bfproxy.id);
         if (this.filterEntity != null && bfproxy.entity == this.filterEntity) return;
 
         var distance = bfproxy.aabb.position.distSqrd(this.aabb.position) + ZERO_TOLERANCE;
