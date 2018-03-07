@@ -90,10 +90,10 @@ export class AABB2 {
     }
 
     contains(aabb: AABB2): boolean {
-        if (this.l < aabb.l && this.t < aabb.t && aabb.b < this.b && aabb.r < this.r) {
-            return false;
+        if (this.l <= aabb.l && this.t <= aabb.t && aabb.b < this.b && aabb.r < this.r) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     copy(aabb:AABB2) {
@@ -108,6 +108,13 @@ export class AABB2 {
         this.r = aabb.r;
         this.t = aabb.t;
         this.b = aabb.b;
+    }
+
+    transform(displacement:Vector2) {
+        this.l += displacement.x;
+        this.r += displacement.x;
+        this.t += displacement.y;
+        this.b += displacement.y;
     }
 
     perimeter(): number {

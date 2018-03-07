@@ -2,6 +2,7 @@ import { AABB2 } from "../../../geom/AABB2";
 import { BFProxy } from "../BFProxy";
 import { Ray } from "../Ray";
 import { RayAABB, Collide } from "../Intersect";
+import { DebugRenderer } from "../../../graphics/render/debug/DebugRenderer";
 
 const boundsPadding: number = 5;
 const dynamicTreeVelocityMultiplyer: number = 2;
@@ -217,21 +218,21 @@ export class DynamicTree {
         // var b = body.aabb.toAABB2();
         // body.aabb.copyToAABB2(this.tempBounds);
         this.tempBounds.copyAABB(body.aabb);
+        // sqthis.tempBounds.transform(body.body.position);
         // if the body is outside the world no longer update it
         // console.log("a");
 
-        if (!this.worldBounds.contains(this.tempBounds)) {
-            //    Logger.getInstance().warn('Actor with id ' + body.actor.id +
-            //       ' is outside the world bounds and will no longer be tracked for physics');
-            this.untrackBody(body);
-            return false;
-        }
+        // if (!this.worldBounds.contains(this.tempBounds)) {
+        //     //    Logger.getInstance().warn('Actor with id ' + body.actor.id +
+        //     //       ' is outside the world bounds and will no longer be tracked for physics');
+        //     this.untrackBody(body);
+        //     return false;
+        // }
         // console.log("b");
 
-        if (node.bounds.contains(this.tempBounds)) {
-            return false;
-        }
-
+        // if (node.bounds.contains(this.tempBounds)) {
+        //     return false;
+        // }
         this.removeNode(node);
         this.tempBounds.l -= boundsPadding;
         this.tempBounds.t -= boundsPadding;
@@ -495,25 +496,27 @@ export class DynamicTree {
     //     return helper(this.root);
     //  }
 
-    //  public debugDraw(ctx: CanvasRenderingContext2D) {
-    //     // draw all the nodes in the Dynamic Tree
-    //     var helper = (currentNode: TreeNode) => {
+     public debugDraw(render: DebugRenderer) {
+        // draw all the nodes in the Dynamic Tree
+        var helper = (currentNode: TreeNode) => {
 
-    //        if (currentNode) {
-    //           if (currentNode.isLeaf()) {
-    //              ctx.lineWidth = 1;
-    //              ctx.strokeStyle = 'green';
-    //           } else {
-    //              ctx.lineWidth = 1;
-    //              ctx.strokeStyle = 'white';
-    //           }
-    //           currentNode.bounds.debugDraw(ctx);
+           if (currentNode) {
+              if (currentNode.isLeaf()) {
+                //  ctx.lineWidth = 1;
+                //  ctx.strokeStyle = 'green';
+                 render.DrawAABB2(currentNode.bounds,"green");
+              } else {
+                //  ctx.lineWidth = 1;
+                //  ctx.strokeStyle = 'white';
+                render.DrawAABB2(currentNode.bounds,"white");
 
-    //           if (currentNode.left) { helper(currentNode.left); }
-    //           if (currentNode.right) { helper(currentNode.right); }
-    //        }
-    //     };
+              }
 
-    //     helper(this.root);
-    //  }
+              if (currentNode.left) { helper(currentNode.left); }
+              if (currentNode.right) { helper(currentNode.right); }
+           }
+        };
+
+        helper(this.root);
+     }
 }

@@ -76,6 +76,10 @@ import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
 import { listenDebugButtons } from "../glaze/tools/HTMLDevTools";
 import { DynamicTreeBroadphase } from "../glaze/physics/collision/broadphase/DynamicTreeBroadphase";
 import { ChickenSystem } from "./systems/ChickenSystem";
+import { DebugRenderSystem } from "../glaze/graphics/systems/DebugRendererSystem";
+import { DebugGraphics } from "../glaze/graphics/components/DebugGraphics";
+import { DynamicTree } from "../glaze/physics/collision/broadphase/DynamicTree";
+import { DebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
 
 interface GlazeMapLayerConfig {}
 
@@ -111,8 +115,11 @@ const TILE_SIZE = 16;
 export class GameTestA extends GlazeEngine {
     private renderSystem: GraphicsRenderSystem;
     private tmxMap: TMXMap;
+    private debugGraphics: DebugRenderer;
+    private dynamicTree: DynamicTree;
     constructor() {
         const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
+
         super(canvas);
         this.loadAssets([TEXTURE_CONFIG, TEXTURE_DATA, FRAMES_CONFIG, MAP_DATA, TILE_SPRITE_SHEET, TILE_FRAMES_CONFIG]);
     }
@@ -183,6 +190,11 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(this.renderSystem);
         this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
 
+        const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
+        const debugRenderSystem = new DebugRenderSystem(debugCanvas,this.renderSystem.camera);
+        this.engine.addSystemToEngine(debugRenderSystem);
+        this.debugGraphics = debugRenderSystem.debugRender;
+
         const tileMapCollision = new TileMapCollision(collisionData);
 
         this.engine.addSystemToEngine(
@@ -198,8 +210,9 @@ export class GameTestA extends GlazeEngine {
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
-        const broadphase = new BruteforceBroadphase(tileMapCollision);
-        // const broadphase = new DynamicTreeBroadphase(tileMapCollision);
+        // const broadphase = new BruteforceBroadphase(tileMapCollision);
+        const broadphase = new DynamicTreeBroadphase(tileMapCollision);
+        this.dynamicTree = broadphase.tree;
 
 
         CombatUtils.setup(this.engine, broadphase);
@@ -240,7 +253,6 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new StateSystem());
         this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
 
-
         let x = 0;
         let y = 0;
         let player = null;
@@ -270,6 +282,7 @@ export class GameTestA extends GlazeEngine {
                 new Active(),
                 new Light(64, 1, 1, 1, 255, 255, 255),
                 new Viewable(),
+                new DebugGraphics(),
                 // new Controllable(150),
                 // new ParticleEmitter([new Explosion(4,100)])
             ]);
@@ -339,5 +352,10 @@ export class GameTestA extends GlazeEngine {
 
     preUpdate() {
         this.input.Update(-this.renderSystem.camera.position.x, -this.renderSystem.camera.position.y);
+    }
+
+    public postUpdate(){
+        if (GlazeEngine.params.debug) 
+            this.dynamicTree.debugDraw(this.debugGraphics);
     }
 }
