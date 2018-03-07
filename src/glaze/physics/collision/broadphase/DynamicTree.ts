@@ -53,39 +53,40 @@ export class DynamicTree {
         var leafAABB = leaf.bounds;
         var currentRoot = this.root;
         while (!currentRoot.isLeaf()) {
-            var left = currentRoot.left;
-            var right = currentRoot.right;
+            const left = currentRoot.left;
+            const right = currentRoot.right;
 
-            var area = currentRoot.bounds.perimeter();
-            var combinedAABB = currentRoot.bounds.combine(leafAABB);
-            var combinedArea = combinedAABB.perimeter();
+            const area = currentRoot.bounds.perimeter();
+            // var combinedAABB = currentRoot.bounds.combine(leafAABB);
+            // var combinedArea = combinedAABB.perimeter();
+            const combinedArea = this.tempBounds.combine2(currentRoot.bounds, leafAABB).perimeter();
 
             // Calculate cost heuristic for creating a new parent and leaf
-            var cost = 2 * combinedArea;
+            const cost = 2 * combinedArea;
 
             // Minimum cost of pushing the leaf down the tree
-            var inheritanceCost = 2 * (combinedArea - area);
+            const inheritanceCost = 2 * (combinedArea - area);
 
             // Cost of descending
             var leftCost = 0;
-            var leftCombined = leafAABB.combine(left.bounds);
-            var newArea;
-            var oldArea;
+            const leftCombinedPerimeter = this.tempBounds.combine2(leafAABB, left.bounds).perimeter(); // leafAABB.combine(left.bounds);
+            var newArea = 0;
+            var oldArea = 0;
             if (left.isLeaf()) {
-                leftCost = leftCombined.perimeter() + inheritanceCost;
+                leftCost = leftCombinedPerimeter + inheritanceCost;
             } else {
                 oldArea = left.bounds.perimeter();
-                newArea = leftCombined.perimeter();
+                newArea = leftCombinedPerimeter;
                 leftCost = newArea - oldArea + inheritanceCost;
             }
 
             var rightCost = 0;
-            var rightCombined = leafAABB.combine(right.bounds);
+            const rightCombinedPerimeter = this.tempBounds.combine2(leafAABB, right.bounds).perimeter(); // leafAABB.combine(right.bounds);
             if (right.isLeaf()) {
-                rightCost = rightCombined.perimeter() + inheritanceCost;
+                rightCost = rightCombinedPerimeter + inheritanceCost;
             } else {
                 oldArea = right.bounds.perimeter();
-                newArea = rightCombined.perimeter();
+                newArea = rightCombinedPerimeter;
                 rightCost = newArea - oldArea + inheritanceCost;
             }
 
@@ -105,7 +106,8 @@ export class DynamicTree {
         // Create the new parent node and insert into the tree
         var oldParent = currentRoot.parent;
         var newParent = new TreeNode(oldParent);
-        newParent.bounds = leafAABB.combine(currentRoot.bounds);
+        // newParent.bounds = leafAABB.combine(currentRoot.bounds);
+        newParent.bounds.combine2(leafAABB, currentRoot.bounds);
         newParent.height = currentRoot.height + 1;
 
         if (oldParent !== null) {
@@ -144,7 +146,8 @@ export class DynamicTree {
             }
 
             currentNode.height = 1 + Math.max(currentNode.left.height, currentNode.right.height);
-            currentNode.bounds = currentNode.left.bounds.combine(currentNode.right.bounds);
+            // currentNode.bounds = currentNode.left.bounds.combine(currentNode.right.bounds);
+            currentNode.bounds.combine2(currentNode.left.bounds, currentNode.right.bounds);
 
             currentNode = currentNode.parent;
         }
@@ -156,8 +159,8 @@ export class DynamicTree {
             return;
         }
 
-        var parent = leaf.parent;
-        var grandParent = parent.parent;
+        const parent = leaf.parent;
+        const grandParent = parent.parent;
         var sibling: TreeNode;
         if (parent.left === leaf) {
             sibling = parent.right;
@@ -176,7 +179,8 @@ export class DynamicTree {
             var currentNode = grandParent;
             while (currentNode) {
                 currentNode = this.balanceNode(currentNode);
-                currentNode.bounds = currentNode.left.bounds.combine(currentNode.right.bounds);
+                // currentNode.bounds = currentNode.left.bounds.combine(currentNode.right.bounds);
+                currentNode.bounds.combine2(currentNode.left.bounds, currentNode.right.bounds);
                 currentNode.height = 1 + Math.max(currentNode.left.height, currentNode.right.height);
 
                 currentNode = currentNode.parent;
@@ -191,16 +195,10 @@ export class DynamicTree {
      * Tracks a body in the dynamic tree
      */
     public trackBody(body: BFProxy) {
-        // console.log("track:"+body.id);
         var node = new TreeNode();
         node.body = body;
-        // node.bounds = body.aabb.toAABB2();
-        // body.aabb.copyToAABB2(node.bounds);
         node.bounds.copyAABB(body.aabb);
-        node.bounds.l -= 2;
-        node.bounds.t -= 2;
-        node.bounds.r += 2;
-        node.bounds.b += 2;
+        node.bounds.expand(2);
         this.nodes.set(body.id, node);
         this.insertNode(node);
     }
@@ -209,8 +207,6 @@ export class DynamicTree {
      * Updates the dynamic tree given the current bounds of each body being tracked
      */
     public updateBody(body: BFProxy) {
-        // console.log("check:"+body.id);
-        // console.log(this.nodes);
         var node = this.nodes.get(body.id);
         if (!node) {
             return false;
@@ -230,9 +226,10 @@ export class DynamicTree {
         // }
         // console.log("b");
 
-        // if (node.bounds.contains(this.tempBounds)) {
-        //     return false;
-        // }
+        if (node.bounds.contains(this.tempBounds)) {
+            return false;
+        }
+        
         this.removeNode(node);
         this.tempBounds.l -= boundsPadding;
         this.tempBounds.t -= boundsPadding;
@@ -280,10 +277,6 @@ export class DynamicTree {
      * Balances the tree about a node
      */
     private balanceNode(node: TreeNode) {
-        if (node === null) {
-            throw new Error("Cannot balance at null node");
-        }
-
         if (node.isLeaf() || node.height < 2) {
             return node;
         }
@@ -325,8 +318,10 @@ export class DynamicTree {
                 a.right = g;
                 g.parent = a;
 
-                a.bounds = b.bounds.combine(g.bounds);
-                c.bounds = a.bounds.combine(f.bounds);
+                // a.bounds = b.bounds.combine(g.bounds);
+                a.bounds.combine2(b.bounds, g.bounds);
+                // c.bounds = a.bounds.combine(f.bounds);
+                c.bounds.combine2(a.bounds, f.bounds);
 
                 a.height = 1 + Math.max(b.height, g.height);
                 c.height = 1 + Math.max(a.height, f.height);
@@ -335,8 +330,11 @@ export class DynamicTree {
                 a.right = f;
                 f.parent = a;
 
-                a.bounds = b.bounds.combine(f.bounds);
-                c.bounds = a.bounds.combine(g.bounds);
+                // a.bounds = b.bounds.combine(f.bounds);
+                a.bounds.combine2(b.bounds, f.bounds);
+
+                // c.bounds = a.bounds.combine(g.bounds);
+                c.bounds.combine2(a.bounds, g.bounds);
 
                 a.height = 1 + Math.max(b.height, f.height);
                 c.height = 1 + Math.max(a.height, g.height);
@@ -371,8 +369,10 @@ export class DynamicTree {
                 a.left = e;
                 e.parent = a;
 
-                a.bounds = c.bounds.combine(e.bounds);
-                b.bounds = a.bounds.combine(d.bounds);
+                // a.bounds = c.bounds.combine(e.bounds);
+                a.bounds.combine2(c.bounds, e.bounds);
+                //b.bounds = a.bounds.combine(d.bounds);
+                b.bounds.combine2(a.bounds, d.bounds);
 
                 a.height = 1 + Math.max(c.height, e.height);
                 b.height = 1 + Math.max(a.height, d.height);
@@ -381,8 +381,11 @@ export class DynamicTree {
                 a.left = d;
                 d.parent = a;
 
-                a.bounds = c.bounds.combine(d.bounds);
-                b.bounds = a.bounds.combine(e.bounds);
+                // a.bounds = c.bounds.combine(d.bounds);
+                a.bounds.combine2(c.bounds, d.bounds);
+
+                // b.bounds = a.bounds.combine(e.bounds);
+                b.bounds.combine2(a.bounds, e.bounds);
 
                 a.height = 1 + Math.max(c.height, d.height);
                 b.height = 1 + Math.max(a.height, e.height);
@@ -412,30 +415,33 @@ export class DynamicTree {
      */
     public query(body: BFProxy, callback: (other: BFProxy) => boolean): void {
         var bounds = body.aabb.toAABB2();
-        // var helper = (currentNode: TreeNode): boolean => {
-        //     // console.log(currentNode && currentNode.body ? currentNode.body.userData1 : "?", currentNode.bounds, body.userData1, bounds);
-        //     if (currentNode && currentNode.bounds.intersect(bounds)) {
-        //         if (currentNode.isLeaf() && currentNode.body !== body) {
-        //             if (callback.call(body, currentNode.body)) {
-        //                 return true;
-        //             }
-        //         } else {
-        //             return helper(currentNode.left) || helper(currentNode.right);
-        //         }
-        //     }
-        //     return false;
-        // };
-        // helper(this.root);
-        DynamicTree.queryHelper(body,bounds,this.root);
+        DynamicTree.queryHelper(body, bounds, this.root);
     }
+    // var helper = (currentNode: TreeNode): boolean => {
+    //     // console.log(currentNode && currentNode.body ? currentNode.body.userData1 : "?", currentNode.bounds, body.userData1, bounds);
+    //     if (currentNode && currentNode.bounds.intersect(bounds)) {
+    //         if (currentNode.isLeaf() && currentNode.body !== body) {
+    //             if (callback.call(body, currentNode.body)) {
+    //                 return true;
+    //             }
+    //         } else {
+    //             return helper(currentNode.left) || helper(currentNode.right);
+    //         }
+    //     }
+    //     return false;
+    // };
+    // helper(this.root);
 
-    static queryHelper(body:BFProxy, bounds:AABB2, currentNode: TreeNode): boolean {
+    static queryHelper(body: BFProxy, bounds: AABB2, currentNode: TreeNode): boolean {
         if (currentNode && currentNode.bounds.intersect(bounds)) {
             if (currentNode.isLeaf() && currentNode.body !== body) {
                 Collide(body, currentNode.body);
-                return true;
+                return false;
             } else {
-                return DynamicTree.queryHelper(body, bounds, currentNode.left) || DynamicTree.queryHelper(body, bounds, currentNode.right);
+                return (
+                    DynamicTree.queryHelper(body, bounds, currentNode.left) ||
+                    DynamicTree.queryHelper(body, bounds, currentNode.right)
+                );
             }
         }
         return false;
@@ -469,7 +475,7 @@ export class DynamicTree {
         helper(this.root);
     }
 
-    public queryArea(area:AABB2,callback: (other: BFProxy) => boolean): void {
+    public queryArea(area: AABB2, callback: (other: BFProxy) => boolean): void {
         var helper = (currentNode: TreeNode): boolean => {
             if (currentNode && currentNode.bounds.intersect(area)) {
                 if (currentNode.isLeaf()) {
@@ -482,7 +488,6 @@ export class DynamicTree {
             return false;
         };
         helper(this.root);
-
     }
 
     //  public getNodes(): TreeNode[] {
@@ -496,27 +501,29 @@ export class DynamicTree {
     //     return helper(this.root);
     //  }
 
-     public debugDraw(render: DebugRenderer) {
+    public debugDraw(render: DebugRenderer) {
         // draw all the nodes in the Dynamic Tree
         var helper = (currentNode: TreeNode) => {
+            if (currentNode) {
+                if (currentNode.isLeaf()) {
+                    //  ctx.lineWidth = 1;
+                    //  ctx.strokeStyle = 'green';
+                    render.DrawAABB2(currentNode.bounds, "green");
+                } else {
+                    //  ctx.lineWidth = 1;
+                    //  ctx.strokeStyle = 'white';
+                    render.DrawAABB2(currentNode.bounds, "white");
+                }
 
-           if (currentNode) {
-              if (currentNode.isLeaf()) {
-                //  ctx.lineWidth = 1;
-                //  ctx.strokeStyle = 'green';
-                 render.DrawAABB2(currentNode.bounds,"green");
-              } else {
-                //  ctx.lineWidth = 1;
-                //  ctx.strokeStyle = 'white';
-                render.DrawAABB2(currentNode.bounds,"white");
-
-              }
-
-              if (currentNode.left) { helper(currentNode.left); }
-              if (currentNode.right) { helper(currentNode.right); }
-           }
+                if (currentNode.left) {
+                    helper(currentNode.left);
+                }
+                if (currentNode.right) {
+                    helper(currentNode.right);
+                }
+            }
         };
 
         helper(this.root);
-     }
+    }
 }

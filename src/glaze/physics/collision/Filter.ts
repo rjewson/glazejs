@@ -27,21 +27,18 @@ export class Filter {
 
     static CHECK(filterA: Filter, filterB: Filter): boolean {
         if (filterA == null || filterB == null) return true;
-
-        // if ((filterA.groupIndex > 0 && filterB.groupIndex > 0 && filterA.groupIndex == filterB.groupIndex)) {
-        //     return false;
-        // }
-
         if (filterA.groupIndex == filterB.groupIndex && filterA.groupIndex != 0) return filterA.groupIndex > 0;
-
         return (filterA.maskBits & filterB.categoryBits) != 0 && (filterA.categoryBits & filterB.maskBits) != 0;
-
-        // else {
-        //     if ((filterA.maskBits & filterB.categoryBits) == 0) return false;
-        //     if ((filterA.categoryBits & filterB.maskBits) == 0) return false;
-        // }
-        // return true;
     }
+
+    // if ((filterA.groupIndex > 0 && filterB.groupIndex > 0 && filterA.groupIndex == filterB.groupIndex)) {
+    //     return false;
+    // }
+    // else {
+    //     if ((filterA.maskBits & filterB.categoryBits) == 0) return false;
+    //     if ((filterA.categoryBits & filterB.maskBits) == 0) return false;
+    // }
+    // return true;
 
     public clone(): Filter {
         return new Filter(this.categoryBits, this.maskBits, this.groupIndex);

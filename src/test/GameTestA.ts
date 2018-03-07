@@ -80,6 +80,8 @@ import { DebugRenderSystem } from "../glaze/graphics/systems/DebugRendererSystem
 import { DebugGraphics } from "../glaze/graphics/components/DebugGraphics";
 import { DynamicTree } from "../glaze/physics/collision/broadphase/DynamicTree";
 import { DebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
+import { GunTurret } from "./components/GunTurret";
+import { GunTurretSystem } from "./systems/GunTurretSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -132,7 +134,7 @@ export class GameTestA extends GlazeEngine {
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
-        cameraRange.expand(-TILE_SIZE * 2);
+        cameraRange.expand(-TILE_SIZE );
 
         this.renderSystem = new GraphicsRenderSystem(this.canvas, new Vector2(1280, 720), cameraRange);
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
@@ -244,6 +246,7 @@ export class GameTestA extends GlazeEngine {
 
         const chickenSystem = new ChickenSystem(blockParticleEngine);
         this.engine.addSystemToEngine(chickenSystem);
+        this.engine.addSystemToEngine(new GunTurretSystem());
 
         this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
         this.engine.addSystemToEngine(new WindSystem(blockParticleEngine,16));
@@ -329,6 +332,20 @@ export class GameTestA extends GlazeEngine {
         // ]);
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
+
+        const turret = this.engine.createEntity();
+        const turretFilter = new Filter();
+        turretFilter.groupIndex = TestFilters.TURRET_GROUP;
+        this.engine.addComponentsToEntity(turret,[
+            this.mapPosition(25,1.5),
+            new TileGraphics("turret"),
+            new Extents(12,12),  
+            new PhysicsCollision(false,turretFilter,[]),
+            new Fixed(),
+            // new Script(behavior), 
+            new GunTurret(1000),
+            new Active()  
+        ]);        
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
         const playerEntity = PlayerFactory.create(this.engine, playerPosition);

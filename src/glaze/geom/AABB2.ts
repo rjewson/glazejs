@@ -61,6 +61,14 @@ export class AABB2 {
         return result;
     }
 
+    combine2(a: AABB2, b: AABB2):AABB2 {
+        this.t = Math.min(a.t, b.t);
+        this.r = Math.max(a.r, b.r);
+        this.b = Math.max(a.b, b.b);
+        this.l = Math.min(a.l, b.l);
+        return this;
+    }
+
     addPoint(x: number, y: number) {
         if (x < this.l) this.l = x;
         if (x > this.r) this.r = x;
@@ -76,10 +84,10 @@ export class AABB2 {
     }
 
     expand(i: number) {
-        this.l -= i / 2;
-        this.r += i / 2;
-        this.t -= i / 2;
-        this.b += i / 2;
+        this.l -= i;
+        this.r += i;
+        this.t -= i;
+        this.b += i;
     }
 
     expand2(width: number, height: number) {
@@ -96,21 +104,21 @@ export class AABB2 {
         return false;
     }
 
-    copy(aabb:AABB2) {
+    copy(aabb: AABB2) {
         this.l = aabb.l;
         this.r = aabb.r;
         this.t = aabb.t;
         this.b = aabb.b;
     }
 
-    copyAABB(aabb:AABB) {
+    copyAABB(aabb: AABB) {
         this.l = aabb.l;
         this.r = aabb.r;
         this.t = aabb.t;
         this.b = aabb.b;
     }
 
-    transform(displacement:Vector2) {
+    transform(displacement: Vector2) {
         this.l += displacement.x;
         this.r += displacement.x;
         this.t += displacement.y;
