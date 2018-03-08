@@ -27,8 +27,6 @@ export class GraphicsRenderSystem extends System {
         this.canvas = canvas;
         this.stage = new Stage();
         this.camera = camera;
-        // this.camera = new Camera();
-        // this.camera.worldExtentsAABB = cameraRange;
         this.stage.addChild(this.camera);
         this.renderer = new RendererEngine(this.stage, this.camera, this.canvas, screenDimension.x, screenDimension.y);
         this.camera.Resize(this.renderer.width, this.renderer.height);

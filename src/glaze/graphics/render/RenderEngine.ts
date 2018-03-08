@@ -92,8 +92,10 @@ export class RendererEngine {
         // gl.clearColor(1.0, 0.0, 0.0, 1.0);
         this.gl.clearColor(159 / 255, 188 / 255, 197 / 255, 1.0);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
-        this.gl.colorMask(true, true, true, false);
-        // this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.colorMask(true, true, true, true);
+        // this.gl.disable(WebGLRenderingContext.BLEND);
+        // this.gl.disable(WebGLRenderingContext.DEPTH_TEST);
+        
         //9FBCC5
         //159 188 197 1
 

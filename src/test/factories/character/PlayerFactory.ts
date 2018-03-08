@@ -13,6 +13,8 @@ import { Moveable } from "../../../glaze/core/components/Moveable";
 import { Active } from "../../../glaze/core/components/Active";
 import { Player } from "../../components/Player";
 import { Position } from "../../../glaze/core/components/Position";
+import { Light } from "../../../glaze/graphics/components/Light";
+import { Viewable } from "../../../glaze/core/components/Viewable";
 
 
 export class PlayerFactory {
@@ -37,6 +39,8 @@ export class PlayerFactory {
             new PhysicsCollision(false,playerFilter,[]),
             new Moveable(),
             new Active(),
+            new Light(64, 1, 1, 1, 255, 255, 255),
+            new Viewable(),
         ]);
 
         return player;

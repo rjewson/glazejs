@@ -157,12 +157,16 @@ export class GameTestA extends GlazeEngine {
         // Just a hack for dev
         (window as any).mb = messageBus;
 
-        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
+        // Non dynamic
+        this.engine.addSystemToEngine(new PhysicsMassSystem());
         this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
         this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
+
+        // Dynamic
+        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
         this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsMassSystem());
         this.engine.addSystemToEngine(new PhysicsPositionSystem());
+
         this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
         this.engine.addSystemToEngine(new SteeringSystem());
 
@@ -202,6 +206,9 @@ export class GameTestA extends GlazeEngine {
 
         this.renderSystem.textureManager.ParseTexturePackerJSON(this.assets.assets.get(TEXTURE_CONFIG), TEXTURE_DATA);
         this.renderSystem.frameListManager.ParseFrameListJSON(this.assets.assets.get(FRAMES_CONFIG));
+
+        // TODO Move this up, later & dort out deps.
+        this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
 
         const background = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Background")));
         const foreground1 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground1")));
@@ -244,7 +251,6 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
 
         this.engine.addSystemToEngine(this.renderSystem);
-        this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
 
         const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
         const debugRenderSystem = new DebugRenderSystem(debugCanvas, this.renderSystem.camera);
@@ -256,7 +262,8 @@ export class GameTestA extends GlazeEngine {
         );
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
-        // const lightSystem = new PointLightingSystem(tileMapCollision);
+        
+        const lightSystem = new PointLightingSystem(tileMapCollision);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
@@ -304,14 +311,15 @@ export class GameTestA extends GlazeEngine {
 
         createTMXLayerEntities(this.engine, GetLayer(tmxMap, "Objects"), factories);
 
-        const pos: Position = this.engine.getComponentForEntity(player, Position);
-        this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
+        // const pos: Position = this.engine.getComponentForEntity(player, Position);
+        // this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
 
         const doorSwitch = this.engine.createEntity();
         this.engine.addComponentsToEntity(doorSwitch, [
             this.mapPosition(10.5, 18.5),
             new Extents(8, 8),
-            new PhysicsCollision(false, null, [
+            new PhysicsCollision(false, new Filter(), [
+                // ()=>{debugger;},
                 throttle(() => {
                     messageBus.trigger("doorA", {});
                 }, 1000),
@@ -343,19 +351,19 @@ export class GameTestA extends GlazeEngine {
 
         // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
 
-        const turret = this.engine.createEntity();
-        const turretFilter = new Filter();
-        turretFilter.groupIndex = TestFilters.TURRET_GROUP;
-        this.engine.addComponentsToEntity(turret, [
-            this.mapPosition(25, 1.5),
-            new TileGraphics("turret"),
-            new Extents(12, 12),
-            new PhysicsCollision(false, turretFilter, []),
-            new Fixed(),
-            // new Script(behavior),
-            new GunTurret(1000),
-            new Active(),
-        ]);
+        // const turret = this.engine.createEntity();
+        // const turretFilter = new Filter();
+        // turretFilter.groupIndex = TestFilters.TURRET_GROUP;
+        // this.engine.addComponentsToEntity(turret, [
+        //     this.mapPosition(25, 1.5),
+        //     new TileGraphics("turret"),
+        //     new Extents(12, 12),
+        //     new PhysicsCollision(false, turretFilter, []),
+        //     new Fixed(),
+        //     // new Script(behavior),
+        //     new GunTurret(1000),
+        //     new Active(),
+        // ]);
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
         const playerEntity = PlayerFactory.create(this.engine, playerPosition);
@@ -382,6 +390,6 @@ export class GameTestA extends GlazeEngine {
     }
 
     public postUpdate() {
-        if (GlazeEngine.params.debug) this.dynamicTree.debugDraw(this.debugGraphics);
+        if (GlazeEngine.params.debug && this.dynamicTree) this.dynamicTree.debugDraw(this.debugGraphics);
     }
 }

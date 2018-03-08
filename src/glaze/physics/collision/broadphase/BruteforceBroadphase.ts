@@ -31,7 +31,7 @@ export class BruteforceBroadphase implements IBroadphase {
     }
 
     public collide() {
-        console.time("Collide");
+        // console.time("Collide");
 
         //Loop back over the proxies
         var i = this.dynamicProxies.length;
@@ -73,7 +73,7 @@ export class BruteforceBroadphase implements IBroadphase {
                 Collide(dynamicProxy, dynamicProxyB);
             }
         }
-        console.timeEnd("Collide");
+        // console.timeEnd("Collide");
 
     }
 

@@ -5,7 +5,7 @@ import { RayAABB, Collide } from "../Intersect";
 import { DebugRenderer } from "../../../graphics/render/debug/DebugRenderer";
 
 const boundsPadding: number = 5;
-const dynamicTreeVelocityMultiplyer: number = 2;
+const dynamicTreeVelocityMultiplyer: number = 3;
 
 export class TreeNode {
     public parent: TreeNode;
@@ -246,7 +246,7 @@ export class DynamicTree {
         }
 
         if (multdy < 0) {
-            this.tempBounds.r += multdy;
+            this.tempBounds.t += multdy;
         } else {
             this.tempBounds.b += multdy;
         }
@@ -414,7 +414,9 @@ export class DynamicTree {
      * the tree until all possible colliders have been returned.
      */
     public query(body: BFProxy, callback: (other: BFProxy) => boolean): void {
-        var bounds = body.aabb.toAABB2();
+        var b = this.nodes.get(body.id);
+        var bounds = b.bounds;
+        //var bounds = body.aabb.toAABB2();
         DynamicTree.queryHelper(body, bounds, this.root);
     }
     // var helper = (currentNode: TreeNode): boolean => {

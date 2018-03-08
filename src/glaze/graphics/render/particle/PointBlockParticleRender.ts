@@ -88,8 +88,8 @@ export class PointBlockParticleRender implements IRenderer {
 
     public Render(clip: AABB2) {
         if (this.indexRun == 0) return;
-        this.gl.enable(WebGLRenderingContext.BLEND);
-        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+        // this.gl.enable(WebGLRenderingContext.BLEND);
+        // this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
 
         this.gl.useProgram(this.pointSpriteShader.program);
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
