@@ -82,6 +82,8 @@ import { DynamicTree } from "../glaze/physics/collision/broadphase/DynamicTree";
 import { DebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
 import { GunTurret } from "./components/GunTurret";
 import { GunTurretSystem } from "./systems/GunTurretSystem";
+import { throttle } from "../glaze/util/FnUtils";
+import { Camera } from "../glaze/graphics/displaylist/Camera";
 
 interface GlazeMapLayerConfig {}
 
@@ -129,14 +131,72 @@ export class GameTestA extends GlazeEngine {
     initalize() {
         this.engine.addCapacityToEngine(1000);
 
-        this.engine.addSystemToEngine(new DestroySystem());
-
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
-        cameraRange.expand(-TILE_SIZE );
+        cameraRange.expand(-TILE_SIZE);
+        const camera = new Camera()
+        camera.worldExtentsAABB = cameraRange;
 
-        this.renderSystem = new GraphicsRenderSystem(this.canvas, new Vector2(1280, 720), cameraRange);
+        const collisionData = LayerToCollisionData(
+            TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
+            GetTileSet(tmxMap, "Collision").firstgid,
+            TILE_SIZE,
+        );
+
+        const tileMapCollision = new TileMapCollision(collisionData);
+        const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
+        
+        // const broadphase = new BruteforceBroadphase(tileMapCollision);
+        const broadphase = new DynamicTreeBroadphase(tileMapCollision);
+        this.dynamicTree = broadphase.tree;
+
+        CombatUtils.setup(this.engine, broadphase);
+
+        const messageBus = new MessageBus();
+        // Just a hack for dev
+        (window as any).mb = messageBus;
+
+        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
+        this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
+        this.engine.addSystemToEngine(new PhysicsMassSystem());
+        this.engine.addSystemToEngine(new PhysicsPositionSystem());
+        this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
+        this.engine.addSystemToEngine(new SteeringSystem());
+
+        this.engine.addSystemToEngine(new ControllerSystem(this.input));
+
+        this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
+
+        // TODO Temp
+        this.engine.addSystemToEngine(new FixedViewManagementSystem(camera));
+
+        this.engine.addSystemToEngine(new AgeSystem());
+        this.engine.addSystemToEngine(new HealthSystem());
+        this.engine.addSystemToEngine(new CollsionCountSystem());
+        this.engine.addSystemToEngine(new EnvironmentForceSystem());
+
+        this.engine.addSystemToEngine(new BeeHiveSystem());
+        this.engine.addSystemToEngine(new BirdNestSystem());
+        this.engine.addSystemToEngine(new BirdSystem(CombatUtils.bfAreaQuery));
+
+        const chickenSystem = new ChickenSystem(blockParticleEngine);
+        this.engine.addSystemToEngine(chickenSystem);
+        this.engine.addSystemToEngine(new GunTurretSystem());
+
+        this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
+        this.engine.addSystemToEngine(new WindSystem(blockParticleEngine, 16));
+
+        this.engine.addSystemToEngine(new StateSystem());
+        this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
+
+        this.engine.addSystemToEngine(new DestroySystem());
+
+        // BEGIN RENDER SYSTEM
+
+        this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, new Vector2(1280, 720));
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
         this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
 
@@ -146,12 +206,6 @@ export class GameTestA extends GlazeEngine {
         const background = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Background")));
         const foreground1 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground1")));
         const foreground2 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground2")));
-
-        const collisionData = LayerToCollisionData(
-            TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
-            GetTileSet(tmxMap, "Collision").firstgid,
-            TILE_SIZE,
-        );
 
         var tileMapRenderer = new TileMapRenderer(16 / 2, 2);
 
@@ -193,68 +247,20 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
 
         const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
-        const debugRenderSystem = new DebugRenderSystem(debugCanvas,this.renderSystem.camera);
+        const debugRenderSystem = new DebugRenderSystem(debugCanvas, this.renderSystem.camera);
         this.engine.addSystemToEngine(debugRenderSystem);
         this.debugGraphics = debugRenderSystem.debugRender;
-
-        const tileMapCollision = new TileMapCollision(collisionData);
 
         this.engine.addSystemToEngine(
             new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision),
         );
 
-        const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
-
-        this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
-
         // const lightSystem = new PointLightingSystem(tileMapCollision);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
-        // const broadphase = new BruteforceBroadphase(tileMapCollision);
-        const broadphase = new DynamicTreeBroadphase(tileMapCollision);
-        this.dynamicTree = broadphase.tree;
-
-
-        CombatUtils.setup(this.engine, broadphase);
-
-        this.engine.addSystemToEngine(new SteeringSystem());
-
-        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
-        this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsMassSystem());
-        this.engine.addSystemToEngine(new PhysicsPositionSystem());
-
-        this.engine.addSystemToEngine(new ControllerSystem(this.input));
-
-        this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
-
-        // TODO Temp
-        this.engine.addSystemToEngine(new FixedViewManagementSystem(this.renderSystem.camera));
-
-        this.engine.addSystemToEngine(new AgeSystem());
-        this.engine.addSystemToEngine(new HealthSystem());
-        this.engine.addSystemToEngine(new CollsionCountSystem());
-        this.engine.addSystemToEngine(new EnvironmentForceSystem());
-
-        this.engine.addSystemToEngine(new BeeHiveSystem());
-        this.engine.addSystemToEngine(new BirdNestSystem());
-        this.engine.addSystemToEngine(new BirdSystem(CombatUtils.bfAreaQuery));
-
-        const chickenSystem = new ChickenSystem(blockParticleEngine);
-        this.engine.addSystemToEngine(chickenSystem);
-        this.engine.addSystemToEngine(new GunTurretSystem());
-
-        this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
-        this.engine.addSystemToEngine(new WindSystem(blockParticleEngine,16));
-
-        const messageBus = new MessageBus();
-        (window as any).mb = messageBus;
-        this.engine.addSystemToEngine(new StateSystem());
-        this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
+        // END SETUP RENDER SYSTEM
 
         let x = 0;
         let y = 0;
@@ -291,10 +297,10 @@ export class GameTestA extends GlazeEngine {
             ]);
         }
 
-        const factories = new Map<string,any>();
-        factories.set(ForceFactory.mapping,ForceFactory.createTMXEntity);
-        factories.set(WaterFactory.mapping,WaterFactory.createTMXEntity);
-        factories.set(DoorFactory.mapping,DoorFactory.createTMXEntity);
+        const factories = new Map<string, any>();
+        factories.set(ForceFactory.mapping, ForceFactory.createTMXEntity);
+        factories.set(WaterFactory.mapping, WaterFactory.createTMXEntity);
+        factories.set(DoorFactory.mapping, DoorFactory.createTMXEntity);
 
         createTMXLayerEntities(this.engine, GetLayer(tmxMap, "Objects"), factories);
 
@@ -305,7 +311,11 @@ export class GameTestA extends GlazeEngine {
         this.engine.addComponentsToEntity(doorSwitch, [
             this.mapPosition(10.5, 18.5),
             new Extents(8, 8),
-            new PhysicsCollision(false, null, []),
+            new PhysicsCollision(false, null, [
+                throttle(() => {
+                    messageBus.trigger("doorA", {});
+                }, 1000),
+            ]),
             new Fixed(),
             new Active(),
             new TileGraphics("switchOff"),
@@ -336,16 +346,16 @@ export class GameTestA extends GlazeEngine {
         const turret = this.engine.createEntity();
         const turretFilter = new Filter();
         turretFilter.groupIndex = TestFilters.TURRET_GROUP;
-        this.engine.addComponentsToEntity(turret,[
-            this.mapPosition(25,1.5),
+        this.engine.addComponentsToEntity(turret, [
+            this.mapPosition(25, 1.5),
             new TileGraphics("turret"),
-            new Extents(12,12),  
-            new PhysicsCollision(false,turretFilter,[]),
+            new Extents(12, 12),
+            new PhysicsCollision(false, turretFilter, []),
             new Fixed(),
-            // new Script(behavior), 
+            // new Script(behavior),
             new GunTurret(1000),
-            new Active()  
-        ]);        
+            new Active(),
+        ]);
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
         const playerEntity = PlayerFactory.create(this.engine, playerPosition);
@@ -371,8 +381,7 @@ export class GameTestA extends GlazeEngine {
         this.input.Update(-this.renderSystem.camera.position.x, -this.renderSystem.camera.position.y);
     }
 
-    public postUpdate(){
-        if (GlazeEngine.params.debug) 
-            this.dynamicTree.debugDraw(this.debugGraphics);
+    public postUpdate() {
+        if (GlazeEngine.params.debug) this.dynamicTree.debugDraw(this.debugGraphics);
     }
 }

@@ -19,8 +19,9 @@ export class PointLightingSystem extends System {
         this.renderer = new FBOLightingRenderer();
     }
 
-    public preUpdate() {
+    public preUpdate():boolean {
         this.renderer.reset();
+        return true;
     }
 
     updateEntity(entity: Entity, position: Position, light: Light, viewable: Viewable) {

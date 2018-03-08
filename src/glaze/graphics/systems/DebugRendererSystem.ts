@@ -14,6 +14,7 @@ import { Sprite } from "../displaylist/Sprite";
 import { DebugGraphics } from "../components/DebugGraphics";
 import { Extents } from "../../core/components/Extents";
 import { DebugRenderer } from "../render/debug/DebugRenderer";
+import { GlazeEngine } from "../../GlazeEngine";
 
 export class DebugRenderSystem extends System {
     public debugRender: DebugRenderer;
@@ -27,7 +28,10 @@ export class DebugRenderSystem extends System {
         this.debugRender = new DebugRenderer(canvas, camera, 1280, 768);
     }
 
-    public preUpdate() {
+    public preUpdate():boolean {
+        if (!GlazeEngine.params.debug) {
+            return false;
+        }
         this.debugRender.Clear();
     }
 

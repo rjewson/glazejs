@@ -60,9 +60,7 @@ export class CombatUtils {
     }
 
     static explode(position: Vector2, radius: number, power: number, sourceEntity: Entity) {
-        debugger;
         CombatUtils.bfAreaQuery.query(position, radius, sourceEntity, true);
-        console.log(CombatUtils.bfAreaQuery.entityCollection.entities);
         CombatUtils.bfAreaQuery.entityCollection.entities.forEach(item => {
             //var item = CombatUtils.bfAreaQuery.entityCollection.entities.head;
             if (!CombatUtils.engine.getComponentForEntity(item.entity, Destroy)) {

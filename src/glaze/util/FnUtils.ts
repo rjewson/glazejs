@@ -1,4 +1,4 @@
-const throttle = function(fn:any, ms:number) {
+export const throttle = function(fn:any, ms:number) {
     let lastCalled = 0;
     return function() {
         const now = Date.now();

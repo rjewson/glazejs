@@ -42,12 +42,16 @@ export class System {
     public updateSystem(dt: number, timestamp: number) {
         this.dt = dt;
         this.timestamp = timestamp;
-        this.preUpdate();
+        if (!this.preUpdate()) {
+            return
+        };
         this.updateAllEntities();
         this.postUpdate();
     }
 
-    public preUpdate() {}
+    public preUpdate():boolean {
+        return true;
+    }
 
     public updateAllEntities() {
         for(let i of this.members.keys()) {

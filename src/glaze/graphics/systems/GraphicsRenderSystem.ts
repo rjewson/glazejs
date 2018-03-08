@@ -22,12 +22,13 @@ export class GraphicsRenderSystem extends System {
     public frameListManager: FrameListManager;
     private _cameraTarget: Vector2;
 
-    constructor(canvas: HTMLCanvasElement, screenDimension:Vector2, cameraRange: AABB2) {
+    constructor(canvas: HTMLCanvasElement, camera:Camera, screenDimension:Vector2) {
         super([Position, Graphics]);
         this.canvas = canvas;
         this.stage = new Stage();
-        this.camera = new Camera();
-        this.camera.worldExtentsAABB = cameraRange;
+        this.camera = camera;
+        // this.camera = new Camera();
+        // this.camera.worldExtentsAABB = cameraRange;
         this.stage.addChild(this.camera);
         this.renderer = new RendererEngine(this.stage, this.camera, this.canvas, screenDimension.x, screenDimension.y);
         this.camera.Resize(this.renderer.width, this.renderer.height);
