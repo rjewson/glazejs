@@ -286,6 +286,7 @@ export class TileMapRenderer implements IRenderer {
 
             this.gl.drawArrays(WebGLRenderingContext.TRIANGLES, 0, 6);
         }
+        this.gl.colorMask(true, true, true, false);
     }
 
     /*

@@ -84,6 +84,8 @@ import { GunTurret } from "./components/GunTurret";
 import { GunTurretSystem } from "./systems/GunTurretSystem";
 import { throttle } from "../glaze/util/FnUtils";
 import { Camera } from "../glaze/graphics/displaylist/Camera";
+import { FloodLightingSystem } from "../glaze/graphics/systems/FloodLightingSystem";
+import { RecursiveLightingSystem } from "../glaze/graphics/systems/RecursiveLightingSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -263,7 +265,20 @@ export class GameTestA extends GlazeEngine {
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
         
-        const lightSystem = new PointLightingSystem(tileMapCollision);
+        // GPU calculated lights
+        // const lightSystem = new PointLightingSystem(tileMapCollision);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // this.engine.addSystemToEngine(lightSystem);
+
+        // JS calculated ights
+        // const lightSystem = new FloodLightingSystem(tileMapCollision.data);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // this.engine.addSystemToEngine(lightSystem);
+
+        // JS recursive lights slooooow
+        // const lightSystem = new RecursiveLightingSystem(tileMapCollision.data);
+        // or less slow
+        // const lightSystem = new BFSLightingSystem(tileMapCollision.data);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // this.engine.addSystemToEngine(lightSystem);
 
@@ -296,7 +311,7 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
-                new Light(64, 1, 1, 1, 255, 255, 255),
+                // new Light(64, 1, 1, 1, 255, 255, 255),
                 new Viewable(),
                 new DebugGraphics(),
                 // new Controllable(150),

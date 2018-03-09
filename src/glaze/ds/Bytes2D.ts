@@ -1,6 +1,6 @@
 export class Bytes2D {
     public data: ArrayBuffer;
-    private data8: Uint8Array;
+    public data8: Uint8Array;
 
     public width: number;
     public height: number;
