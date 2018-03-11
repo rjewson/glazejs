@@ -86,6 +86,7 @@ import { throttle } from "../glaze/util/FnUtils";
 import { Camera } from "../glaze/graphics/displaylist/Camera";
 import { FloodLightingSystem } from "../glaze/graphics/systems/FloodLightingSystem";
 import { RecursiveLightingSystem } from "../glaze/graphics/systems/RecursiveLightingSystem";
+import { CALightingSystem } from "../glaze/graphics/systems/CALightingSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -148,7 +149,7 @@ export class GameTestA extends GlazeEngine {
 
         const tileMapCollision = new TileMapCollision(collisionData);
         const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
-        
+
         // const broadphase = new BruteforceBroadphase(tileMapCollision);
         const broadphase = new DynamicTreeBroadphase(tileMapCollision);
         this.dynamicTree = broadphase.tree;
@@ -264,7 +265,7 @@ export class GameTestA extends GlazeEngine {
         );
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
-        
+
         // GPU calculated lights
         // const lightSystem = new PointLightingSystem(tileMapCollision);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
@@ -279,8 +280,10 @@ export class GameTestA extends GlazeEngine {
         // const lightSystem = new RecursiveLightingSystem(tileMapCollision.data);
         // or less slow
         // const lightSystem = new BFSLightingSystem(tileMapCollision.data);
-        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // this.engine.addSystemToEngine(lightSystem);
+
+        const lightSystem = new CALightingSystem(tileMapCollision.data);
+        this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        this.engine.addSystemToEngine(lightSystem);
 
         // END SETUP RENDER SYSTEM
 
