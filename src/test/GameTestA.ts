@@ -87,6 +87,8 @@ import { Camera } from "../glaze/graphics/displaylist/Camera";
 import { FloodLightingSystem } from "../glaze/graphics/systems/FloodLightingSystem";
 import { RecursiveLightingSystem } from "../glaze/graphics/systems/RecursiveLightingSystem";
 import { CALightingSystem } from "../glaze/graphics/systems/CALightingSystem";
+import { WaterRenderSystem } from "../glaze/graphics/systems/WaterRenderSystem";
+import { BFSLightingSystem } from "../glaze/graphics/systems/BFSLightingSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -281,6 +283,7 @@ export class GameTestA extends GlazeEngine {
         // or less slow
         // const lightSystem = new BFSLightingSystem(tileMapCollision.data);
 
+        // const lightSystem = new WaterRenderSystem(tileMapCollision.data);
         const lightSystem = new CALightingSystem(tileMapCollision.data);
         this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         this.engine.addSystemToEngine(lightSystem);
