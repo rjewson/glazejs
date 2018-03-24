@@ -3,6 +3,7 @@ import { BFProxy } from "../BFProxy";
 import { Ray } from "../Ray";
 import { RayAABB, Collide } from "../Intersect";
 import { DebugRenderer } from "../../../graphics/render/debug/DebugRenderer";
+import { Pool } from "../../../util/Pool";
 
 const boundsPadding: number = 5;
 const dynamicTreeVelocityMultiplyer: number = 3;
@@ -16,6 +17,10 @@ export class TreeNode {
     public body: BFProxy;
 
     constructor(parent?: TreeNode) {
+        this.reset(parent);
+    }
+
+    reset(parent?: TreeNode) {
         this.parent = parent || null;
         this.body = null;
         this.bounds = new AABB2();
@@ -30,15 +35,20 @@ export class TreeNode {
 }
 
 export class DynamicTree {
+
     public root: TreeNode;
-    public nodes: Map<number, TreeNode>; //{ [key: number]: TreeNode };
+    public nodes: Map<number, TreeNode>;
     public tempBounds: AABB2;
+    public nodePool:Pool<TreeNode>;
+
     constructor(
         public worldBounds: AABB2 = new AABB2(-Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE),
     ) {
         this.root = null;
         this.nodes = new Map(); //{};
         this.tempBounds = new AABB2();
+        this.nodePool = new Pool(()=>new TreeNode());
+        this.nodePool.addCapacity(1000);
     }
 
     private insertNode(leaf: TreeNode): void {
@@ -105,7 +115,10 @@ export class DynamicTree {
 
         // Create the new parent node and insert into the tree
         var oldParent = currentRoot.parent;
-        var newParent = new TreeNode(oldParent);
+        // var newParent = new TreeNode(oldParent);
+        var newParent = this.nodePool.reserve();
+        newParent.reset(oldParent);
+        // console.log(this.nodePool.assigned);
         // newParent.bounds = leafAABB.combine(currentRoot.bounds);
         newParent.bounds.combine2(leafAABB, currentRoot.bounds);
         newParent.height = currentRoot.height + 1;
@@ -175,6 +188,8 @@ export class DynamicTree {
                 grandParent.right = sibling;
             }
             sibling.parent = grandParent;
+            // DELETE PARENT!!
+            this.nodePool.free(parent);
 
             var currentNode = grandParent;
             while (currentNode) {
@@ -188,6 +203,8 @@ export class DynamicTree {
         } else {
             this.root = sibling;
             sibling.parent = null;
+            //DELETE PARENT;
+            this.nodePool.free(parent);
         }
     }
 
@@ -195,7 +212,9 @@ export class DynamicTree {
      * Tracks a body in the dynamic tree
      */
     public trackBody(body: BFProxy) {
-        var node = new TreeNode();
+        // var node = new TreeNode();
+        var node = this.nodePool.reserve();
+        node.reset();
         node.body = body;
         node.bounds.copyAABB(body.aabb);
         node.bounds.expand(2);
@@ -214,6 +233,22 @@ export class DynamicTree {
         // var b = body.aabb.toAABB2();
         // body.aabb.copyToAABB2(this.tempBounds);
         this.tempBounds.copyAABB(body.aabb);
+
+        var multdx = body.body.delta.x;
+        var multdy = body.body.delta.y;
+
+        if (multdx < 0) {
+            this.tempBounds.l += multdx;
+        } else {
+            this.tempBounds.r += multdx;
+        }
+
+        if (multdy < 0) {
+            this.tempBounds.t += multdy;
+        } else {
+            this.tempBounds.b += multdy;
+        }
+
         // sqthis.tempBounds.transform(body.body.position);
         // if the body is outside the world no longer update it
         // console.log("a");
@@ -226,18 +261,22 @@ export class DynamicTree {
         // }
         // console.log("b");
 
+        // Fixme this is wrong
         if (node.bounds.contains(this.tempBounds)) {
             return false;
         }
-        
+
         this.removeNode(node);
         this.tempBounds.l -= boundsPadding;
         this.tempBounds.t -= boundsPadding;
         this.tempBounds.r += boundsPadding;
         this.tempBounds.b += boundsPadding;
 
-        var multdx = body.body.delta.x * dynamicTreeVelocityMultiplyer;
-        var multdy = body.body.delta.y * dynamicTreeVelocityMultiplyer;
+        multdx = body.body.delta.x * dynamicTreeVelocityMultiplyer;
+        multdy = body.body.delta.y * dynamicTreeVelocityMultiplyer;
+        // TODO Fix this hack
+        // var multdx = (body.body ? body.body.delta.x : 5) * dynamicTreeVelocityMultiplyer;
+        // var multdy = (body.body ? body.body.delta.y : 5) * dynamicTreeVelocityMultiplyer;
 
         if (multdx < 0) {
             this.tempBounds.l += multdx;
@@ -267,7 +306,8 @@ export class DynamicTree {
             return;
         }
         this.removeNode(node);
-
+        // DELETE NODE
+        this.nodePool.free(node);
         // this.nodes[body.id] = null;
         // delete this.nodes[body.id];
         this.nodes.delete(body.id);

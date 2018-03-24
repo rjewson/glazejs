@@ -14,6 +14,11 @@ import { Extents } from "../../glaze/core/components/Extents";
 import { RandomFloat } from "../../glaze/util/Random";
 import { StandardBullet } from "../factories/projectile/StandardBullet";
 import { BeeFactory } from "../factories/character/BeeFactory";
+import { Holder } from "../../glaze/core/components/Holder";
+import { TestFilters } from "../config/Filters";
+import { Moveable } from "../../glaze/core/components/Moveable";
+import { Active } from "../../glaze/core/components/Active";
+import { Held } from "../../glaze/core/components/Held";
 
 /*
 backspace   8
@@ -84,7 +89,7 @@ export class PlayerSystem extends System {
 
     playerLight: Entity;
     playerHolder: Entity;
-    //  holder:Holder;
+    holder:Holder;
     //  inventory:Inventory;
 
     animation: GraphicsAnimation;
@@ -126,20 +131,20 @@ export class PlayerSystem extends System {
         //     new Active()
         //     ],"player light");
         // TODO
-        // holder = new Holder();
+        this.holder = new Holder(entity);
         // TODO
         // inventory = new Inventory(4);
 
-        // playerHolder = engine.createEntity([
-        //     position,
-        //     entity.getComponent(Extents),
-        //     holder,
-        //     new PhysicsCollision(true,new Filter(1,0,exile.ExileFilters.PLAYER_GROUP),[]),
-        //     new Moveable(),
-        //     new Active(),
-        //     inventory
-        // ],"playerHolder");
-        // player.addChildEntity(playerHolder);
+        this.playerHolder = this.engine.createEntity();
+        this.engine.addComponentsToEntity(this.playerHolder,[
+            position,
+            extents,
+            this.holder,
+            new PhysicsCollision(true,new Filter(1,0,TestFilters.PLAYER_GROUP),[],false,physicsBody.body),
+            new Moveable(),
+            new Active(),
+        ]);
+
         // player.addChildEntity(playerLight);
 
         // playerFilter = entity.getComponent(PhysicsCollision).proxy.filter;
@@ -191,20 +196,26 @@ export class PlayerSystem extends System {
             BeeFactory.create(this.engine,position.clone());
         }
         // TODO
-        // holder.activate = this.input.JustPressed(72);
+        this.holder.activate = this.input.JustPressed(72);
         // trace("x");
 
         // TODO
-        // if (this.input.JustPressed(74)) {
-        //     //Drop Item 'J'
-        //     var item = holder.drop();
-        // } else if (this.input.JustPressed(75)) {
-        //     //Throw Item 'K'
-        //     var item = holder.drop();
-        //     if (item!=null) {
-        //         glaze.util.Ballistics.calcProjectileVelocity(item.getComponent(PhysicsBody).body,input.ViewCorrectedMousePosition(),700);
-        //     }
-        // }
+        if (this.input.JustPressed(74)) {
+            //Drop Item 'J'
+            // var item = this.holder.drop();
+            if (this.holder.heldItem!=null) {
+                // TODO move this somewhere sensible
+                this.engine.removeComponentsFromEntity(this.holder.heldItem, [Held]);
+                this.holder.heldItem = null;
+            }
+
+        } else if (this.input.JustPressed(75)) {
+            //Throw Item 'K'
+            // var item = holder.drop();
+            // if (item!=null) {
+            //     glaze.util.Ballistics.calcProjectileVelocity(item.getComponent(PhysicsBody).body,input.ViewCorrectedMousePosition(),700);
+            // }
+        }
 
         // TODO
         // if (this.input.JustPressed(81)) { //Q

@@ -15,7 +15,7 @@ export class Pool<T> {
     }
 
     public addCapacity(capacity: number) {
-        this.pool = [...entityRange(this.pool.length, capacity), ...this.pool];
+        this.pool = [...entityRange(this.pool.length, capacity, this.factory), ...this.pool];
         this.nextAvailableIndex += capacity;
     }
 
@@ -47,7 +47,7 @@ export class Pool<T> {
 
 const emptyNullArray = count => Array(count).fill(null);
 const reverseOrder = (a, b) => b - a;
-const entityRange = (start, len) =>
+const entityRange = (start, len, factory) =>
     emptyNullArray(len)
-        .map((_, i) => start + i)
+        .map((_, i) => factory(start + i))
         .sort(reverseOrder);

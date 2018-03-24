@@ -89,6 +89,10 @@ import { RecursiveLightingSystem } from "../glaze/graphics/systems/RecursiveLigh
 import { CALightingSystem } from "../glaze/graphics/systems/CALightingSystem";
 import { WaterRenderSystem } from "../glaze/graphics/systems/WaterRenderSystem";
 import { BFSLightingSystem } from "../glaze/graphics/systems/BFSLightingSystem";
+import { Holdable } from "../glaze/core/components/Holdable";
+import { HolderSystem } from "../glaze/core/systems/HolderSystem";
+import { HoldableSystem } from "../glaze/core/systems/HoldableSystem";
+import { HeldSystem } from "../glaze/core/systems/HeldSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -171,6 +175,7 @@ export class GameTestA extends GlazeEngine {
         this.engine.addSystemToEngine(new PhysicsUpdateSystem());
         this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
         this.engine.addSystemToEngine(new PhysicsPositionSystem());
+        this.engine.addSystemToEngine(new HeldSystem());
 
         this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
         this.engine.addSystemToEngine(new SteeringSystem());
@@ -200,6 +205,9 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addSystemToEngine(new StateSystem());
         this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
+
+        this.engine.addSystemToEngine(new HolderSystem(TestFilters.HOLDABLE_CAT));
+        this.engine.addSystemToEngine(new HoldableSystem(TestFilters.HOLDABLE_CAT));
 
         this.engine.addSystemToEngine(new DestroySystem());
 
@@ -284,11 +292,16 @@ export class GameTestA extends GlazeEngine {
         // const lightSystem = new BFSLightingSystem(tileMapCollision.data);
 
         // const lightSystem = new WaterRenderSystem(tileMapCollision.data);
-        const lightSystem = new CALightingSystem(tileMapCollision.data);
-        this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        this.engine.addSystemToEngine(lightSystem);
+        // const lightSystem = new CALightingSystem(tileMapCollision.data);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // this.engine.addSystemToEngine(lightSystem);
 
         // END SETUP RENDER SYSTEM
+
+        const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
+        const playerEntity = PlayerFactory.create(this.engine, playerPosition);
+        chickenSystem.scaredOf(playerEntity);
+        this.renderSystem.cameraTarget = playerPosition.coords;
 
         let x = 0;
         let y = 0;
@@ -386,11 +399,17 @@ export class GameTestA extends GlazeEngine {
         //     new Active(),
         // ]);
 
-        const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
-        const playerEntity = PlayerFactory.create(this.engine, playerPosition);
-        chickenSystem.scaredOf(playerEntity);
-
-        this.renderSystem.cameraTarget = playerPosition.coords;
+        const rock = this.engine.createEntity();
+        this.engine.addComponentsToEntity(rock,[
+            this.mapPosition(13,4),
+            new Extents(7,7),
+            new Graphics("items","rock"),
+            new PhysicsCollision(false,new Filter(),[]),
+            new Moveable(),
+            new PhysicsBody(new Body(Material.ROCK),true),
+            new Holdable(),
+            new Active()
+        ]);
 
         this.loop.start();
         listenDebugButtons(this.engine);
