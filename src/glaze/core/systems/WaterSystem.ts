@@ -32,9 +32,6 @@ export class WaterSystem extends System {
         this.cycle = (Math.PI * 2 / 1000 * this.timestamp) % 1000;
     }
 
-    // updateEntity(entity: Entity, physicsCollision: PhysicsCollision, extents: Extents, water: Water) {
-    // }
-
     public callback(a: BFProxy, b: BFProxy, contact: Contact) {
         var area = a.aabb.overlapArea(b.aabb);
         b.body.damping = 0.9;

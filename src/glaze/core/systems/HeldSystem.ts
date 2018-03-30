@@ -21,7 +21,6 @@ export class HeldSystem extends System {
         physicsBody: PhysicsBody,
         active: Active,
     ) {
-        debugger;
         var body = physicsBody.body;
         body.velocity.setTo(0, 0);
         body.skip = true;

@@ -93,6 +93,10 @@ import { Holdable } from "../glaze/core/components/Holdable";
 import { HolderSystem } from "../glaze/core/systems/HolderSystem";
 import { HoldableSystem } from "../glaze/core/systems/HoldableSystem";
 import { HeldSystem } from "../glaze/core/systems/HeldSystem";
+import { Phase } from "../glaze/ecs/Phase";
+import { TeleporterFactory } from "./factories/item/TeleporterFactory";
+import { TeleporterSystem } from "./systems/TeleporterSystem";
+import { WaterHolder } from "../glaze/core/components/WaterHolder";
 
 interface GlazeMapLayerConfig {}
 
@@ -144,7 +148,7 @@ export class GameTestA extends GlazeEngine {
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
         cameraRange.expand(-TILE_SIZE);
-        const camera = new Camera()
+        const camera = new Camera();
         camera.worldExtentsAABB = cameraRange;
 
         const collisionData = LayerToCollisionData(
@@ -166,53 +170,60 @@ export class GameTestA extends GlazeEngine {
         // Just a hack for dev
         (window as any).mb = messageBus;
 
+        const corePhase = new Phase();
+        this.engine.addPhase(corePhase);
+
         // Non dynamic
-        this.engine.addSystemToEngine(new PhysicsMassSystem());
-        this.engine.addSystemToEngine(new PhysicsStaticSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsMoveableSystem(broadphase));
+        corePhase.addSystem(new PhysicsMassSystem());
+        corePhase.addSystem(new PhysicsStaticSystem(broadphase));
+        corePhase.addSystem(new PhysicsMoveableSystem(broadphase));
 
         // Dynamic
-        this.engine.addSystemToEngine(new PhysicsUpdateSystem());
-        this.engine.addSystemToEngine(new PhysicsCollisionSystem(broadphase));
-        this.engine.addSystemToEngine(new PhysicsPositionSystem());
-        this.engine.addSystemToEngine(new HeldSystem());
+        corePhase.addSystem(new PhysicsUpdateSystem());
+        corePhase.addSystem(new PhysicsCollisionSystem(broadphase));
+        corePhase.addSystem(new PhysicsPositionSystem());
+        corePhase.addSystem(new HeldSystem());
 
-        this.engine.addSystemToEngine(new PlayerSystem(this.input, blockParticleEngine));
-        this.engine.addSystemToEngine(new SteeringSystem());
+        corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine));
+        corePhase.addSystem(new SteeringSystem());
 
-        this.engine.addSystemToEngine(new ControllerSystem(this.input));
+        corePhase.addSystem(new ControllerSystem(this.input));
 
-        this.engine.addSystemToEngine(new ParticleSystem(blockParticleEngine));
+        corePhase.addSystem(new ParticleSystem(blockParticleEngine));
 
         // TODO Temp
-        this.engine.addSystemToEngine(new FixedViewManagementSystem(camera));
+        corePhase.addSystem(new FixedViewManagementSystem(camera));
 
-        this.engine.addSystemToEngine(new AgeSystem());
-        this.engine.addSystemToEngine(new HealthSystem());
-        this.engine.addSystemToEngine(new CollsionCountSystem());
-        this.engine.addSystemToEngine(new EnvironmentForceSystem());
+        corePhase.addSystem(new AgeSystem());
+        corePhase.addSystem(new HealthSystem());
+        corePhase.addSystem(new CollsionCountSystem());
+        corePhase.addSystem(new EnvironmentForceSystem());
 
-        this.engine.addSystemToEngine(new BeeHiveSystem());
-        this.engine.addSystemToEngine(new BirdNestSystem());
-        this.engine.addSystemToEngine(new BirdSystem(CombatUtils.bfAreaQuery));
+        corePhase.addSystem(new BeeHiveSystem());
+        corePhase.addSystem(new BirdNestSystem());
+        corePhase.addSystem(new BirdSystem(CombatUtils.bfAreaQuery));
 
         const chickenSystem = new ChickenSystem(blockParticleEngine);
-        this.engine.addSystemToEngine(chickenSystem);
-        this.engine.addSystemToEngine(new GunTurretSystem());
+        corePhase.addSystem(chickenSystem);
+        corePhase.addSystem(new GunTurretSystem());
 
-        this.engine.addSystemToEngine(new WaterSystem(blockParticleEngine));
-        this.engine.addSystemToEngine(new WindSystem(blockParticleEngine, 16));
+        corePhase.addSystem(new WaterSystem(blockParticleEngine));
+        corePhase.addSystem(new WindSystem(blockParticleEngine, 16));
 
-        this.engine.addSystemToEngine(new StateSystem());
-        this.engine.addSystemToEngine(new StateUpdateSystem(messageBus));
+        corePhase.addSystem(new StateSystem());
+        corePhase.addSystem(new StateUpdateSystem(messageBus));
 
-        this.engine.addSystemToEngine(new HolderSystem(TestFilters.HOLDABLE_CAT));
-        this.engine.addSystemToEngine(new HoldableSystem(TestFilters.HOLDABLE_CAT));
+        corePhase.addSystem(new HolderSystem(TestFilters.HOLDABLE_CAT));
+        corePhase.addSystem(new HoldableSystem(TestFilters.HOLDABLE_CAT));
 
-        this.engine.addSystemToEngine(new DestroySystem());
+        corePhase.addSystem(new TeleporterSystem());
+
+        corePhase.addSystem(new DestroySystem());
 
         // BEGIN RENDER SYSTEM
 
+        const renderPhase = new Phase();
+        this.engine.addPhase(renderPhase);
         this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, new Vector2(1280, 720));
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
         this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
@@ -221,7 +232,7 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.frameListManager.ParseFrameListJSON(this.assets.assets.get(FRAMES_CONFIG));
 
         // TODO Move this up, later & dort out deps.
-        this.engine.addSystemToEngine(new AnimationSystem(this.renderSystem.frameListManager));
+        renderPhase.addSystem(new AnimationSystem(this.renderSystem.frameListManager));
 
         const background = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Background")));
         const foreground1 = LayerToCoordTexture(TMXdecodeLayer(GetLayer(tmxMap, "Foreground1")));
@@ -263,14 +274,14 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.itemContainer.addChild(tileMapRenderer.renderLayersMap.get("bg").sprite);
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
 
-        this.engine.addSystemToEngine(this.renderSystem);
+        renderPhase.addSystem(this.renderSystem);
 
         const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
         const debugRenderSystem = new DebugRenderSystem(debugCanvas, this.renderSystem.camera);
-        this.engine.addSystemToEngine(debugRenderSystem);
+        renderPhase.addSystem(debugRenderSystem);
         this.debugGraphics = debugRenderSystem.debugRender;
 
-        this.engine.addSystemToEngine(
+        renderPhase.addSystem(
             new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision),
         );
 
@@ -279,12 +290,12 @@ export class GameTestA extends GlazeEngine {
         // GPU calculated lights
         // const lightSystem = new PointLightingSystem(tileMapCollision);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // this.engine.addSystemToEngine(lightSystem);
+        // renderPhase.addSystem(lightSystem);
 
         // JS calculated ights
         // const lightSystem = new FloodLightingSystem(tileMapCollision.data);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // this.engine.addSystemToEngine(lightSystem);
+        // renderPhase.addSystem(lightSystem);
 
         // JS recursive lights slooooow
         // const lightSystem = new RecursiveLightingSystem(tileMapCollision.data);
@@ -294,7 +305,7 @@ export class GameTestA extends GlazeEngine {
         // const lightSystem = new WaterRenderSystem(tileMapCollision.data);
         // const lightSystem = new CALightingSystem(tileMapCollision.data);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // this.engine.addSystemToEngine(lightSystem);
+        // renderPhase.addSystem(lightSystem);
 
         // END SETUP RENDER SYSTEM
 
@@ -348,6 +359,8 @@ export class GameTestA extends GlazeEngine {
         // const pos: Position = this.engine.getComponentForEntity(player, Position);
         // this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
 
+        TeleporterFactory.create(this.engine, this.mapPosition(3,23), new Extents(16,32));
+
         const doorSwitch = this.engine.createEntity();
         this.engine.addComponentsToEntity(doorSwitch, [
             this.mapPosition(10.5, 18.5),
@@ -363,51 +376,61 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff"),
         ]);
 
-        // const beeHive = this.engine.createEntity();
-        // this.engine.addComponentsToEntity(beeHive, [
-        //     this.mapPosition(20.5, 17),
-        //     new Extents(16, 16),
-        //     new Graphics("insects", "hive"),
-        //     new PhysicsCollision(false, null, []),
-        //     new Fixed(),
-        //     new Active(),
-        //     new BeeHive(5),
-        // ]);
+        const beeHive = this.engine.createEntity();
+        this.engine.addComponentsToEntity(beeHive, [
+            this.mapPosition(20.5, 17),
+            new Extents(16, 16),
+            new Graphics("insects", "hive"),
+            new PhysicsCollision(false, null, []),
+            new Fixed(),
+            new Active(),
+            new BeeHive(5),
+        ]);
 
-        // const birdNest = this.engine.createEntity();
-        // this.engine.addComponentsToEntity(birdNest, [
-        //     this.mapPosition(34, 30),
-        //     new Extents(7, 7),
-        //     new Fixed(),
-        //     new BirdNest(5),
-        //     new Active(),
-        // ]);
+        const birdNest = this.engine.createEntity();
+        this.engine.addComponentsToEntity(birdNest, [
+            this.mapPosition(34, 30),
+            new Extents(7, 7),
+            new Fixed(),
+            new BirdNest(5),
+            new Active(),
+        ]);
 
-        // this.fireBullet(new Vector2(50, 50), new Vector2(100, 100));
-
-        // const turret = this.engine.createEntity();
-        // const turretFilter = new Filter();
-        // turretFilter.groupIndex = TestFilters.TURRET_GROUP;
-        // this.engine.addComponentsToEntity(turret, [
-        //     this.mapPosition(25, 1.5),
-        //     new TileGraphics("turret"),
-        //     new Extents(12, 12),
-        //     new PhysicsCollision(false, turretFilter, []),
-        //     new Fixed(),
-        //     // new Script(behavior),
-        //     new GunTurret(1000),
-        //     new Active(),
-        // ]);
+        const turret = this.engine.createEntity();
+        const turretFilter = new Filter();
+        turretFilter.groupIndex = TestFilters.TURRET_GROUP;
+        this.engine.addComponentsToEntity(turret, [
+            this.mapPosition(25, 1.5),
+            new TileGraphics("turret"),
+            new Extents(12, 12),
+            new PhysicsCollision(false, turretFilter, []),
+            new Fixed(),
+            new GunTurret(1000),
+            new Active(),
+        ]);
 
         const rock = this.engine.createEntity();
-        this.engine.addComponentsToEntity(rock,[
-            this.mapPosition(13,4),
-            new Extents(7,7),
-            new Graphics("items","rock"),
+        this.engine.addComponentsToEntity(rock, [
+            this.mapPosition(13, 4),
+            new Extents(7, 7),
+            new Graphics("items", "rock"),
+            new PhysicsCollision(false, new Filter(), []),
+            new Moveable(),
+            new PhysicsBody(new Body(Material.ROCK), true),
+            new Holdable(),
+            new Active(),
+        ]);
+
+        const waterContainer = this.engine.createEntity();
+        this.engine.addComponentsToEntity(waterContainer, [
+            this.mapPosition(25,57),
+            new Extents(6,14),
+            new Graphics("items","water_container"),
             new PhysicsCollision(false,new Filter(),[]),
             new Moveable(),
-            new PhysicsBody(new Body(Material.ROCK),true),
+            new PhysicsBody(new Body(Material.NORMAL),true),
             new Holdable(),
+            new WaterHolder(10),
             new Active()
         ]);
 

@@ -34,7 +34,7 @@ class GraphicsSystem extends System {
 
 const engine = new Engine();
 engine.addCapacityToEngine(10);
-engine.addSystemToEngine(new GraphicsSystem());
+// engine.addSystemToEngine(new GraphicsSystem());
 
 const e = engine.createEntity();
 engine.addComponentsToEntity(e, [new Position(), new Graphics(1)]);

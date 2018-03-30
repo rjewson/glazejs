@@ -11,7 +11,7 @@ export class Graphics {
 
     constructor(frameListId: string, initialFrameId:string=null) {
         this.frameListId = frameListId;
-        this.initialFrameId = null;
+        this.initialFrameId = initialFrameId;
     }
 
     public setFrame(value: Frame) {

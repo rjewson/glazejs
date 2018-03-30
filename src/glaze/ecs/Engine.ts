@@ -2,15 +2,20 @@ import { IComponentFactory } from "./Component";
 import { Entity } from "./Entity";
 import { Pool } from "../util/Pool";
 import { System } from "./System";
+import { Phase } from "./Phase";
 
 export class Engine {
     public components: Map<string, any[]>;
+    public phases: Phase[];
     public systems: System[];
+    public c4e: Map<Entity, GetC4E>;
     public entityPool: Pool<Entity>;
 
     constructor() {
         this.components = new Map();
+        this.phases = new Array();
         this.systems = new Array();
+        this.c4e = new Map();
         this.entityPool = new Pool(i => i);
     }
 
@@ -22,13 +27,16 @@ export class Engine {
     }
 
     public createEntity(): Entity {
-        return this.entityPool.reserve();
+        const entity = this.entityPool.reserve();
+        this.c4e.set(entity, createGetComponentForEntity(this, entity));
+        return entity;
     }
 
     public destroyEntity(entity: Entity): void {
         this.systems.forEach(system => system.removeEntity(entity));
         this.clearAllComponentsForEntity(entity);
         this.entityPool.free(entity);
+        this.c4e.delete(entity);
     }
 
     public getComponentForEntity(entity: Entity, component: IComponentFactory) {
@@ -56,14 +64,19 @@ export class Engine {
         this.matchEntity(entity);
     }
 
-    public addSystemToEngine(system: System) {
+    public addPhase(phase: Phase) {
+        phase.engine = this;
+        this.phases.push(phase);
+    }
+
+    public addPhaseSystemToEngine(system: System) {
         system.engine = this;
         this.systems.push(system);
         system.components.forEach((name: string) => this.createComponentEntry(name));
     }
 
     public update(dt: number, timestamp: number) {
-        this.systems.forEach(system => system.updateSystem(dt, timestamp));
+        this.phases.forEach(phase => phase.updatePhase(dt, timestamp));
     }
 
     public query(query: IComponentFactory[]): Entity[] {
@@ -115,3 +128,10 @@ export class Engine {
 // const setIdOnComponent = (component: IComponent<any>, id: number) => (component._id_ = id);
 const emptyArray = () => [];
 const emptyNullArray = count => Array(count).fill(null);
+
+export interface GetC4E {
+    (component: IComponentFactory): any;
+}
+
+export const createGetComponentForEntity = (engine: Engine, entity: Entity): GetC4E => (component: IComponentFactory) =>
+    engine.getComponentForEntity(entity, component);

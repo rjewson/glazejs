@@ -21,7 +21,6 @@ export class System {
 
     public addEntity(entity: Entity, components: any[]) {
         if (this.members.has(entity)) return;
-        // console.log("adding "+this.constructor.name+" "+entity);
         const boundUpdate = this.updateEntity.bind(this, entity, ...components);
         const entry = { components, boundUpdate };
         this.members.set(entity, entry);
@@ -43,18 +42,18 @@ export class System {
         this.dt = dt;
         this.timestamp = timestamp;
         if (!this.preUpdate()) {
-            return
-        };
+            return;
+        }
         this.updateAllEntities();
         this.postUpdate();
     }
 
-    public preUpdate():boolean {
+    public preUpdate(): boolean {
         return true;
     }
 
     public updateAllEntities() {
-        for(let i of this.members.keys()) {
+        for (let i of this.members.keys()) {
             this.members.get(i).boundUpdate();
         }
     }

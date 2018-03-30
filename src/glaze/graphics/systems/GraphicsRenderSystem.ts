@@ -38,9 +38,6 @@ export class GraphicsRenderSystem extends System {
         this.camera.addChild(this.itemContainer);    }
 
     initalize() {
-        // this.camera.worldExtentsAABB.expand(-16);
-
-
     }
 
     onEntityAdded(entity: Entity, position: Position, graphics: Graphics) {

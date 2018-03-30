@@ -19,6 +19,8 @@ import { TestFilters } from "../config/Filters";
 import { Moveable } from "../../glaze/core/components/Moveable";
 import { Active } from "../../glaze/core/components/Active";
 import { Held } from "../../glaze/core/components/Held";
+import { Ballistics } from "../../glaze/util/Ballastics";
+import { PlasmaBall } from "../factories/projectile/PlasmaBall";
 
 /*
 backspace   8
@@ -89,7 +91,7 @@ export class PlayerSystem extends System {
 
     playerLight: Entity;
     playerHolder: Entity;
-    holder:Holder;
+    holder: Holder;
     //  inventory:Inventory;
 
     animation: GraphicsAnimation;
@@ -136,11 +138,11 @@ export class PlayerSystem extends System {
         // inventory = new Inventory(4);
 
         this.playerHolder = this.engine.createEntity();
-        this.engine.addComponentsToEntity(this.playerHolder,[
+        this.engine.addComponentsToEntity(this.playerHolder, [
             position,
             extents,
             this.holder,
-            new PhysicsCollision(true,new Filter(1,0,TestFilters.PLAYER_GROUP),[],false,physicsBody.body),
+            new PhysicsCollision(true, new Filter(1, 0, TestFilters.PLAYER_GROUP), [], false, physicsBody.body),
             new Moveable(),
             new Active(),
         ]);
@@ -193,7 +195,7 @@ export class PlayerSystem extends System {
         // }
         // TODO
         if (this.input.Pressed(85)) {
-            BeeFactory.create(this.engine,position.clone());
+            BeeFactory.create(this.engine, position.clone());
         }
         // TODO
         this.holder.activate = this.input.JustPressed(72);
@@ -203,18 +205,17 @@ export class PlayerSystem extends System {
         if (this.input.JustPressed(74)) {
             //Drop Item 'J'
             // var item = this.holder.drop();
-            if (this.holder.heldItem!=null) {
-                // TODO move this somewhere sensible
-                this.engine.removeComponentsFromEntity(this.holder.heldItem, [Held]);
-                this.holder.heldItem = null;
-            }
-
+            Holder.drop(this.engine, this.holder);
         } else if (this.input.JustPressed(75)) {
             //Throw Item 'K'
-            // var item = holder.drop();
-            // if (item!=null) {
-            //     glaze.util.Ballistics.calcProjectileVelocity(item.getComponent(PhysicsBody).body,input.ViewCorrectedMousePosition(),700);
-            // }
+            const item = Holder.drop(this.engine, this.holder);
+            if (item != null) {
+                Ballistics.calcProjectileVelocity(
+                    this.engine.getComponentForEntity(item, PhysicsBody).body,
+                    this.input.ViewCorrectedMousePosition(),
+                    700,
+                );
+            }
         }
 
         // TODO
@@ -246,8 +247,13 @@ export class PlayerSystem extends System {
                     this.input.ViewCorrectedMousePosition(),
                 );
             }
-            // if (this.currentWeapon==1)
-            //     exile.entities.projectile.PlasmaProjectileFactory.create(engine,position.clone(),playerFilter.clone(),input.ViewCorrectedMousePosition());
+            if (this.currentWeapon == 1)
+                PlasmaBall.create(
+                    this.engine,
+                    position.clone(),
+                    physicsCollision.proxy.filter.clone(),
+                    this.input.ViewCorrectedMousePosition(),
+                );
         }
         //'e' aim
         if (this.input.Pressed(69)) {

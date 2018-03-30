@@ -1,6 +1,8 @@
 import { IParticleEngine } from "../engines/IParticleEngine";
 import { Vector2 } from "../../geom/Vector2";
+import { Engine, GetC4E } from "../../ecs/Engine";
+import { Entity } from "../../ecs/Entity";
 
 export interface IParticleEmitter {
-    update(time: number, position: Vector2, engine: IParticleEngine): void;
+    update(time: number, c4e: GetC4E, position: Vector2, particleEngine: IParticleEngine): void;
 }
