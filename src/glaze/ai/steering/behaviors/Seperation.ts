@@ -1,9 +1,9 @@
-// import { Behavior } from "./Behavior";
 // import { Entity } from "../../../ecs/Entity";
 // import { SteeringSettings } from "../SteeringSettings";
-// import { Body } from "../../../physics/Body";
+// import { Behavior } from "./Behavior";
 // import { SteeringAgentParameters } from "../SteeringAgentParameters";
 // import { Vector2 } from "../../../geom/Vector2";
+// import { Body } from "../../../physics/Body";
 
 // export class Seperation extends Behavior
 // {
@@ -17,11 +17,11 @@
 // 		this.seperationDistance = seperationDistance;
 // 	}
 
-// 	public calculate(agent:Body,params:SteeringAgentParameters,result:Vector2) {
-		
+//     calculate(agent: Body, params: SteeringAgentParameters, result: Vector2) {
+
 // 		var count = 0;
 
-// 		for (entity in group) {
+//         this.group.forEach(entity=>{
 // 			var body = entity.getComponent(PhysicsBody).body;
 // 			if (body!=this.agent) {
 // 				if (body.position.distSqrd(agent.position)<this.seperationDistance*this.seperationDistance) {
@@ -30,7 +30,8 @@
 // 					count++;
 // 				}
 // 			}
-// 		}
+//         }
+//     })
 
 // 		if (count>0) {
 // 			result.multEquals(-1/count);
@@ -40,5 +41,5 @@
 
 // 	}
 
-	
+
 // }

@@ -1,3 +1,5 @@
+import { TileMapCollision } from "../../physics/collision/broadphase/TileMapCollision";
+
 export class SteeringAgentParameters {
     static default_scale: number = 0.2;
     static heavy_scale: number = 5;
@@ -6,6 +8,7 @@ export class SteeringAgentParameters {
 
     public maxAcceleration: number; // = 100/5;
     public maxSteeringForcePerStep: number; // = 100/5;
+    public map: TileMapCollision;
 
     constructor(maxAcceleration: number, maxSteeringForcePerStep: number) {
         this.maxAcceleration = maxAcceleration;

@@ -27,14 +27,12 @@ export class WallAvoidance extends Behavior {
     bottom: Vector2 = new Vector2(0, 1);
     left: Vector2 = new Vector2(-1, 0);
     searchAABB: AABB2 = new AABB2();
-    map: TileMapCollision;
 
     closestFeeler: Feeler = null;
     closestDist: number = Number.POSITIVE_INFINITY;
 
-    constructor(map: TileMapCollision, feelerLength: number) {
+    constructor( feelerLength: number) {
         super(SteeringSettings.wallAvoidanceWeight, SteeringSettings.wallAvoidancePriority);
-        this.map = map;
         this.feelerLength = feelerLength;
 
         this.ptv1 = new Vector2();
@@ -122,7 +120,7 @@ export class WallAvoidance extends Behavior {
         this.searchAABB.addPoint(this.feelers[1].tip.x, this.feelers[1].tip.y);
         this.searchAABB.addPoint(this.feelers[2].tip.x, this.feelers[2].tip.y);
         // searchAABB.expand(20);
-        this.map.iterateCells(this.searchAABB, this.checkAABB);
+        params.map.iterateCells(this.searchAABB, this.checkAABB);
 
         if (this.closestFeeler != null) this.closestFeeler.CalculateForce(result);
     }

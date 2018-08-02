@@ -185,7 +185,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new HeldSystem());
 
         corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine));
-        corePhase.addSystem(new SteeringSystem());
+        corePhase.addSystem(new SteeringSystem(tileMapCollision));
 
         corePhase.addSystem(new ControllerSystem(this.input));
 

@@ -38,8 +38,6 @@ export class DynamicTreeBroadphase implements IBroadphase {
     }
 
     public collide() {
-        // console.time("Collide");
-
         //Loop back over the proxies
         var i = this.dynamicProxies.length;
         while (--i >= 0) {
@@ -60,20 +58,14 @@ export class DynamicTreeBroadphase implements IBroadphase {
         }
 
         var k = this.dynamicProxies.length;
-        // console.log("start");
-        let count = 0;
         while (--k >= 0) {
             var dynamicProxy = this.dynamicProxies[k];
-            this.tree.query(dynamicProxy, (other: BFProxy) => {
-                Collide(dynamicProxy, other);
-                count++;
-                return false;
-            });
+            this.tree.query(dynamicProxy);
+            // this.tree.query(dynamicProxy, (other: BFProxy) => {
+            //     Collide(dynamicProxy, other);
+            //     return false;
+            // });
         }
-        // console.log(count);
-        // console.log("end");
-        // console.timeEnd("Collide");
-
     }
 
     public QueryArea(aabb: AABB, result: QueryCallback, checkDynamic: boolean = true, checkStatic: boolean = true) {

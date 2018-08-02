@@ -453,7 +453,7 @@ export class DynamicTree {
      * that you are complete with your query and you do not want to continue. Returning false will continue searching
      * the tree until all possible colliders have been returned.
      */
-    public query(body: BFProxy, callback: (other: BFProxy) => boolean): void {
+    public query(body: BFProxy) { // , callback: (other: BFProxy) => boolean): void {
         var b = this.nodes.get(body.id);
         var bounds = b.bounds;
         //var bounds = body.aabb.toAABB2();

@@ -5,19 +5,23 @@ import { Steering } from "../components/Steering";
 import { Entity } from "../../../ecs/Entity";
 import { Body } from "../../../physics/Body";
 import { Behavior } from "../behaviors/Behavior";
+import { TileMapCollision } from "../../../physics/collision/broadphase/TileMapCollision";
 
 export class SteeringSystem extends System {
     public behaviorForce: Vector2;
     public totalForce: Vector2;
+    public map: TileMapCollision;
 
-    constructor() {
+    constructor(map: TileMapCollision) {
         super([PhysicsBody, Steering]);
         this.behaviorForce = new Vector2();
         this.totalForce = new Vector2();
+        this.map = map;
     }
 
     updateEntity(entity: Entity, physicsBody: PhysicsBody, steering: Steering) {
         if (steering.hasChanged) {
+            steering.steeringParameters.map = this.map;
             steering.behaviors.sort(this.behaviorsCompare);
             steering.hasChanged = false;
         }

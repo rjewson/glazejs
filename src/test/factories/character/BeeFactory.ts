@@ -24,6 +24,8 @@ import { ParticleEmitter } from "../../../glaze/particle/components/ParticleEmit
 import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { State } from "../../../glaze/core/components/State";
+import { TileMapCollision } from "../../../glaze/physics/collision/broadphase/TileMapCollision";
+import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidance";
 
 export class BeeFactory {
 
@@ -54,7 +56,7 @@ export class BeeFactory {
                 [
                     new Wander(80, 40, 143.5),
                     new Seek(position.coords.clone(), 32),
-                    // ,new WallAvoidance(map,40)
+                    new WallAvoidance(40)
                 ],
                 HEAVY_STEERING_PARAMS,
             ),

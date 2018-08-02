@@ -27,6 +27,7 @@ import { Arrival } from "../../../glaze/ai/steering/behaviors/Arrival";
 import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidance";
 import { State } from "../../../glaze/core/components/State";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
+import { TileMapCollision } from "../../../glaze/physics/collision/broadphase/TileMapCollision";
 
 export class BirdFactory {
 
@@ -60,7 +61,7 @@ export class BirdFactory {
                 new Arrival(follow.coords, 256),
                 //,new Seek(follow.coords,32)
                 // new Arrival(follow.coords,128,32)
-                // new WallAvoidance(map, 60),
+                new WallAvoidance(60),
                 // ,new Seperation(nest.getComponent(BirdNest).group.members,20)
             ]),
             new State(BirdFactory.states, null, false),
