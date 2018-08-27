@@ -518,19 +518,32 @@ export class DynamicTree {
     }
 
     public queryArea(area: AABB2, callback: (other: BFProxy) => boolean): void {
-        var helper = (currentNode: TreeNode): boolean => {
-            if (currentNode && currentNode.bounds.intersect(area)) {
-                if (currentNode.isLeaf()) {
-                    callback(currentNode.body);
-                    return false;
-                } else {
-                    return helper(currentNode.left) || helper(currentNode.right);
-                }
-            }
-            return false;
-        };
-        helper(this.root);
+        // var helper = (currentNode: TreeNode): boolean => {
+        //     if (currentNode && currentNode.bounds.intersect(area)) {
+        //         if (currentNode.isLeaf()) {
+        //             callback(currentNode.body);
+        //             return false;
+        //         } else {
+        //             return helper(currentNode.left) || helper(currentNode.right);
+        //         }
+        //     }
+        //     return false;
+        // };
+        // helper(this.root);
+        DynamicTree.queryAreaHelper(this.root, area, callback);
     }
+
+    static queryAreaHelper(currentNode: TreeNode, area:AABB2, callback: (other: BFProxy) => boolean): boolean {
+        if (currentNode && currentNode.bounds.intersect(area)) {
+            if (currentNode.isLeaf()) {
+                callback(currentNode.body);
+                return false;
+            } else {
+                return DynamicTree.queryAreaHelper(currentNode.left, area, callback) || DynamicTree.queryAreaHelper(currentNode.right, area, callback);
+            }
+        }
+        return false;
+    };
 
     //  public getNodes(): TreeNode[] {
     //     var helper = (currentNode: TreeNode): TreeNode[] => {

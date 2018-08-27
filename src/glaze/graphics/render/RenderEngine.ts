@@ -97,7 +97,7 @@ export class RendererEngine {
 
         // this.gl.disable(WebGLRenderingContext.BLEND);
         // this.gl.disable(WebGLRenderingContext.DEPTH_TEST);
-        
+
         //9FBCC5
         //159 188 197 1
 

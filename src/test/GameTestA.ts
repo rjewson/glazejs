@@ -306,7 +306,6 @@ export class GameTestA extends GlazeEngine {
         // const lightSystem = new CALightingSystem(tileMapCollision.data);
         // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
         // renderPhase.addSystem(lightSystem);
-
         // END SETUP RENDER SYSTEM
 
         const playerPosition = this.mapPosition(33.5, 38.5); //     this.mapPosition(3, 16);
