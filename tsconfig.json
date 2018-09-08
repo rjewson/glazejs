@@ -1,8 +1,12 @@
 {
-    "compilerOptions": {
-        "sourceMap": true,
-        "target": "es6",
-        "noStrictGenericChecks": true,
-        "allowJs": true,
-    }
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es6",
+    "noStrictGenericChecks": true,
+    "allowJs": true,
+    "lib": ["webworker"],
+    // "paths": {
+    //   "*": ["node_modules/*", "src/typings/*"]
+    // }
+  }
 }

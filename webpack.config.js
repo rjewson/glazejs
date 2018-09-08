@@ -5,7 +5,7 @@ module.exports = {
     devtool: "inline-source-map",
     mode: "development",
     entry: "./src/index.ts",
-    output: { filename: "./dist/index.js" },
+    output: { filename: "./dist/index.js", globalObject: 'this' },
     module: {
         rules: [
             {
@@ -14,7 +14,7 @@ module.exports = {
                 options: {
                     transpileOnly: true
                 }
-            },
+            }
         ],
     },
     resolve: {
@@ -24,6 +24,7 @@ module.exports = {
     serve: {
         content: "./dist/",
         port: 8000,
+        hot: false,
     },
     performance: {
         hints: false

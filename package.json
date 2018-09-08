@@ -6,20 +6,19 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "dev": "webpack-serve ./webpack.config.js"
+    "dev": "webpack-serve --hmr false ./webpack.config.js"
   },
   "author": "rjewson@gmail.com",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "@types/webgl2": "0.0.4",
     "ts-loader": "5.0.0",
     "tslint": "^5.11.0",
     "typescript": "^2.9.2",
     "webpack": "^4.17.2",
     "webpack-serve": "^2.0.2",
-    "webpack-cli": "^3.1.0"
-  },
-  "devDependencies": {
+    "webpack-cli": "^3.1.0",
     "worker-loader": "^2.0.0"
-  }
+  },
+  "dependencies": {}
 }

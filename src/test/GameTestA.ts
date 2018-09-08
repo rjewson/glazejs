@@ -97,6 +97,7 @@ import { Phase } from "../glaze/ecs/Phase";
 import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
+import { WorkerSystem } from "./systems/WorkerSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -219,7 +220,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new TeleporterSystem());
 
         corePhase.addSystem(new DestroySystem());
-
+        corePhase.addSystem(new WorkerSystem());
         // BEGIN RENDER SYSTEM
 
         const renderPhase = new Phase();
@@ -286,6 +287,8 @@ export class GameTestA extends GlazeEngine {
         );
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
+        
+        
 
         // GPU calculated lights
         // const lightSystem = new PointLightingSystem(tileMapCollision);
