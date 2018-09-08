@@ -143,7 +143,7 @@ export class GameTestA extends GlazeEngine {
 
     initalize() {
         this.engine.addCapacityToEngine(1000);
-
+        console.log("init7");
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);

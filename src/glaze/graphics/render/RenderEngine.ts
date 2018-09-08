@@ -51,7 +51,7 @@ export class RendererEngine {
     public InitalizeWebGlContext() {
         this.view.addEventListener("webglcontextlost", this.onContextLost, false);
         this.view.addEventListener("webglcontextrestored", this.onContextRestored, false);
-        this.gl = this.view.getContext("webgl", this.contextAttributes);
+        this.gl = this.view.getContext("webgl2", this.contextAttributes);
 
         this.gl.disable(WebGLRenderingContext.DEPTH_TEST);
         this.gl.disable(WebGLRenderingContext.CULL_FACE);

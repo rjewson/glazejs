@@ -3,6 +3,7 @@ var path = require("path");
 
 module.exports = {
     devtool: "inline-source-map",
+    mode: "development",
     entry: "./src/index.ts",
     output: { filename: "./dist/index.js" },
     module: {
@@ -10,6 +11,9 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: "ts-loader",
+                options: {
+                    transpileOnly: true
+                }
             },
         ],
     },
@@ -17,8 +21,16 @@ module.exports = {
         extensions: [".ts", ".tsx", ".js"],
     },
     watch:true,
-    devServer: {
-        contentBase: "./dist/",
+    serve: {
+        content: "./dist/",
         port: 8000,
     },
+    performance: {
+        hints: false
+    },
+    optimization: {
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false,
+      }
 };
