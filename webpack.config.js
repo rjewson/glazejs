@@ -14,7 +14,11 @@ module.exports = {
                 options: {
                     transpileOnly: true
                 }
-            }
+            },
+            // {
+            //     test: /\.wasm$/,
+            //     loaders: ['wasm-loader']
+            // }
         ],
     },
     resolve: {

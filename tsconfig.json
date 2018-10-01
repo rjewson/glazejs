@@ -4,7 +4,8 @@
     "target": "es6",
     "noStrictGenericChecks": true,
     "allowJs": true,
-    "lib": ["webworker"],
+    "lib": ["dom", "webworker", "es6"],
+    "module": "ESNext",
     // "paths": {
     //   "*": ["node_modules/*", "src/typings/*"]
     // }

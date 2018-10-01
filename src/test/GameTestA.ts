@@ -98,6 +98,7 @@ import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
 import { WorkerSystem } from "./systems/WorkerSystem";
+import {m} from "../glaze/wasm/test";
 
 interface GlazeMapLayerConfig {}
 
@@ -143,8 +144,13 @@ export class GameTestA extends GlazeEngine {
     }
 
     initalize() {
+        import("../glaze/wasm/test.wasm").then((addModule: m) => {
+            console.log(addModule._Z7squaredi(10));
+        });
+
         this.engine.addCapacityToEngine(1000);
         console.log("init7");
+        
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);

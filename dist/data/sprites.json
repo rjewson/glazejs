@@ -1135,12 +1135,12 @@
 	"pivot": {"x":0.5,"y":0.5}
 }},
 "meta": {
-	"app": "http://www.codeandweb.com/texturepacker",
+	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "sprites.png",
 	"format": "RGBA8888",
 	"size": {"w":128,"h":256},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a88219b23bd770db41ca02dde65abf0b:e11b16a357242d1368e0a7f03ca425c1:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:3b83b5d90a42d1baec608fd3c8b0e78a:04deac9a3fbb0c9fe4b6941b41960d08:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }
