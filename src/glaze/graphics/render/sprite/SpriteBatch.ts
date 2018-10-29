@@ -3,11 +3,10 @@ import { Sprite } from "../../displaylist/Sprite";
 import { Stage } from "../../displaylist/Stage";
 import { AABB2 } from "../../../geom/AABB2";
 import { DisplayObjectContainer } from "../../displaylist/DisplayObjectContainer";
-import { DisplayObject } from "../../displaylist/DIsplayObject";
 import { ShaderWrapper } from "../util/ShaderWrapper";
 
 export class WebGLBatch {
-    public gl: WebGLRenderingContext;
+    public gl: WebGL2RenderingContext;
 
     public size: number;
     public dynamicSize: number;
@@ -20,7 +19,7 @@ export class WebGLBatch {
 
     public blendMode: number;
 
-    constructor(gl: WebGLRenderingContext) {
+    constructor(gl: WebGL2RenderingContext) {
         this.gl = gl;
         this.size = 1;
         this.indexBuffer = gl.createBuffer();
@@ -34,11 +33,7 @@ export class WebGLBatch {
     public ResizeBatch(size: number) {
         this.size = size;
         this.dynamicSize = size;
-
         this.data = new Float32Array(this.dynamicSize * 20);
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, this.data, WebGLRenderingContext.DYNAMIC_DRAW);
-
         this.indices = new Uint16Array(this.dynamicSize * 6);
 
         for (let i = 0; i < this.dynamicSize; i++) {
@@ -51,18 +46,13 @@ export class WebGLBatch {
             this.indices[index2 + 4] = index3 + 2;
             this.indices[index2 + 5] = index3 + 3;
         }
-
-        this.gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        this.gl.bufferData(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, this.indices, WebGLRenderingContext.STATIC_DRAW);
     }
 
     public Flush(shader: ShaderWrapper, texture: Texture, size: number) {
+        if (size === 0) return;
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        // this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,data,WebGLRenderingContext.STATIC_DRAW);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
-        this.gl.vertexAttribPointer(shader.attribute.aVertexPosition, 2, WebGLRenderingContext.FLOAT, false, 20, 0);
-        this.gl.vertexAttribPointer(shader.attribute.aTextureCoord, 2, WebGLRenderingContext.FLOAT, false, 20, 8);
-        this.gl.vertexAttribPointer(shader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, 20, 16);
+        // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data.subarray(0, size * 20));
+        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data, 0, size * 20);
         this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
         this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
         this.gl.drawElements(WebGLRenderingContext.TRIANGLES, size * 6, WebGLRenderingContext.UNSIGNED_SHORT, 0);
@@ -156,5 +146,4 @@ export class WebGLBatch {
 
         if (indexRun > 0) this.Flush(shader, currentTexture, indexRun);
     }
-    
 }

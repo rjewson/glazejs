@@ -8,7 +8,7 @@ import { ShaderWrapper } from "../util/ShaderWrapper";
 import { WebGLBatch } from "./SpriteBatch";
 
 export class SpriteRenderer implements IRenderer {
-    public gl: WebGLRenderingContext;
+    public gl: WebGL2RenderingContext;
     public stage: Stage;
     public camera: Camera;
 
@@ -19,9 +19,11 @@ export class SpriteRenderer implements IRenderer {
 
     public first: boolean = true;
 
+    public vao: WebGLVertexArrayObject;
+
     constructor() {}
 
-    public Init(gl: WebGLRenderingContext, camera: Camera) {
+    public Init(gl: WebGL2RenderingContext, camera: Camera) {
         this.gl = gl;
         this.camera = camera;
         this.projection = new Vector2();
@@ -30,8 +32,8 @@ export class SpriteRenderer implements IRenderer {
             WebGLShaderUtils.CompileProgram(
                 gl,
                 SpriteRenderer.SPRITE_VERTEX_SHADER,
-                SpriteRenderer.SPRITE_FRAGMENT_SHADER,
-            ),
+                SpriteRenderer.SPRITE_FRAGMENT_SHADER
+            )
         );
         this.spriteBatch = new WebGLBatch(gl);
         this.spriteBatch.ResizeBatch(1000);
@@ -40,6 +42,54 @@ export class SpriteRenderer implements IRenderer {
     public Resize(width: number, height: number) {
         this.projection.x = width / 2;
         this.projection.y = height / 2;
+
+        this.gl.uniform2f(this.spriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
+        this.gl.uniform1i(this.spriteShader.uniform.uSampler, 0);
+
+        this.vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(this.vao);
+        this.gl.bindBuffer(WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER, this.spriteBatch.indexBuffer);
+        this.gl.bufferData(
+            WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER,
+            this.spriteBatch.indices,
+            WebGL2RenderingContext.STATIC_DRAW
+        );
+
+        this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.spriteBatch.dataBuffer);
+        this.gl.bufferData(
+            WebGL2RenderingContext.ARRAY_BUFFER,
+            this.spriteBatch.data,
+            WebGL2RenderingContext.STREAM_DRAW
+        );
+        // this.gl.uniform2f(
+        //     this.spriteShader.uniform.projectionVector,
+        //     this.projection.x,
+        //     this.projection.y
+        // );
+        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aVertexPosition);
+        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aTextureCoord);
+        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aColor);
+        this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.spriteBatch.dataBuffer);
+
+        this.gl.vertexAttribPointer(
+            this.spriteShader.attribute.aVertexPosition,
+            2,
+            WebGL2RenderingContext.FLOAT,
+            false,
+            20,
+            0
+        );
+        this.gl.vertexAttribPointer(
+            this.spriteShader.attribute.aTextureCoord,
+            2,
+            WebGL2RenderingContext.FLOAT,
+            false,
+            20,
+            8
+        );
+        this.gl.vertexAttribPointer(this.spriteShader.attribute.aColor, 1, WebGL2RenderingContext.FLOAT, false, 20, 16);
+
+        this.gl.bindVertexArray(null);
     }
 
     public AddStage(stage: Stage) {
@@ -50,32 +100,9 @@ export class SpriteRenderer implements IRenderer {
         this.stage.updateTransform();
 
         this.gl.useProgram(this.spriteShader.program);
-        // if (first) {
-        this.gl.uniform2f(this.spriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
-        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aVertexPosition);
-        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aTextureCoord);
-        this.gl.enableVertexAttribArray(this.spriteShader.attribute.aColor);
-        //     first=false;
-        // }
-        this.gl.vertexAttribPointer(
-            this.spriteShader.attribute.aVertexPosition,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            0,
-        );
-        this.gl.vertexAttribPointer(
-            this.spriteShader.attribute.aTextureCoord,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            8,
-        );
-        this.gl.vertexAttribPointer(this.spriteShader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, 20, 16);
-
+        this.gl.bindVertexArray(this.vao);
         this.spriteBatch.Render(this.spriteShader, this.stage, this.camera.viewPortAABB);
+        this.gl.bindVertexArray(null);
     }
 
     static SPRITE_VERTEX_SHADER: string = `

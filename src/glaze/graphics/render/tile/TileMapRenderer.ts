@@ -90,13 +90,17 @@ export class TileMapRenderer implements IRenderer {
             -1,
             1,
             0,
-            0,
+            0
         ]);
 
         gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, quadVerts, WebGLRenderingContext.STATIC_DRAW);
         this.tilemapShader = new ShaderWrapper(
             gl,
-            WebGLShaderUtils.CompileProgram(gl, TileMapRenderer.TILEMAP_VERTEX_SHADER, TileMapRenderer.TILEMAP_FRAGMENT_SHADER),
+            WebGLShaderUtils.CompileProgram(
+                gl,
+                TileMapRenderer.TILEMAP_VERTEX_SHADER,
+                TileMapRenderer.TILEMAP_FRAGMENT_SHADER
+            )
         );
 
         this.flip = false;
@@ -115,7 +119,7 @@ export class TileMapRenderer implements IRenderer {
         this.scaledViewportSize[0] = this.viewportSize.x / this.tileScale;
         this.scaledViewportSize[1] = this.viewportSize.y / this.tileScale;
         this.renderLayers.forEach(renderLayer =>
-            renderLayer.Resize(Math.floor(expandedWidth), Math.floor(expandedHeight)),
+            renderLayer.Resize(Math.floor(expandedWidth), Math.floor(expandedHeight))
         );
     }
 
@@ -136,29 +140,29 @@ export class TileMapRenderer implements IRenderer {
             WebGLRenderingContext.RGBA,
             WebGLRenderingContext.RGBA,
             WebGLRenderingContext.UNSIGNED_BYTE,
-            image,
+            image
         );
         if (!this.filtered) {
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.NEAREST,
+                WebGLRenderingContext.NEAREST
             );
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.NEAREST,
+                WebGLRenderingContext.NEAREST
             );
         } else {
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.LINEAR,
+                WebGLRenderingContext.LINEAR
             );
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.LINEAR,
+                WebGLRenderingContext.LINEAR
             ); // Worth it to mipmap here?
         }
         this.inverseSpriteTextureSize[0] = 1 / image.width;
@@ -178,7 +182,7 @@ export class TileMapRenderer implements IRenderer {
         sprite: BaseTexture,
         layerId: string,
         scrollScaleX: number,
-        scrollScaleY: number,
+        scrollScaleY: number
     ) {
         var layer = new TileLayer();
         layer.setTextureFromMap(this.gl, data);
@@ -189,14 +193,13 @@ export class TileMapRenderer implements IRenderer {
         this.layersMap.set(layerId, layer);
     }
 
-    public SetTileRenderLayer(id:string, layers: Array<string>) {
+    public SetTileRenderLayer(id: string, layers: Array<string>) {
         var tileRenderLayer = new TileLayerRenderProxy(this, layers);
         this.renderLayers.push(tileRenderLayer);
-        this.renderLayersMap.set(id,tileRenderLayer);
+        this.renderLayersMap.set(id, tileRenderLayer);
     }
 
     public updateMap(x: number, y: number, data: Array<number>) {
-
         var startX = data[0];
         var startY = data[1];
         var width = data[2];
@@ -231,7 +234,7 @@ export class TileMapRenderer implements IRenderer {
             height,
             WebGLRenderingContext.RGBA,
             WebGLRenderingContext.UNSIGNED_BYTE,
-            this.writebuffer2.data8,
+            this.writebuffer2.data8
         );
     }
 
@@ -256,7 +259,7 @@ export class TileMapRenderer implements IRenderer {
             WebGLRenderingContext.FLOAT,
             false,
             16,
-            0,
+            0
         );
         this.gl.vertexAttribPointer(this.tilemapShader.attribute.texture, 2, WebGLRenderingContext.FLOAT, false, 16, 8);
 

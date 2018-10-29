@@ -15,7 +15,7 @@ export class RendererEngine {
     public width: number;
     public height: number;
 
-    public gl: WebGLRenderingContext;
+    public gl: WebGL2RenderingContext;
     public contextAttributes: WebGLContextAttributes;
 
     private contextLost: boolean;
@@ -60,7 +60,7 @@ export class RendererEngine {
         this.gl.clearColor(0, 0, 0, 1);
         this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA,WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
 
-        if (!this.gl.getExtension("OES_texture_float")) console.log("New browser time: Float textures not supported");
+        // if (!this.gl.getExtension("OES_texture_float")) console.log("New browser time: Float textures not supported");
     }
 
     public Resize(width: number, height: number) {
