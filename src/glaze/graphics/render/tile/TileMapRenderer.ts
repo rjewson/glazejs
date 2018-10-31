@@ -298,7 +298,7 @@ export class TileMapRenderer implements IRenderer {
 
     8x8 supertiles = 64 supertiles
 
-    of 
+    of
 
     16*16 8*8 pixel tiles = 256 tiles
 
@@ -344,7 +344,7 @@ p.x = Math.floor(index / 8);
         void main(void) {
            vec4 tile = texture2D(tiles, texCoord);
             // if(tile.x == 1.0 && tile.y == 1.0) { discard; }
-            if (tile.x == 1.0 && tile.y == 1.0) { 
+            if (tile.x == 1.0 && tile.y == 1.0) {
                 discard;
                 // gl_FragColor = vec4(0.0,0.0,0.0,0.0);
             } else {

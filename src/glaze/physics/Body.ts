@@ -1,6 +1,7 @@
 import { Vector2 } from "../geom/Vector2";
 import { Material } from "./Material";
 import { Contact } from "./collision/Contact";
+import { MAXINT } from "../util/Maths";
 
 const SLEEP_BIAS: number = 0.99332805041467;
 const SLEEP_EPSILON: number = 0.0009;
@@ -116,7 +117,7 @@ export class Body {
 
         this.stepContactCount = 0;
 
-        this.toi = Number.POSITIVE_INFINITY;
+        this.toi = MAXINT;
     }
 
     public respondStaticCollision(contact: Contact): boolean {
@@ -177,7 +178,7 @@ export class Body {
         if (this.skip || this.isSleeping) return;
         //Its a bullet and it hit something?
         if (this.isBullet) {
-            if (this.toi < Number.POSITIVE_INFINITY) {
+            if (this.toi < MAXINT) {
                 this.position.copy(this.positionCorrection);
                 this.originalVelocity.reflectEquals(this.contactNormal);
                 //Fixme

@@ -14,12 +14,14 @@ import { Viewable } from "../components/Viewable";
 export class WaterSystem extends System {
     public particleEngine: IParticleEngine;
     public cycle: number;
+    private _tempVec: Vector2;
 
     constructor(particleEngine: IParticleEngine) {
         super([PhysicsCollision, Extents, Water]);
         this.particleEngine = particleEngine;
         this.cycle = 0;
         this.callback = this.callback.bind(this);
+        this._tempVec = new Vector2();
     }
 
     onEntityAdded(entity: Entity, physicsCollision: PhysicsCollision, extents: Extents, water: Water) {
@@ -36,7 +38,8 @@ export class WaterSystem extends System {
         var area = a.aabb.overlapArea(b.aabb);
         b.body.damping = 0.9;
         // b.body.addForce(new Vector2(0, -area * 5));
-        b.body.addForce(new Vector2(0, -area * (4.5 + Math.sin(this.cycle) * 0.5)));
+        this._tempVec.setTo(0, -area * (4.5 + Math.sin(this.cycle) * 0.5));
+        b.body.addForce(this._tempVec);
 
         // trace(-area*0.05,b.body.mass);
         if (!b.body.inWaterPrev) {

@@ -335,6 +335,16 @@ export const StaticAABBvsSweeptAABB = function(
     }
 };
 
+// const dx = aabb_position_B.x - aabb_position_A.x;
+    // const dy = aabb_position_B.y - aabb_position_A.y;
+
+    // if (dx*dx>dy*dy) {
+    //     contact.normal.x = dx>=0 ? -1: 1;
+    //     contact.normal.y = 0;
+    // } else {
+    //     contact.normal.x = 0;
+    //     contact.normal.y = dy>=0 ? -1 : 1;
+    // }
 export const AABBvsStaticSolidAABB = function(
     aabb_position_A: Vector2,
     aabb_extents_A: Vector2,
@@ -344,11 +354,11 @@ export const AABBvsStaticSolidAABB = function(
     contact: Contact,
 ): boolean {
     //New overlap code, handle corners better
-    var dx = aabb_position_B.x - aabb_position_A.x;
-    var px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
+    const dx = aabb_position_B.x - aabb_position_A.x;
+    const px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
 
-    var dy = aabb_position_B.y - aabb_position_A.y;
-    var py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
+    const dy = aabb_position_B.y - aabb_position_A.y;
+    const py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
 
     if (px < py) {
         contact.normal.x = dx < 0 ? 1 : -1;
@@ -361,21 +371,11 @@ export const AABBvsStaticSolidAABB = function(
     contact.normal.x *= bias.x;
     contact.normal.y *= bias.y;
 
-    // var dx = aabb_position_B.x - aabb_position_A.x;
-    // var dy = aabb_position_B.y - aabb_position_A.y;
+    const pcx = contact.normal.x * (aabb_extents_A.x + aabb_extents_B.x) + aabb_position_B.x;
+    const pcy = contact.normal.y * (aabb_extents_A.y + aabb_extents_B.y) + aabb_position_B.y;
 
-    // if (dx*dx>dy*dy) {
-    //     contact.normal.x = dx>=0 ? -1: 1;
-    //     contact.normal.y = 0;
-    // } else {
-    //     contact.normal.x = 0;
-    //     contact.normal.y = dy>=0 ? -1 : 1;
-    // }
-    var pcx = contact.normal.x * (aabb_extents_A.x + aabb_extents_B.x) + aabb_position_B.x;
-    var pcy = contact.normal.y * (aabb_extents_A.y + aabb_extents_B.y) + aabb_position_B.y;
-
-    var pdx = aabb_position_A.x - pcx;
-    var pdy = aabb_position_A.y - pcy;
+    const pdx = aabb_position_A.x - pcx;
+    const pdy = aabb_position_A.y - pcy;
 
     contact.distance = pdx * contact.normal.x + pdy * contact.normal.y;
 

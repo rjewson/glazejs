@@ -4,20 +4,20 @@ import { Node } from "./Node";
 export class AStar implements IPathfinder
 {
 
-	constructor() 
+	constructor()
 	{
-		
+
 	}
-	
+
 	public FindPath(nodes:Array<Node>, start:Node, finish:Node):Array<Node> {
 		return [];
 		// var open = new GenericStack<Node>();
 		// var closed = new GenericStack<Node>();
-		
+
 		// open.add(start);
 		// while (!open.isEmpty()) {
 		// //while(open.size() > 0){
-		// 	var lowest:Float = Math.POSITIVE_INFINITY;
+		// 	var lowest:Float = MAXINT;
 		// 	//float lowest = Float.MAX_VALUE;
 		// 	//int c = -1;
 		// 	var current:Node = null;
@@ -30,7 +30,7 @@ export class AStar implements IPathfinder
 		// 	if(current == finish){
 		// 		break;
 		// 	}
-			
+
 		// 	for (edge in current.links) {
 		// 		var adjacent = edge.node;
 		// 		if (adjacent.walkable && Lambda.indexOf(closed, adjacent) < 0) {
@@ -47,7 +47,7 @@ export class AStar implements IPathfinder
 		// 		}
 		// 	}
 		// }
-		
+
 		// // Path generation
 		// var path = new Array<Node>();
 		// var pathNode:Node = finish;
@@ -57,5 +57,5 @@ export class AStar implements IPathfinder
 		// }
 
 		// return path;
-	}	
+	}
 }

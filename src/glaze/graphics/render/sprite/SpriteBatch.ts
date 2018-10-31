@@ -137,10 +137,10 @@ export class WebGLBatch {
                     indexRun = 0;
                     currentTexture = sprite.texture.baseTexture.texture;
                 }
-                if (clip == null || sprite.aabb.intersect(clip)) {
+                // if (clip == null || sprite.aabb.intersect(clip)) {
                     this.AddSpriteToBatch(sprite, indexRun);
                     indexRun++;
-                }
+                // }
             }
         }
 

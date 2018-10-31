@@ -53,8 +53,11 @@ export class System {
     }
 
     public updateAllEntities() {
-        for (let i of this.members.keys()) {
-            this.members.get(i).boundUpdate();
+        // for (let i of this.members.keys()) {
+        //     this.members.get(i).boundUpdate();
+        // }
+        for (let i of this.members.values()) {
+            i.boundUpdate();
         }
     }
 

@@ -69,17 +69,17 @@ export class DisplayObjectContainer extends DisplayObject {
 
     public updateTransform() {
         //Reset AABB
-        this.aabb.reset();
+        //this.aabb.reset();
         super.updateTransform();
         this.calcExtents();
-        this.subTreeAABB.reset();
-        this.subTreeAABB.addAABB(this.aabb);
+        //this.subTreeAABB.reset();
+        //this.subTreeAABB.addAABB(this.aabb);
         //Expand AAABB to this DisplayObject -> New required
-        var child = this.head;
+        let child = this.head;
         while (child != null) {
             child.updateTransform();
             //Inflate this AABB to encapsulate child
-            this.subTreeAABB.addAABB(child.aabb);
+            //this.subTreeAABB.addAABB(child.aabb);
             child = child.next;
         }
     }

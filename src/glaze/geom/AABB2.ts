@@ -1,11 +1,12 @@
 import { AABB } from "./AABB";
 import { Vector2 } from "./Vector2";
+import { MAXINT, MININT } from "../util/Maths";
 
 export class AABB2 {
-    public l: number = Number.POSITIVE_INFINITY;
-    public t: number = Number.POSITIVE_INFINITY;
-    public r: number = Number.NEGATIVE_INFINITY;
-    public b: number = Number.NEGATIVE_INFINITY;
+    public l: number = MAXINT;
+    public t: number = MAXINT;
+    public r: number = MININT;
+    public b: number = MININT;
 
     constructor(t = 0.0, r = 0.0, b = 0.0, l = 0.0) {
         this.t = t;
@@ -28,8 +29,8 @@ export class AABB2 {
     }
 
     reset() {
-        this.t = this.l = Number.POSITIVE_INFINITY;
-        this.r = this.b = Number.NEGATIVE_INFINITY;
+        this.t = this.l = MAXINT;
+        this.r = this.b = MININT;
     }
 
     get width(): number {
@@ -39,13 +40,13 @@ export class AABB2 {
     get height(): number {
         return this.b - this.t;
     }
-
+    // if (this.l > aabb.r) return false;
+    // else if (this.r < aabb.l) return false;
+    // else if (this.t > aabb.b) return false;
+    // else if (this.b < aabb.t) return false;
+    // else return true;
     intersect(aabb: AABB2): boolean {
-        if (this.l > aabb.r) return false;
-        else if (this.r < aabb.l) return false;
-        else if (this.t > aabb.b) return false;
-        else if (this.b < aabb.t) return false;
-        else return true;
+        return this.l <= aabb.r && this.r > aabb.l && this.t <= aabb.b && this.b >= aabb.t;
     }
 
     addAABB(aabb: AABB2) {
@@ -61,7 +62,7 @@ export class AABB2 {
         return result;
     }
 
-    combine2(a: AABB2, b: AABB2):AABB2 {
+    combine2(a: AABB2, b: AABB2): AABB2 {
         this.t = Math.min(a.t, b.t);
         this.r = Math.max(a.r, b.r);
         this.b = Math.max(a.b, b.b);
