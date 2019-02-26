@@ -50,12 +50,12 @@ export class WebGLBatch {
 
     public Flush(shader: ShaderWrapper, texture: Texture, size: number) {
         if (size === 0) return;
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data.subarray(0, size * 20));
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data, 0, size * 20);
-        this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
-        this.gl.drawElements(WebGLRenderingContext.TRIANGLES, size * 6, WebGLRenderingContext.UNSIGNED_SHORT, 0);
+        this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.dataBuffer);
+        // this.gl.bufferSubData(WebGL2RenderingContext.ARRAY_BUFFER, 0, this.data.subarray(0, size * 20));
+        this.gl.bufferSubData(WebGL2RenderingContext.ARRAY_BUFFER, 0, this.data, 0, size * 20);
+        this.gl.activeTexture(WebGL2RenderingContext.TEXTURE0);
+        this.gl.bindTexture(WebGL2RenderingContext.TEXTURE_2D, texture);
+        this.gl.drawElements(WebGL2RenderingContext.TRIANGLES, size * 6, WebGL2RenderingContext.UNSIGNED_SHORT, 0);
     }
 
     public AddSpriteToBatch(sprite: Sprite, indexRun: number) {

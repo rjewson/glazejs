@@ -27,9 +27,9 @@ export class Explosion implements IParticleEmitter {
                 vy,
                 0,
                 1,
-                RandomFloat(50, 200),
-                0.99,
-                false,
+                RandomFloat(250, 300),
+                0.999,
+                true,
                 true,
                 null,
                 4,
@@ -39,5 +39,23 @@ export class Explosion implements IParticleEmitter {
                 0,
             );
         }
+        particleEngine.EmitParticle(
+            position.x,
+            position.y,
+            vx,
+            vy,
+            0,
+            1,
+            RandomFloat(250, 300),
+            0.999,
+            true,
+            true,
+            null,
+            4,
+            0,
+            0,
+            0,
+            0,
+        );
     }
 }

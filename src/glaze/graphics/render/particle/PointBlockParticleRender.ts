@@ -27,6 +27,8 @@ export class PointBlockParticleRender implements IRenderer {
     public first: boolean = true;
     public maxSprites: number;
 
+    public vao: WebGLVertexArrayObject;
+
     constructor(size: number) {
         this.maxSprites = size;
     }
@@ -55,6 +57,37 @@ export class PointBlockParticleRender implements IRenderer {
     public Resize(width: number, height: number) {
         this.projection.x = width / 2;
         this.projection.y = height / 2;
+        this.vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(this.vao);
+        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.position);
+        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.size);
+        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.colour);
+
+        this.gl.vertexAttribPointer(
+            this.pointSpriteShader.attribute.position,
+            2,
+            WebGL2RenderingContext.FLOAT,
+            false,
+            16,
+            0
+        );
+        this.gl.vertexAttribPointer(
+            this.pointSpriteShader.attribute.size,
+            1,
+            WebGL2RenderingContext.FLOAT,
+            false,
+            16,
+            8
+        );
+        this.gl.vertexAttribPointer(
+            this.pointSpriteShader.attribute.colour,
+            4,
+            WebGL2RenderingContext.UNSIGNED_BYTE,
+            true,
+            16,
+            12
+        );
+        this.gl.bindVertexArray(null);
     }
 
     public AddStage(stage: Stage) {
@@ -92,47 +125,19 @@ export class PointBlockParticleRender implements IRenderer {
         // this.gl.blendFunc(WebGL2RenderingContext.SRC_ALPHA, WebGL2RenderingContext.ONE_MINUS_SRC_ALPHA);
 
         this.gl.useProgram(this.pointSpriteShader.program);
+        this.gl.bindVertexArray(this.vao);
         this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        // this.gl.bufferData(WebGL2RenderingContext.ARRAY_BUFFER,data,WebGL2RenderingContext.DYNAMIC_DRAW);
         this.gl.bufferSubData(WebGL2RenderingContext.ARRAY_BUFFER, 0, this.data, 0, this.indexRun * 4);
 
-        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.position);
-        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.size);
-        this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.colour);
-
-        this.gl.vertexAttribPointer(
-            this.pointSpriteShader.attribute.position,
-            2,
-            WebGL2RenderingContext.FLOAT,
-            false,
-            16,
-            0
-        );
-        this.gl.vertexAttribPointer(
-            this.pointSpriteShader.attribute.size,
-            1,
-            WebGL2RenderingContext.FLOAT,
-            false,
-            16,
-            8
-        );
-        this.gl.vertexAttribPointer(
-            this.pointSpriteShader.attribute.colour,
-            4,
-            WebGL2RenderingContext.UNSIGNED_BYTE,
-            true,
-            16,
-            12
-        );
         this.gl.uniform2f(
             this.pointSpriteShader.uniform.cameraPosition,
             this.camera.position.x,
             this.camera.position.y
         );
-
         this.gl.uniform2f(this.pointSpriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
 
         this.gl.drawArrays(WebGL2RenderingContext.POINTS, 0, this.indexRun);
+        this.gl.bindVertexArray(null);
     }
 
     static SPRITE_VERTEX_SHADER: string = `
@@ -147,7 +152,7 @@ export class PointBlockParticleRender implements IRenderer {
         void main() {
             gl_PointSize = size;
             vColor = colour;
-            gl_Position = vec4( (cameraPosition.x + position.x) / projectionVector.x -1.0, (cameraPosition.y + position.y) / -projectionVector.y + 1.0 , 0.0, 1.0);            
+            gl_Position = vec4( (cameraPosition.x + position.x) / projectionVector.x -1.0, (cameraPosition.y + position.y) / -projectionVector.y + 1.0 , 0.0, 1.0);
         }
     `;
 

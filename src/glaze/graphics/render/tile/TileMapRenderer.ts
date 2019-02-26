@@ -11,7 +11,7 @@ import { BaseTexture } from "../../texture/BaseTexture";
 import { AABB2 } from "../../../geom/AABB2";
 
 export class TileMapRenderer implements IRenderer {
-    public gl: WebGLRenderingContext;
+    public gl: WebGL2RenderingContext;
     public viewportSize: Vector2;
     public scaledViewportSize: Float32Array;
     public inverseTileTextureSize: Float32Array;
@@ -39,6 +39,8 @@ export class TileMapRenderer implements IRenderer {
 
     public flip: boolean;
 
+    public vao: WebGLVertexArrayObject;
+
     constructor(tileSize: number, tileScale: number) {
         this.tileSize = tileSize;
         this.tileScale = tileScale;
@@ -48,7 +50,7 @@ export class TileMapRenderer implements IRenderer {
         this.renderLayersMap = new Map();
     }
 
-    public Init(gl: WebGLRenderingContext, camera: Camera) {
+    public Init(gl: WebGL2RenderingContext, camera: Camera) {
         if (this.gl != null) return;
         this.gl = gl;
         this.camera = camera;
@@ -63,7 +65,7 @@ export class TileMapRenderer implements IRenderer {
         this.inverseSpriteTextureSize = new Float32Array(2);
 
         this.quadVertBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.quadVertBuffer);
+        this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.quadVertBuffer);
 
         var quadVerts = new Float32Array([
             -1,
@@ -93,7 +95,7 @@ export class TileMapRenderer implements IRenderer {
             0
         ]);
 
-        gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, quadVerts, WebGLRenderingContext.STATIC_DRAW);
+        gl.bufferData(WebGL2RenderingContext.ARRAY_BUFFER, quadVerts, WebGL2RenderingContext.STATIC_DRAW);
         this.tilemapShader = new ShaderWrapper(
             gl,
             WebGLShaderUtils.CompileProgram(
@@ -121,6 +123,22 @@ export class TileMapRenderer implements IRenderer {
         this.renderLayers.forEach(renderLayer =>
             renderLayer.Resize(Math.floor(expandedWidth), Math.floor(expandedHeight))
         );
+        this.vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(this.vao);
+        this.gl.bindBuffer(WebGL2RenderingContext.ARRAY_BUFFER, this.quadVertBuffer);
+
+        this.gl.enableVertexAttribArray(this.tilemapShader.attribute.position);
+        this.gl.enableVertexAttribArray(this.tilemapShader.attribute.texture);
+        this.gl.vertexAttribPointer(
+            this.tilemapShader.attribute.position,
+            2,
+            WebGL2RenderingContext.FLOAT,
+            false,
+            16,
+            0
+        );
+        this.gl.vertexAttribPointer(this.tilemapShader.attribute.texture, 2, WebGL2RenderingContext.FLOAT, false, 16, 8);
+        this.gl.bindVertexArray(null);
     }
 
     // public  TileScale(scale:Float) {
@@ -130,39 +148,39 @@ export class TileMapRenderer implements IRenderer {
     // }
 
     public SetSpriteSheet(image: HTMLImageElement) {
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.spriteSheet);
-        this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-        // gl.texParameteri(WebGLRenderingContext.TEXTURE_2D,WebGLRenderingContext.TEXTURE_MAG_FILTER,WebGLRenderingContext.NEAREST);
-        // gl.texParameteri(WebGLRenderingContext.TEXTURE_2D,WebGLRenderingContext.TEXTURE_MIN_FILTER,WebGLRenderingContext.NEAREST);
+        this.gl.bindTexture(WebGL2RenderingContext.TEXTURE_2D, this.spriteSheet);
+        this.gl.pixelStorei(WebGL2RenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+        // gl.texParameteri(WebGL2RenderingContext.TEXTURE_2D,WebGL2RenderingContext.TEXTURE_MAG_FILTER,WebGL2RenderingContext.NEAREST);
+        // gl.texParameteri(WebGL2RenderingContext.TEXTURE_2D,WebGL2RenderingContext.TEXTURE_MIN_FILTER,WebGL2RenderingContext.NEAREST);
         this.gl.texImage2D(
-            WebGLRenderingContext.TEXTURE_2D,
+            WebGL2RenderingContext.TEXTURE_2D,
             0,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.UNSIGNED_BYTE,
+            WebGL2RenderingContext.RGBA,
+            WebGL2RenderingContext.RGBA,
+            WebGL2RenderingContext.UNSIGNED_BYTE,
             image
         );
         if (!this.filtered) {
             this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.NEAREST
+                WebGL2RenderingContext.TEXTURE_2D,
+                WebGL2RenderingContext.TEXTURE_MAG_FILTER,
+                WebGL2RenderingContext.NEAREST
             );
             this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.NEAREST
+                WebGL2RenderingContext.TEXTURE_2D,
+                WebGL2RenderingContext.TEXTURE_MIN_FILTER,
+                WebGL2RenderingContext.NEAREST
             );
         } else {
             this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.LINEAR
+                WebGL2RenderingContext.TEXTURE_2D,
+                WebGL2RenderingContext.TEXTURE_MAG_FILTER,
+                WebGL2RenderingContext.LINEAR
             );
             this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.LINEAR
+                WebGL2RenderingContext.TEXTURE_2D,
+                WebGL2RenderingContext.TEXTURE_MIN_FILTER,
+                WebGL2RenderingContext.LINEAR
             ); // Worth it to mipmap here?
         }
         this.inverseSpriteTextureSize[0] = 1 / image.width;
@@ -224,16 +242,16 @@ export class TileMapRenderer implements IRenderer {
         }
 
         var writeLayer = this.layers[2].tileDataTexture;
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, writeLayer);
+        this.gl.bindTexture(WebGL2RenderingContext.TEXTURE_2D, writeLayer);
         this.gl.texSubImage2D(
-            WebGLRenderingContext.TEXTURE_2D,
+            WebGL2RenderingContext.TEXTURE_2D,
             0,
             x - centerX,
             y - centerY,
             width,
             height,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.UNSIGNED_BYTE,
+            WebGL2RenderingContext.RGBA,
+            WebGL2RenderingContext.UNSIGNED_BYTE,
             this.writebuffer2.data8
         );
     }
@@ -245,23 +263,11 @@ export class TileMapRenderer implements IRenderer {
     public RenderLayers(renderLayer: TileLayerRenderProxy) {
         this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
         this.gl.colorMask(true, true, true, true);
-        this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
+        this.gl.clear(WebGL2RenderingContext.COLOR_BUFFER_BIT);
 
         this.gl.useProgram(this.tilemapShader.program);
 
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.quadVertBuffer);
-
-        this.gl.enableVertexAttribArray(this.tilemapShader.attribute.position);
-        this.gl.enableVertexAttribArray(this.tilemapShader.attribute.texture);
-        this.gl.vertexAttribPointer(
-            this.tilemapShader.attribute.position,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            16,
-            0
-        );
-        this.gl.vertexAttribPointer(this.tilemapShader.attribute.texture, 2, WebGLRenderingContext.FLOAT, false, 16, 8);
+        this.gl.bindVertexArray(this.vao);
 
         this.gl.uniform2fv(this.tilemapShader.uniform.viewportSize, this.scaledViewportSize);
         this.gl.uniform1f(this.tilemapShader.uniform.tileSize, this.tileSize);
@@ -281,15 +287,16 @@ export class TileMapRenderer implements IRenderer {
             this.gl.uniform2fv(this.tilemapShader.uniform.inverseSpriteTextureSize, layer.inverseSpriteTextureSize);
             this.gl.uniform2fv(this.tilemapShader.uniform.inverseTileTextureSize, layer.inverseTileDataTextureSize);
 
-            this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-            this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, layer.spriteTexture);
+            this.gl.activeTexture(WebGL2RenderingContext.TEXTURE0);
+            this.gl.bindTexture(WebGL2RenderingContext.TEXTURE_2D, layer.spriteTexture);
 
-            this.gl.activeTexture(WebGLRenderingContext.TEXTURE1);
-            this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, layer.tileDataTexture);
+            this.gl.activeTexture(WebGL2RenderingContext.TEXTURE1);
+            this.gl.bindTexture(WebGL2RenderingContext.TEXTURE_2D, layer.tileDataTexture);
 
-            this.gl.drawArrays(WebGLRenderingContext.TRIANGLES, 0, 6);
+            this.gl.drawArrays(WebGL2RenderingContext.TRIANGLES, 0, 6);
         }
         this.gl.colorMask(true, true, true, false);
+        this.gl.bindVertexArray(null);
     }
 
     /*

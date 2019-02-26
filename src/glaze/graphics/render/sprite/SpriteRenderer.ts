@@ -43,9 +43,6 @@ export class SpriteRenderer implements IRenderer {
         this.projection.x = width / 2;
         this.projection.y = height / 2;
 
-        this.gl.uniform2f(this.spriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
-        this.gl.uniform1i(this.spriteShader.uniform.uSampler, 0);
-
         this.vao = this.gl.createVertexArray();
         this.gl.bindVertexArray(this.vao);
         this.gl.bindBuffer(WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER, this.spriteBatch.indexBuffer);
@@ -100,6 +97,8 @@ export class SpriteRenderer implements IRenderer {
         this.stage.updateTransform();
 
         this.gl.useProgram(this.spriteShader.program);
+        this.gl.uniform2f(this.spriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
+        this.gl.uniform1i(this.spriteShader.uniform.uSampler, 0);
         this.gl.bindVertexArray(this.vao);
         this.spriteBatch.Render(this.spriteShader, this.stage, this.camera.viewPortAABB);
         this.gl.bindVertexArray(null);

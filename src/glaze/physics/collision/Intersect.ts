@@ -168,14 +168,14 @@ export const StaticAABBvsStaticAABB = function(
     aabb_extents_B: Vector2,
     contact: Contact,
 ): boolean {
-    var dx = aabb_position_B.x - aabb_position_A.x;
-    var px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
+    const dx = aabb_position_B.x - aabb_position_A.x;
+    const px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
     if (px <= 0) return false;
-    var dy = aabb_position_B.y - aabb_position_A.y;
-    var py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
+    const dy = aabb_position_B.y - aabb_position_A.y;
+    const py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
     if (py <= 0) return false;
     if (px < py) {
-        var sx = dx < 0 ? -1 : 1;
+        const sx = dx < 0 ? -1 : 1;
         contact.distance = contact.delta.x = px * sx;
         contact.delta.y = 0;
         contact.normal.x = sx;
@@ -183,7 +183,7 @@ export const StaticAABBvsStaticAABB = function(
         contact.position.x = aabb_position_A.x + aabb_extents_A.x * sx;
         contact.position.y = aabb_position_B.y;
     } else {
-        var sy = dy < 0 ? -1 : 1;
+        const sy = dy < 0 ? -1 : 1;
         contact.delta.x = 0;
         contact.distance = contact.delta.y = py * sy;
         contact.normal.x = 0;
@@ -227,16 +227,16 @@ export const IsStaticSegmentvsStaticAABB = function(
     // var sign.x = scale.x<0 ? -1 : 1;
     // var sign.y = scale.y<0 ? -1 : 1;
 
-    var nearTimeX = (aabb_position.x - sign.x * (aabb_extents.x + paddingX) - segment_position.x) * scale.x;
-    var nearTimeY = (aabb_position.y - sign.y * (aabb_extents.y + paddingY) - segment_position.y) * scale.y;
+    const nearTimeX = (aabb_position.x - sign.x * (aabb_extents.x + paddingX) - segment_position.x) * scale.x;
+    const nearTimeY = (aabb_position.y - sign.y * (aabb_extents.y + paddingY) - segment_position.y) * scale.y;
 
-    var farTimeX = (aabb_position.x + sign.x * (aabb_extents.x + paddingX) - segment_position.x) * scale.x;
-    var farTimeY = (aabb_position.y + sign.y * (aabb_extents.y + paddingY) - segment_position.y) * scale.y;
+    const farTimeX = (aabb_position.x + sign.x * (aabb_extents.x + paddingX) - segment_position.x) * scale.x;
+    const farTimeY = (aabb_position.y + sign.y * (aabb_extents.y + paddingY) - segment_position.y) * scale.y;
 
     if (nearTimeX > farTimeY || nearTimeY > farTimeX) return false;
 
-    var nearTime = Math.max(nearTimeX, nearTimeY);
-    var farTime = Math.min(farTimeX, farTimeY);
+    const nearTime = Math.max(nearTimeX, nearTimeY);
+    const farTime = Math.min(farTimeX, farTimeY);
 
     if (nearTime >= 1 || farTime <= 0) return false;
 
@@ -252,22 +252,22 @@ export const StaticSegmentvsStaticAABB = function(
     paddingY: number,
     contact: Contact,
 ): boolean {
-    var scaleX = 1 / segment_delta.x;
-    var scaleY = 1 / segment_delta.y;
+    const scaleX = 1 / segment_delta.x;
+    const scaleY = 1 / segment_delta.y;
 
-    var signX = scaleX < 0 ? -1 : 1;
-    var signY = scaleY < 0 ? -1 : 1;
+    const signX = scaleX < 0 ? -1 : 1;
+    const signY = scaleY < 0 ? -1 : 1;
 
-    var nearTimeX = (aabb_position.x - signX * (aabb_extents.x + paddingX) - segment_position.x) * scaleX;
-    var nearTimeY = (aabb_position.y - signY * (aabb_extents.y + paddingY) - segment_position.y) * scaleY;
+    const nearTimeX = (aabb_position.x - signX * (aabb_extents.x + paddingX) - segment_position.x) * scaleX;
+    const nearTimeY = (aabb_position.y - signY * (aabb_extents.y + paddingY) - segment_position.y) * scaleY;
 
-    var farTimeX = (aabb_position.x + signX * (aabb_extents.x + paddingX) - segment_position.x) * scaleX;
-    var farTimeY = (aabb_position.y + signY * (aabb_extents.y + paddingY) - segment_position.y) * scaleY;
+    const farTimeX = (aabb_position.x + signX * (aabb_extents.x + paddingX) - segment_position.x) * scaleX;
+    const farTimeY = (aabb_position.y + signY * (aabb_extents.y + paddingY) - segment_position.y) * scaleY;
 
     if (nearTimeX > farTimeY || nearTimeY > farTimeX) return false;
 
-    var nearTime = Math.max(nearTimeX, nearTimeY);
-    var farTime = Math.min(farTimeX, farTimeY);
+    const nearTime = Math.max(nearTimeX, nearTimeY);
+    const farTime = Math.min(farTimeX, farTimeY);
 
     if (nearTime >= 1 || farTime <= 0) return false;
 
@@ -323,7 +323,7 @@ export const StaticAABBvsSweeptAABB = function(
             contact.sweepPosition.x = aabb_position_B.x + aabb_delta_B.x * contact.time;
             contact.sweepPosition.y = aabb_position_B.y + aabb_delta_B.y * contact.time;
             //Inline expanded normalize to avoid object creation
-            var t = Math.sqrt(aabb_delta_B.x * aabb_delta_B.x + aabb_delta_B.y * aabb_delta_B.y);
+            const t = Math.sqrt(aabb_delta_B.x * aabb_delta_B.x + aabb_delta_B.y * aabb_delta_B.y);
             contact.position.x += aabb_delta_B.x / t * aabb_extents_B.x;
             contact.position.y += aabb_delta_B.y / t * aabb_extents_B.y;
             return true;
@@ -429,11 +429,11 @@ export const AABBvsStaticSolidAABBFixedNormal = function(
 ): boolean {
     contact.normal.copy(normal);
 
-    var pcx = contact.normal.x * (aabb_extents_A.x + aabb_extents_B.x) + aabb_position_B.x;
-    var pcy = contact.normal.y * (aabb_extents_A.y + aabb_extents_B.y) + aabb_position_B.y;
+    const pcx = contact.normal.x * (aabb_extents_A.x + aabb_extents_B.x) + aabb_position_B.x;
+    const pcy = contact.normal.y * (aabb_extents_A.y + aabb_extents_B.y) + aabb_position_B.y;
 
-    var pdx = aabb_position_A.x - pcx;
-    var pdy = aabb_position_A.y - pcy;
+    const pdx = aabb_position_A.x - pcx;
+    const pdy = aabb_position_A.y - pcy;
 
     contact.distance = pdx * contact.normal.x + pdy * contact.normal.y;
 
@@ -451,11 +451,11 @@ const AABBvsStaticSolidAABBSlope = function(
     var _sqr = 0.70710678118655;
 
     //New overlap code, handle corners better
-    var dx = aabb_position_B.x - aabb_position_A.x;
-    var px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
+    const dx = aabb_position_B.x - aabb_position_A.x;
+    const px = aabb_extents_B.x + aabb_extents_A.x - Math.abs(dx);
 
-    var dy = aabb_position_B.y - aabb_position_A.y;
-    var py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
+    const dy = aabb_position_B.y - aabb_position_A.y;
+    const py = aabb_extents_B.y + aabb_extents_A.y - Math.abs(dy);
 
     // if (px<py) {
     //     contact.normal.x = dx<0 ? 1 : -1;

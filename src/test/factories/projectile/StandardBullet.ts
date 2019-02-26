@@ -29,7 +29,7 @@ export class StandardBullet {
         destroy: function(engine: Engine, entity: Entity) {
             if (engine.getComponentForEntity(entity, Destroy)) return;
             engine.addComponentsToEntity(entity, [new Destroy(1)]);
-            engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
+            engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(4, 80));
             CombatUtils.explode(engine.getComponentForEntity(entity, Position).coords, 100, 10000, entity);
         },
     };

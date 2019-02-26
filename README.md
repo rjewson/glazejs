@@ -15,7 +15,7 @@ A HTML5/WebGL game engine built with TypeScript.  The goal of the project to ena
 - AI
     - Behaviour Tree
     - FSM's
-- and more! 
+- and more!
 
 Live: [http://rjewson.com/glaze](http://rjewson.com/glaze)
 
@@ -24,3 +24,6 @@ Live: [http://rjewson.com/glaze](http://rjewson.com/glaze)
 1. clone this repo
 2. `npm install`
 3. `npm run dev`
+
+TODO
+- Write force to buffer and apply there (for particles)

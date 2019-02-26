@@ -7,7 +7,7 @@ import { Entity } from "../../ecs/Entity";
 import { Vector2 } from "../../geom/Vector2";
 import { Viewable } from "../../core/components/Viewable";
 
-const airLightDropOff = 3;
+const airLightDropOff = 1;
 const groundLightDropOff = 25;
 
 const cornerCoef = 0.7;
