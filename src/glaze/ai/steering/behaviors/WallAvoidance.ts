@@ -6,7 +6,7 @@ import { SteeringSettings } from "../SteeringSettings";
 import { SteeringAgentParameters } from "../SteeringAgentParameters";
 import { Body } from "../../../physics/Body";
 import { AABB2 } from "../../../geom/AABB2";
-import { toRad } from "../../../util/Maths";
+import { toRad, MAXINT } from "../../../util/Maths";
 import { AABB } from "../../../geom/AABB";
 
 export class WallAvoidance extends Behavior {
@@ -29,7 +29,7 @@ export class WallAvoidance extends Behavior {
     searchAABB: AABB2 = new AABB2();
 
     closestFeeler: Feeler = null;
-    closestDist: number = Number.POSITIVE_INFINITY;
+    closestDist: number = MAXINT;
 
     constructor( feelerLength: number) {
         super(SteeringSettings.wallAvoidanceWeight, SteeringSettings.wallAvoidancePriority);
@@ -112,7 +112,7 @@ export class WallAvoidance extends Behavior {
         }
 
         this.closestFeeler = null;
-        this.closestDist = Number.POSITIVE_INFINITY;
+        this.closestDist = MAXINT;
 
         this.searchAABB.reset();
         this.searchAABB.addPoint(agent.position.x, agent.position.y);

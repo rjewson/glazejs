@@ -3,7 +3,6 @@ import { Vector2 } from "../../geom/Vector2";
 import { Texture } from "../texture/Texture";
 
 export class Sprite extends DisplayObjectContainer {
-   
     public anchor: Vector2;
     public texture: Texture;
     public blendMode: number;
@@ -18,23 +17,23 @@ export class Sprite extends DisplayObjectContainer {
     }
 
     public calcExtents() {
-        var width = this.texture.frame.width;
-        var height = this.texture.frame.height;
+        const width = this.texture.frame.width;
+        const height = this.texture.frame.height;
 
-        var aX = this.anchor.x;
-        var aY = this.anchor.y;
-        var w0 = width * (1 - aX);
-        var w1 = width * -aX;
+        const aX = this.anchor.x;
+        const aY = this.anchor.y;
+        const w0 = width * (1 - aX);
+        const w1 = width * -aX;
 
-        var h0 = height * (1 - aY);
-        var h1 = height * -aY;
+        const h0 = height * (1 - aY);
+        const h1 = height * -aY;
 
-        var a = this.worldTransform[0];
-        var b = this.worldTransform[3];
-        var c = this.worldTransform[1];
-        var d = this.worldTransform[4];
-        var tx = this.worldTransform[2];
-        var ty = this.worldTransform[5];
+        const a = this.worldTransform[0];
+        const b = this.worldTransform[3];
+        const c = this.worldTransform[1];
+        const d = this.worldTransform[4];
+        const tx = this.worldTransform[2];
+        const ty = this.worldTransform[5];
 
         this.transformedVerts[0] = a * w1 + c * h1 + tx;
         this.transformedVerts[1] = d * h1 + b * w1 + ty;
@@ -48,8 +47,12 @@ export class Sprite extends DisplayObjectContainer {
         this.transformedVerts[6] = a * w1 + c * h0 + tx;
         this.transformedVerts[7] = d * h0 + b * w1 + ty;
 
-        for (var i = 0; i < 4; i++) {
-            this.aabb.addPoint(this.transformedVerts[i * 2], this.transformedVerts[i * 2 + 1]);
-        }
+        // for (var i = 0; i < 4; i++) {
+        //     this.aabb.addPoint(this.transformedVerts[i * 2], this.transformedVerts[i * 2 + 1]);
+        // }
+        // this.aabb.addPoint(this.transformedVerts[0], this.transformedVerts[1]);
+        // this.aabb.addPoint(this.transformedVerts[2], this.transformedVerts[3]);
+        // this.aabb.addPoint(this.transformedVerts[4], this.transformedVerts[5]);
+        // this.aabb.addPoint(this.transformedVerts[6], this.transformedVerts[7]);
     }
 }

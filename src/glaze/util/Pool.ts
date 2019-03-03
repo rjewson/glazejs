@@ -1,7 +1,6 @@
 type poolFactory<T> = (index: number) => T;
 
 export class Pool<T> {
-
     private pool: T[];
     private factory: poolFactory<T>;
     private nextAvailableIndex: number;
@@ -32,22 +31,22 @@ export class Pool<T> {
         this.pool[this.nextAvailableIndex] = item;
     }
 
-    get capacity():number {
+    get capacity(): number {
         return this.pool.length;
     }
 
-    get assigned():number {
+    get assigned(): number {
         return this.pool.length - this.nextAvailableIndex;
     }
 
-    get totalAllocations():number {
+    get totalAllocations(): number {
         return this.totalAllocationCount;
     }
 }
 
-const emptyNullArray = count => Array(count).fill(null);
-const reverseOrder = (a, b) => b - a;
-const entityRange = (start, len, factory) =>
+const emptyNullArray = (count: number) => Array(count).fill(null);
+const reverseOrder = (a: number, b: number) => b - a;
+const entityRange = (start: number, len: number, factory: poolFactory<any>) =>
     emptyNullArray(len)
         .map((_, i) => factory(start + i))
         .sort(reverseOrder);

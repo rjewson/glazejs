@@ -12,7 +12,7 @@ export class TreeNode {
     public parent: TreeNode;
     public left: TreeNode;
     public right: TreeNode;
-    public bounds: AABB2;
+    public bounds: AABB2 = new AABB2();
     public height: number;
     public body: BFProxy;
 
@@ -23,7 +23,7 @@ export class TreeNode {
     reset(parent?: TreeNode) {
         this.parent = parent || null;
         this.body = null;
-        this.bounds = new AABB2();
+        this.bounds.reset();
         this.left = null;
         this.right = null;
         this.height = 0;
@@ -35,20 +35,19 @@ export class TreeNode {
 }
 
 export class DynamicTree {
-
     public root: TreeNode;
     public nodes: Map<number, TreeNode>;
     public tempBounds: AABB2;
-    public nodePool:Pool<TreeNode>;
+    public nodePool: Pool<TreeNode>;
 
     constructor(
-        public worldBounds: AABB2 = new AABB2(-Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE),
+        public worldBounds: AABB2 = new AABB2(-Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)
     ) {
         this.root = null;
         this.nodes = new Map(); //{};
         this.tempBounds = new AABB2();
-        this.nodePool = new Pool(()=>new TreeNode());
-        this.nodePool.addCapacity(1000);
+        this.nodePool = new Pool(() => new TreeNode());
+        this.nodePool.addCapacity(10000);
     }
 
     private insertNode(leaf: TreeNode): void {
@@ -453,7 +452,8 @@ export class DynamicTree {
      * that you are complete with your query and you do not want to continue. Returning false will continue searching
      * the tree until all possible colliders have been returned.
      */
-    public query(body: BFProxy) { // , callback: (other: BFProxy) => boolean): void {
+    public query(body: BFProxy) {
+        // , callback: (other: BFProxy) => boolean): void {
         var b = this.nodes.get(body.id);
         var bounds = b.bounds;
         //var bounds = body.aabb.toAABB2();
@@ -473,8 +473,28 @@ export class DynamicTree {
     //     return false;
     // };
     // helper(this.root);
-
+    // 443 289 110
+    static stack = new Array(100);
     static queryHelper(body: BFProxy, bounds: AABB2, currentNode: TreeNode): boolean {
+        let sp = 1;
+        DynamicTree.stack[0] = currentNode;
+        while (sp>0) {
+            const node = DynamicTree.stack[--sp];
+            if (node.bounds.intersect(bounds)) {
+                if (node.isLeaf()) {
+                    if (node.body !== body) {
+                        Collide(body, node.body);
+                    }
+                } else {
+                    DynamicTree.stack[sp++] = node.left;
+                    DynamicTree.stack[sp++] = node.right;
+                }
+            }
+        }
+        return false;
+    }
+
+    static queryHelper2(body: BFProxy, bounds: AABB2, currentNode: TreeNode): boolean {
         if (currentNode && currentNode.bounds.intersect(bounds)) {
             if (currentNode.isLeaf() && currentNode.body !== body) {
                 Collide(body, currentNode.body);
@@ -533,17 +553,37 @@ export class DynamicTree {
         DynamicTree.queryAreaHelper(this.root, area, callback);
     }
 
-    static queryAreaHelper(currentNode: TreeNode, area:AABB2, callback: (other: BFProxy) => boolean): boolean {
-        if (currentNode && currentNode.bounds.intersect(area)) {
-            if (currentNode.isLeaf()) {
-                callback(currentNode.body);
-                return false;
-            } else {
-                return DynamicTree.queryAreaHelper(currentNode.left, area, callback) || DynamicTree.queryAreaHelper(currentNode.right, area, callback);
+    static queryAreaHelper(currentNode: TreeNode, area: AABB2, callback: (other: BFProxy) => boolean): boolean {
+        let sp = 1;
+        DynamicTree.stack[0] = currentNode;
+        while (sp>0) {
+            const node = DynamicTree.stack[--sp];
+            if (node.bounds.intersect(area)) {
+                if (node.isLeaf()) {
+                    callback(node.body);
+                } else {
+                    DynamicTree.stack[sp++] = node.left;
+                    DynamicTree.stack[sp++] = node.right;
+                }
             }
         }
         return false;
-    };
+    }
+
+    // static queryAreaHelper(currentNode: TreeNode, area: AABB2, callback: (other: BFProxy) => boolean): boolean {
+    //     if (currentNode && currentNode.bounds.intersect(area)) {
+    //         if (currentNode.isLeaf()) {
+    //             callback(currentNode.body);
+    //             return false;
+    //         } else {
+    //             return (
+    //                 DynamicTree.queryAreaHelper(currentNode.left, area, callback) ||
+    //                 DynamicTree.queryAreaHelper(currentNode.right, area, callback)
+    //             );
+    //         }
+    //     }
+    //     return false;
+    // }
 
     //  public getNodes(): TreeNode[] {
     //     var helper = (currentNode: TreeNode): TreeNode[] => {

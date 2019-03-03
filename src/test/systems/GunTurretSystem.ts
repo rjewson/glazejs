@@ -28,6 +28,7 @@ export class GunTurretSystem extends System {
     }
 
     fireBullet(pos: Vector2, target: Vector2) {
+        return;
         var filter = new Filter();
         filter.groupIndex = TestFilters.TURRET_GROUP;
         var bullet = StandardBullet.create(this.engine, new Position(pos.x, pos.y), filter, target);

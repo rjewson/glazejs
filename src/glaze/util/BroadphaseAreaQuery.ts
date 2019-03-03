@@ -42,7 +42,7 @@ export class BroadphaseAreaQuery {
     }
 
     addBroadphaseItem(bfproxy: BFProxy):boolean {
-        console.log("found "+bfproxy.id);
+        // console.log("found "+bfproxy.id);
         if (this.filterEntity != null && bfproxy.entity == this.filterEntity) return;
 
         var distance = bfproxy.aabb.position.distSqrd(this.aabb.position) + ZERO_TOLERANCE;
