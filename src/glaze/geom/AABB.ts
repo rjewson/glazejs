@@ -24,8 +24,8 @@ export class AABB {
      *  Standard AABB overlap.  Only returns a boolean, which isnt much use if you need to actually resolve anything.
      */
     overlap(aabb: AABB): boolean {
-        if (Math.abs(this.position.x - aabb.position.x) > (this.extents.x + aabb.extents.x)) return false;
-        if (Math.abs(this.position.y - aabb.position.y) > (this.extents.y + aabb.extents.y)) return false;
+        if (Math.abs(this.position.x - aabb.position.x) > this.extents.x + aabb.extents.x) return false;
+        if (Math.abs(this.position.y - aabb.position.y) > this.extents.y + aabb.extents.y) return false;
         return true;
     }
 
@@ -52,10 +52,10 @@ export class AABB {
     }
 
     toAABB2(): AABB2 {
-        return new AABB2(this.t,this.r,this.b,this.l);
+        return new AABB2(this.t, this.r, this.b, this.l);
     }
 
-    copyToAABB2(aabb2:AABB2) {
+    copyToAABB2(aabb2: AABB2) {
         aabb2.t = this.t;
         aabb2.r = this.r;
         aabb2.b = this.b;

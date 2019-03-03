@@ -1,5 +1,6 @@
 import { Vector2 } from "../../../geom/Vector2";
 import { lineIntersection } from "../../../util/Geometry";
+import { MAXINT } from "../../../util/Maths";
 
 export class Feeler {
     public base: Vector2;
@@ -28,7 +29,7 @@ export class Feeler {
     }
 
     public Reset(unitDirection: Vector2, position: Vector2) {
-        this.distToClosestIP = Number.POSITIVE_INFINITY;
+        this.distToClosestIP = MAXINT;
         this.tip.copy(unitDirection);
         this.base.copy(position);
         if (this.angle != 0) {
@@ -53,7 +54,7 @@ export class Feeler {
     }
 
     public CalculateForce(force: Vector2) {
-        if (this.distToClosestIP != Number.POSITIVE_INFINITY) {
+        if (this.distToClosestIP != MAXINT) {
             //glaze.debug.DebugEngine.DrawParticle(closestIP.x,closestIP.y,4,255,255,255);
             // var sf =  normal.mult( tip.minus( closestIP ).length() );
             var sf = this.tip.clone();

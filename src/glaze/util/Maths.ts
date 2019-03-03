@@ -20,6 +20,9 @@ export const EPS = 1e-6;
 
 export const SQRT2 = 1.414213562373095;
 
+export const MAXINT = Math.pow(2, 31) - 1;
+export const MININT = -MAXINT;
+
 export function toRad(deg: number): number {
     return deg * DEG_RAD;
 }

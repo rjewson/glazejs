@@ -6,6 +6,7 @@ interface EntityEntry {
     components: any[];
     boundUpdate: () => void;
 }
+
 export class System {
     public engine: Engine;
     public components: string[];
@@ -53,8 +54,8 @@ export class System {
     }
 
     public updateAllEntities() {
-        for (let i of this.members.keys()) {
-            this.members.get(i).boundUpdate();
+        for (const i of this.members) {
+            i[1].boundUpdate();
         }
     }
 

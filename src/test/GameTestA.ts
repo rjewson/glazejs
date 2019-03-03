@@ -12,7 +12,7 @@ import {
     GetLayer,
     LayerToCoordTexture,
     LayerToCollisionData,
-    GetTileSet,
+    GetTileSet
 } from "../glaze/tmx/TMXMap";
 import { TileMapRenderer } from "../glaze/graphics/render/tile/TileMapRenderer";
 import { GraphicsAnimation } from "../glaze/graphics/components/GraphicsAnimation";
@@ -98,7 +98,7 @@ import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
 import { WorkerSystem } from "./systems/WorkerSystem";
-import {m} from "../glaze/wasm/test";
+import { m } from "../glaze/wasm/test";
 
 interface GlazeMapLayerConfig {}
 
@@ -150,7 +150,7 @@ export class GameTestA extends GlazeEngine {
 
         this.engine.addCapacityToEngine(1000);
         console.log("init7");
-        
+
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
         var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
@@ -161,7 +161,7 @@ export class GameTestA extends GlazeEngine {
         const collisionData = LayerToCollisionData(
             TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
             GetTileSet(tmxMap, "Collision").firstgid,
-            TILE_SIZE,
+            TILE_SIZE
         );
 
         const tileMapCollision = new TileMapCollision(collisionData);
@@ -226,7 +226,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new TeleporterSystem());
 
         corePhase.addSystem(new DestroySystem());
-        corePhase.addSystem(new WorkerSystem());
+        // corePhase.addSystem(new WorkerSystem());
         // BEGIN RENDER SYSTEM
 
         const renderPhase = new Phase();
@@ -257,21 +257,21 @@ export class GameTestA extends GlazeEngine {
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Foreground2",
             1,
-            1,
+            1
         );
         tileMapRenderer.SetTileLayerFromData(
             foreground1,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Foreground1",
             1,
-            1,
+            1
         );
         tileMapRenderer.SetTileLayerFromData(
             background,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Background",
             1,
-            1,
+            1
         );
 
         const spriteRender = new SpriteRenderer();
@@ -289,12 +289,10 @@ export class GameTestA extends GlazeEngine {
         this.debugGraphics = debugRenderSystem.debugRender;
 
         renderPhase.addSystem(
-            new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision),
+            new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision)
         );
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
-        
-        
 
         // GPU calculated lights
         // const lightSystem = new PointLightingSystem(tileMapCollision);
@@ -351,7 +349,7 @@ export class GameTestA extends GlazeEngine {
                 new Active(),
                 // new Light(64, 1, 1, 1, 255, 255, 255),
                 new Viewable(),
-                new DebugGraphics(),
+                new DebugGraphics()
                 // new Controllable(150),
                 // new ParticleEmitter([new Explosion(4,100)])
             ]);
@@ -367,7 +365,7 @@ export class GameTestA extends GlazeEngine {
         // const pos: Position = this.engine.getComponentForEntity(player, Position);
         // this.renderSystem.cameraTarget = pos.coords; // new Vector2(400, 400);
 
-        TeleporterFactory.create(this.engine, this.mapPosition(3,23), new Extents(16,32));
+        TeleporterFactory.create(this.engine, this.mapPosition(3, 23), new Extents(16, 32));
 
         const doorSwitch = this.engine.createEntity();
         this.engine.addComponentsToEntity(doorSwitch, [
@@ -377,11 +375,11 @@ export class GameTestA extends GlazeEngine {
                 // ()=>{debugger;},
                 throttle(() => {
                     messageBus.trigger("doorA", {});
-                }, 1000),
+                }, 1000)
             ]),
             new Fixed(),
             new Active(),
-            new TileGraphics("switchOff"),
+            new TileGraphics("switchOff")
         ]);
 
         const beeHive = this.engine.createEntity();
@@ -392,7 +390,7 @@ export class GameTestA extends GlazeEngine {
             new PhysicsCollision(false, null, []),
             new Fixed(),
             new Active(),
-            new BeeHive(5),
+            new BeeHive(5)
         ]);
 
         const birdNest = this.engine.createEntity();
@@ -401,7 +399,7 @@ export class GameTestA extends GlazeEngine {
             new Extents(7, 7),
             new Fixed(),
             new BirdNest(5),
-            new Active(),
+            new Active()
         ]);
 
         const turret = this.engine.createEntity();
@@ -414,7 +412,7 @@ export class GameTestA extends GlazeEngine {
             new PhysicsCollision(false, turretFilter, []),
             new Fixed(),
             new GunTurret(1000),
-            new Active(),
+            new Active()
         ]);
 
         const rock = this.engine.createEntity();
@@ -426,17 +424,17 @@ export class GameTestA extends GlazeEngine {
             new Moveable(),
             new PhysicsBody(new Body(Material.ROCK), true),
             new Holdable(),
-            new Active(),
+            new Active()
         ]);
 
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [
-            this.mapPosition(25,57),
-            new Extents(6,14),
-            new Graphics("items","water_container"),
-            new PhysicsCollision(false,new Filter(),[]),
+            this.mapPosition(25, 57),
+            new Extents(6, 14),
+            new Graphics("items", "water_container"),
+            new PhysicsCollision(false, new Filter(), []),
             new Moveable(),
-            new PhysicsBody(new Body(Material.NORMAL),true),
+            new PhysicsBody(new Body(Material.NORMAL), true),
             new Holdable(),
             new WaterHolder(10),
             new Active()
