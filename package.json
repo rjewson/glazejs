@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch",
-    "dev": "webpack-serve --hmr false ./webpack.config.js",
+    "dev": "webpack-serve --hmr false ./webpack.dev.js",
     "gen-sprites": "spritesheet-js -f json -n sprites.png -p ./output ./resources/sprites/*.png"
   },
   "author": "rjewson@gmail.com",
