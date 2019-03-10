@@ -1,86 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>glazeJS</title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0" />
+        <link rel="stylesheet" href="main.css" />
 
-<head>
-    <meta charset="utf-8" />
-    <title>glazeJS</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0">
-    <link rel="stylesheet" href="main.css">
+        <style type="text/css">
+            * {
+                font-family: "Courier New", Courier, monospace;
+            }
 
-    <style type="text/css">
-        * {
-            font-family: "Courier New", Courier, monospace;
-        }
+            body {
+                min-width: 1200px;
+                font-size: 12px;
+                margin: 0px;
+            }
 
-        body {
-            min-width: 1200px;
-            font-size: 12px;
-        }
+            h1 {
+                font-size: 14px;
+                margin: 2px;
+            }
 
-        h1 {
-            font-size: 14px;
-            margin: 2px;
-        }
+            button {
+                font-size: 12px;
+            }
 
-        button {
-            font-size: 12px;
-        }
+            #viewContainer {
+                float: left;
+                position: relative;
+                min-width: 800px;
+                min-height: 600px;
+            }
 
-        #viewContainer {
-            float: left;
-            position: relative;
-            min-width: 800px;
-            min-height: 600px;
-        }
+            #view {
+                transform: translate3d(0, 0, 0);
+                image-rendering: pixelated;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: crisp-edges;
+            }
 
-        #view {
-            transform: translate3d(0.0, 0.0, 0.0);
-            image-rendering: pixelated;
-        }
+            #viewDebug {
+                /*display:none;*/
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
 
-        #viewDebug {
-            /*display:none;*/
-            position: absolute;
-            top: 0px;
-            left: 0px;
-        }
+            #controlPanel {
+                float: left;
+                margin: 5px;
+                width: 400px;
+            }
 
-        #controlPanel {
-            float: left;
-            margin: 5px;
-            width: 400px;
-        }
+            .panel {
+                padding: 10px;
+                outline: 1px solid black;
+            }
 
-        .panel {
-            padding: 10px;
-            outline: 1px solid black;
-        }
+            #instructions {
+                clear: both;
+            }
+        </style>
+    </head>
 
-        #instructions {
-            clear: both;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>glazeJS
-        <a href="https://github.com/rjewson/glaze-engine">glazeJS</a>
-    </h1>
-    <div id="playControls" class="">
-        <div class="play"></div>
-        <button id="startbutton">Run</button>
-        <button id="stopbutton">Pause</button>
-        <button id="debugChickens">Chickens</button>
-        <button id="debugDump">Dump</button>
-        <input type="checkbox" id="debugDraw"><label for="debugDraw">Draw Debug</label>
-    </div>
-    <div id="viewContainer">
-        <canvas id="view"></canvas>
-        <canvas id="viewDebug"></canvas>
-    </div>
-    <div id="debugResult"></div>
-    <script src="./dist/index.js"></script>
-</body>
-
+    <body>
+        <h1>
+            glazeJS
+            <a href="https://github.com/rjewson/glaze-engine">glazeJS</a>
+        </h1>
+        <div id="playControls" class="">
+            <div class="play"></div>
+            <button id="startbutton">Run</button>
+            <button id="stopbutton">Pause</button>
+            <button id="debugChickens">Chickens</button>
+            <button id="debugDump">Dump</button>
+            <input type="checkbox" id="debugDraw" /><label for="debugDraw">Draw Debug</label>
+        </div>
+        <div id="viewContainer">
+            <canvas id="view"></canvas>
+            <canvas id="viewDebug"></canvas>
+        </div>
+        <div id="debugResult"></div>
+        <script src="./dist/index.js"></script>
+    </body>
 </html>
