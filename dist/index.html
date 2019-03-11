@@ -13,7 +13,8 @@
             }
 
             body {
-                min-width: 1200px;
+                min-width: 1280px;
+                min-height: 800px;
                 font-size: 12px;
                 margin: 0px;
             }
@@ -28,14 +29,14 @@
             }
 
             #viewContainer {
-                float: left;
+                /* float: left; */
                 position: relative;
-                min-width: 800px;
-                min-height: 600px;
+                min-width: 1280px;
+                min-height: 800px;
             }
 
             #view {
-                transform: translate3d(0, 0, 0);
+                /* transform: translate3d(0, 0, 0); */
                 image-rendering: pixelated;
                 image-rendering: -moz-crisp-edges;
                 image-rendering: crisp-edges;
@@ -48,39 +49,31 @@
                 left: 0px;
             }
 
-            #controlPanel {
-                float: left;
-                margin: 5px;
-                width: 400px;
+            #playControls {
+                position: absolute;
+                top: 0px;
+                left: 0px;
             }
 
             .panel {
                 padding: 10px;
                 outline: 1px solid black;
             }
-
-            #instructions {
-                clear: both;
-            }
         </style>
     </head>
 
     <body>
-        <h1>
-            glazeJS
-            <a href="https://github.com/rjewson/glaze-engine">glazeJS</a>
-        </h1>
-        <div id="playControls" class="">
-            <div class="play"></div>
-            <button id="startbutton">Run</button>
-            <button id="stopbutton">Pause</button>
-            <button id="debugChickens">Chickens</button>
-            <button id="debugDump">Dump</button>
-            <input type="checkbox" id="debugDraw" /><label for="debugDraw">Draw Debug</label>
-        </div>
         <div id="viewContainer">
             <canvas id="view"></canvas>
             <canvas id="viewDebug"></canvas>
+            <div id="playControls" class="">
+                <div class="play"></div>
+                <button id="startbutton">Run</button>
+                <button id="stopbutton">Pause</button>
+                <button id="debugChickens">Chickens</button>
+                <button id="debugDump">Dump</button>
+                <input type="checkbox" id="debugDraw" /><label for="debugDraw">Draw Debug</label>
+            </div>
         </div>
         <div id="debugResult"></div>
         <script src="./dist/index.js"></script>

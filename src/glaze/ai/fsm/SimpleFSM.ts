@@ -10,9 +10,9 @@ export class SimpleFSM {
     public order: Array<string>;
     public currentState: string;
     public previousState: string;
-    private messages:Signal;
+    private messages: Signal;
 
-    constructor(states: SimpleFSMStates, initialState: string, order: Array<string>, messages:Signal) {
+    constructor(states: SimpleFSMStates, initialState: string, order: Array<string>, messages: Signal) {
         this.states = states;
         this.currentState = initialState;
         this.order = order;
@@ -29,7 +29,7 @@ export class SimpleFSM {
         this.currentState = newState;
 
         this.states[newState](engine, owner);
-        this.messages.dispatch(owner, )
+        this.messages.dispatch(owner);
 
         return this.currentState;
     }
