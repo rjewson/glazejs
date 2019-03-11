@@ -30,7 +30,7 @@ export class GlazeEngine {
 
         this.input = new DigitalInput();
         var rect = canvas.getBoundingClientRect();
-        this.input.InputTarget(window.document, new Vector2(rect.left, rect.top));
+        this.input.InputTarget(document, new Vector2(rect.left, rect.top));
 
         this.engine = new Engine();
     }
