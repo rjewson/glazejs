@@ -21,6 +21,9 @@ import { Active } from "../../glaze/core/components/Active";
 import { Held } from "../../glaze/core/components/Held";
 import { Ballistics } from "../../glaze/util/Ballastics";
 import { PlasmaBall } from "../factories/projectile/PlasmaBall";
+import { Hierachy } from "../../glaze/core/components/Hierachy";
+import { Attachment } from "../../glaze/core/components/Attachment";
+import { Vector2 } from "../../glaze/geom/Vector2";
 
 /*
 backspace   8
@@ -139,14 +142,15 @@ export class PlayerSystem extends System {
 
         this.playerHolder = this.engine.createEntity();
         this.engine.addComponentsToEntity(this.playerHolder, [
-            position,
+            new Position(0,0),
+            new Attachment(new Vector2(0,0)),
             extents,
             this.holder,
             new PhysicsCollision(true, new Filter(1, 0, TestFilters.PLAYER_GROUP), [], false, physicsBody.body),
             new Moveable(),
             new Active(),
         ]);
-
+        Hierachy.addChild(this.engine, entity, this.playerHolder);
         // player.addChildEntity(playerLight);
 
         // playerFilter = entity.getComponent(PhysicsCollision).proxy.filter;

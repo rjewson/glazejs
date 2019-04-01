@@ -26,6 +26,7 @@ export const listenDebugButtons = (engine: Engine) => {
         }
     });
     document.getElementById("debugDraw").addEventListener("click", (event:any) => {
+        document.getElementById("viewDebug").style.display = event.target.checked ? "block" : "none";
         GlazeEngine.params.debug = event.target.checked;
     });
 

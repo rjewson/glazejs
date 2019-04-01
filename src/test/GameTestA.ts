@@ -98,7 +98,9 @@ import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
 import { WorkerSystem } from "./systems/WorkerSystem";
-import { m } from "../glaze/wasm/test";
+import { AttachmentSystem } from "../glaze/core/systems/AttachmentSystem";
+import { Hierachy } from "../glaze/core/components/Hierachy";
+import { Attachment } from "../glaze/core/components/Attachment";
 
 interface GlazeMapLayerConfig {}
 
@@ -184,6 +186,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new PhysicsUpdateSystem());
         corePhase.addSystem(new PhysicsCollisionSystem(broadphase));
         corePhase.addSystem(new PhysicsPositionSystem());
+        corePhase.addSystem(new AttachmentSystem());
         corePhase.addSystem(new HeldSystem());
 
         corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine));
@@ -421,6 +424,17 @@ export class GameTestA extends GlazeEngine {
             new Holdable(),
             new Active()
         ]);
+
+        const playerRock = this.engine.createEntity();
+        this.engine.addComponentsToEntity(playerRock, [
+            new Position(0,0,),
+            new Extents(7, 7),
+            new Graphics("items", "rock"),
+            new Active(),
+            new Attachment(new Vector2(-10, -10)),
+        ]);
+
+        Hierachy.addChild(this.engine, playerEntity, playerRock);
 
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [

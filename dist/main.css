@@ -1,3 +1,48 @@
+* {
+    font-family: "Courier New", Courier, monospace;
+}
+
+body {
+    min-width: 1280px;
+    min-height: 800px;
+    font-size: 12px;
+    margin: 0px;
+}
+
+h1 {
+    font-size: 14px;
+    margin: 2px;
+}
+
+button {
+    font-size: 12px;
+}
+
+#viewContainer {
+    position: relative;
+    min-width: 1280px;
+    min-height: 800px;
+}
+
+#view {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#viewDebug {
+    display:none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#playControls {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
 .table-header-rotated {
     border-collapse: collapse;
 }

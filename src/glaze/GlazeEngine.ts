@@ -4,6 +4,7 @@ import { AssetLoader } from "./util/AssetLoader";
 import { GameLoop } from "./util/GameLoop";
 import { Vector2 } from "./geom/Vector2";
 import { Entity } from "./ecs/Entity";
+import { GZE } from "./GZE";
 
 export interface GlazeEngineParams {
     tileSize: number;
@@ -32,7 +33,7 @@ export class GlazeEngine {
         var rect = canvas.getBoundingClientRect();
         this.input.InputTarget(document, new Vector2(rect.left, rect.top));
 
-        this.engine = new Engine();
+        GZE.engine = this.engine = new Engine();
     }
 
     public loadAssets(assetList: Array<string>) {

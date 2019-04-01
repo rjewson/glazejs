@@ -5,10 +5,10 @@ export class Position {
     public prevCoords: Vector2;
     public direction: Vector2;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, xdir: number = 1, ydir: number = 1) {
         this.coords = new Vector2(x, y);
         this.prevCoords = new Vector2(x, y);
-        this.direction = new Vector2(1, 1);
+        this.direction = new Vector2(xdir, ydir);
     }
 
     public update(position: Vector2) {
