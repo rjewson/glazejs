@@ -6,7 +6,7 @@
     "allowJs": true,
     "lib": ["dom", "webworker", "es6"],
     "module": "ESNext",
-    "outDir": "./dist"
+    "outDir": "./dist",
     // "paths": {
     //   "*": ["node_modules/*", "src/typings/*"]
     // }
