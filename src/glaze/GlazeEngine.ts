@@ -32,7 +32,14 @@ export class GlazeEngine {
         this.input = new DigitalInput();
         var rect = canvas.getBoundingClientRect();
         this.input.InputTarget(document, new Vector2(rect.left, rect.top));
-
+        // Hackish: if were in an iframe refocus each time we click
+        if ( window.location !== window.parent.location ) {
+            window.onclick = () => {
+                if (!document.hasFocus()) {
+                    window.focus();
+                }
+            }
+        }
         GZE.engine = this.engine = new Engine();
     }
 

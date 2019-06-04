@@ -22,13 +22,13 @@ export class DigitalInput {
 
     public InputTarget(target: EventTarget, inputCorrection: Vector2): void {
         this.target = target;
-        target.addEventListener("keydown", this.KeyDown.bind(this), false);
-        target.addEventListener("keyup", this.KeyUp.bind(this), false);
-        target.addEventListener("mousedown", this.MouseDown.bind(this), false);
-        //target.addEventListener("touchstart",MouseDown,false);
+        target.addEventListener("keydown", this.KeyDown.bind(this));
+        target.addEventListener("keyup", this.KeyUp.bind(this));
+        target.addEventListener("mousedown", this.MouseDown.bind(this));
+        //target.addEventListener("touchstart",MouseDow);
 
-        target.addEventListener("mouseup", this.MouseUp.bind(this), false);
-        target.addEventListener("mousemove", this.MouseMove.bind(this), false);
+        target.addEventListener("mouseup", this.MouseUp.bind(this));
+        target.addEventListener("mousemove", this.MouseMove.bind(this));
         // target.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, RightMouseDown, false, 0, true);
         // target.addEventListener(MouseEvent.RIGHT_MOUSE_UP, RightMouseUp, false, 0, true);
         this.inputCorrection = inputCorrection;
