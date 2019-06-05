@@ -15,7 +15,7 @@ export class GunTurretSystem extends System {
 
     updateEntity(entity: Entity, turret: GunTurret, position: Position) {
         if (turret.intervalDelay.tick(this.dt)) {
-            var entities = CombatUtils.SearchSortAndFilter(position.coords, 400, entity, EntityFilterOptions.ENEMY)
+            var entities = CombatUtils.SearchSortAndFilter(position.coords, 200, entity, EntityFilterOptions.ENEMY)
                 .entities;
             if (entities.length > 0) {
                 this.fireBulletAtEntity(position, entities[0].entity);
@@ -28,7 +28,6 @@ export class GunTurretSystem extends System {
     }
 
     fireBullet(pos: Vector2, target: Vector2) {
-        return;
         var filter = new Filter();
         filter.groupIndex = TestFilters.TURRET_GROUP;
         var bullet = StandardBullet.create(this.engine, new Position(pos.x, pos.y), filter, target);

@@ -1,7 +1,89 @@
 <html>
     <head>
-            <link rel="stylesheet" href="dist/main.css" />
+        <link rel="stylesheet" href="dist/main.css" />
+        <style>
+            table.customTable {
+                width: 800px;
+                background-color: #ffffff;
+                border-collapse: collapse;
+                border-width: 1px;
+                border-color: #000000;
+                border-style: solid;
+                color: #000000;
+            }
+
+            table.customTable td,
+            table.customTable th {
+                text-align: left;
+                border-width: 1px;
+                border-color: #000000;
+                border-style: solid;
+                padding: 2px;
+                font-size: 12px;
+                font-family: Arial, sans-serif;
+            }
+
+            table.customTable thead {
+                background-color: #ffffff;
+            }
+        </style>
     </head>
     <h1>GlazeJS Demo</h1>
+    Things to do:
+    <ul>
+        <li>Switches open things</li>
+        <li>Use the teleporter</li>
+        <li>Heavy things help you sink</li>
+        <li>Try to get the water container</li>
+    </ul>
+    <h3>Keys:</h3>
+    <table class="customTable">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Action</th>
+                <th>Key</th>
+                <th>Action</th>
+                <th>Key</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>WASD</b></td>
+                <td>Move/Fly</td>
+                <td><b>Space</b></td>
+                <td>Fire Projectile</td>
+                <td><b>1-2</b></td>
+                <td>Select Projectile</td>
+            </tr>
+            <tr>
+                <td><b>H</b></td>
+                <td>Hold Item</td>
+                <td><b>J</b></td>
+                <td>Drop Item</td>
+                <td><b>K</b></td>
+                <td>Throw Item</td>
+            </tr>
+            <tr>
+                <td><b>E</b></td>
+                <td>Aim</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><b>U</b>/td>
+                <td>Bees!!</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Generated at CSSPortal.com -->
+    <h3>Game:</h3>
     <iframe src="dist/index.html" width="1280" height="800" frameborder="0"></iframe>
 </html>

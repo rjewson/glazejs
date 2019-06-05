@@ -425,20 +425,20 @@ export class GameTestA extends GlazeEngine {
             new Active()
         ]);
 
-        const playerRock = this.engine.createEntity();
-        this.engine.addComponentsToEntity(playerRock, [
-            new Position(0,0,),
-            new Extents(7, 7),
-            new Graphics("items", "rock"),
-            new Active(),
-            new Attachment(new Vector2(-10, -10)),
-        ]);
+        // const playerRock = this.engine.createEntity();
+        // this.engine.addComponentsToEntity(playerRock, [
+        //     new Position(0,0,),
+        //     new Extents(7, 7),
+        //     new Graphics("items", "rock"),
+        //     new Active(),
+        //     new Attachment(new Vector2(-10, -10)),
+        // ]);
 
-        Hierachy.addChild(this.engine, playerEntity, playerRock);
+        // Hierachy.addChild(this.engine, playerEntity, playerRock);
 
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [
-            this.mapPosition(25, 57),
+            this.mapPosition(23, 46),
             new Extents(6, 14),
             new Graphics("items", "water_container"),
             new PhysicsCollision(false, new Filter(), []),
