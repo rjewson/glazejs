@@ -35,7 +35,11 @@ export interface TMXLayer {
     y: number;
 }
 
-export interface TMXProperty {}
+export interface TMXProperty {
+    name: string;
+    type: string;
+    value: any;
+}
 
 export interface TMXTileSet {
     columns: number;
@@ -77,7 +81,7 @@ export interface TMXObject {
     point: boolean;
     polygon: number[];
     polyline: number[];
-    properties: number[];
+    properties: TMXProperty[];
     rotation: number;
     text: object;
     type: string;

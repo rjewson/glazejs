@@ -23,10 +23,8 @@ export class ForceFactory {
         components.push(new Active());
 
         var forceDataArray: Array<ForceData> = [];
-        for (var i = 0; i < 10; i++) {
-            var raw = object.properties["config" + i] as string;
-            if (raw != null) {
-                const config = raw.split(",").map(parseFloat);
+        object.properties.forEach((prop) => {
+            const config = prop.value.split(",").map(parseFloat);
                 forceDataArray.push(
                     new ForceData(
                         config[0],
@@ -36,8 +34,7 @@ export class ForceFactory {
                         config[4],
                     ),
                 );
-            }
-        }
+        });
 
         components.push(new EnvironmentForce(forceDataArray));
         components.push(new Wind(1/1000));

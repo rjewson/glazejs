@@ -1,6 +1,8 @@
 # glazeJS
 
-A HTML5/WebGL game engine built with TypeScript.  The goal of the project to enable the development of large, open multiplayer 2D worlds for in browser gaming.  Close attention has been paid to all performance aspects.
+A 2D WebGL game engine built with TypeScript.  The goal of the project to enable the development of large, open multiplayer 2D worlds for in-browser gaming.  Close attention has been paid to all performance aspects.
+
+Live: [https://rjewson.github.io/glazejs/](https://rjewson.github.io/glazejs/)
 
 - Fully designed around the Entity-Component-System archectural pattern
 - Custom WebGL renderer with special attention to:
@@ -16,8 +18,6 @@ A HTML5/WebGL game engine built with TypeScript.  The goal of the project to ena
     - Behaviour Tree
     - FSM's
 - and more!
-
-Live: [http://rjewson.com/glaze](http://rjewson.com/glaze)
 
 ## Install and run
 
