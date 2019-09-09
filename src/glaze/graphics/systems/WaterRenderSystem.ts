@@ -141,7 +141,7 @@ export class WaterRenderSystem extends System {
         for (var ypos = 1; ypos < this.waterGrid1.height - 1; ypos++) {
             for (var xpos = 1; xpos < this.waterGrid1.width - 1; xpos++) {
                 const v = waterMap.get(xpos, ypos, 0);
-                this.renderer.AddSpriteToBatch(xpos * 16 + 8, ypos * 16 + 8, 16, v * 16, 0, 0, 0);
+                this.renderer.AddSpriteToBatch(xpos * 16 + 8, ypos * 16 + 8, 16, v * 8, 0, 0, 255);
             }
         }
     }

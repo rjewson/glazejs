@@ -13,10 +13,10 @@
   "license": "ISC",
   "devDependencies": {
     "ts-loader": "5.3.3",
-    "tslint": "^5.17.0",
-    "typescript": "^3.5.1",
-    "webpack": "^4.17.2",
-    "webpack-cli": "^3.1.0",
+    "tslint": "^5.19.0",
+    "typescript": "^3.6.2",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8",
     "webpack-merge": "^4.2.1",
     "webpack-serve": "^2.0.2",
     "worker-loader": "^2.0.0"
