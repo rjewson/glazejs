@@ -36,7 +36,7 @@ export class FixedViewManagementSystem extends System {
         if (status == true) {
             this.engine.addComponentsToEntity(entity, [new Viewable()]);
         } else {
-            this.engine.removeComponentsFromEntity(entity, [Viewable]);
+            this.engine.removeComponentsFromEntityByType(entity, [Viewable]);
         }
     }
 }

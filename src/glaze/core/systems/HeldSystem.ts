@@ -83,7 +83,7 @@ export class HeldSystem extends System {
     public drop(heldItem: Entity) {
         if (heldItem != null) {
             var _heldItem = heldItem;
-            this.engine.removeComponentsFromEntity(heldItem, [Held]);
+            this.engine.removeComponentsFromEntityByType(heldItem, [Held]);
             heldItem = null;
             return _heldItem;
         }

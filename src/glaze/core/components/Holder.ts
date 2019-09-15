@@ -15,7 +15,7 @@ export class Holder {
     static drop(engine:Engine, holder:Holder):Entity {
         if (holder.heldItem!=null) {
             const item = holder.heldItem;
-            engine.removeComponentsFromEntity(holder.heldItem, [Held]);
+            engine.removeComponentsFromEntityByType(holder.heldItem, [Held]);
             holder.heldItem = null;
             return item;
         }

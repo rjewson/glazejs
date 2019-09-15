@@ -1,26 +1,28 @@
-import { IComponentFactory } from "./Component";
+import { ComponentType, ComponentInstance } from "./Component";
 import { Entity } from "./Entity";
 import { Engine } from "./Engine";
+import { BitVector } from "../ds/BitVector";
 
 interface EntityEntry {
-    components: any[];
+    components: ComponentInstance[];
     boundUpdate: () => void;
 }
 
 export class System {
     public engine: Engine;
-    public components: string[];
+    public componentTypes: ComponentType[];
+    public matchMask: BitVector
     public members: Map<Entity, EntityEntry>;
 
     protected dt: number;
     protected timestamp: number;
 
-    constructor(components: IComponentFactory[]) {
+    constructor(componentTypes: ComponentType[]) {
         this.members = new Map();
-        this.components = components.map(factory => factory.name);
+        this.componentTypes = componentTypes;
     }
 
-    public addEntity(entity: Entity, components: any[]) {
+    public addEntity(entity: Entity, components: ComponentInstance[]) {
         if (this.members.has(entity)) return;
         const boundUpdate = this.updateEntity.bind(this, entity, ...components);
         const entry = { components, boundUpdate };
@@ -28,7 +30,7 @@ export class System {
         this.onEntityAdded(entity, ...components);
     }
 
-    public onEntityAdded(entity: Entity, ...components: any[]) {}
+    public onEntityAdded(entity: Entity, ...components: ComponentInstance[]) {}
 
     public removeEntity(entity: Entity) {
         if (!this.members.has(entity)) return;
@@ -37,7 +39,7 @@ export class System {
         this.members.delete(entity);
     }
 
-    public onEntityRemoved(entity: Entity, ...components: any[]) {}
+    public onEntityRemoved(entity: Entity, ...components: ComponentInstance[]) {}
 
     public updateSystem(dt: number, timestamp: number) {
         this.dt = dt;
@@ -61,5 +63,5 @@ export class System {
 
     public postUpdate() {}
 
-    public updateEntity(entity: Entity, ...components: any[]) {}
+    public updateEntity(entity: Entity, ...components: ComponentInstance[]) {}
 }

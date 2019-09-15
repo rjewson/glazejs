@@ -32,7 +32,7 @@ export class TeleporterFactory {
         off: function(engine: Engine, entity: Entity) {
             var pc = engine.getComponentForEntity(entity, PhysicsCollision);
             pc.proxy.isActive = true;
-            engine.removeComponentsFromEntity(entity, [ParticleEmitter]);
+            engine.removeComponentsFromEntityByType(entity, [ParticleEmitter]);
         },
     };
 
