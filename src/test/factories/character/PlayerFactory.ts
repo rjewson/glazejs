@@ -39,7 +39,7 @@ export class PlayerFactory {
             new PhysicsCollision(false,playerFilter,[]),
             new Moveable(),
             new Active(),
-            new Light(128, 1, 1, 1, 255, 0, 0),
+            new Light(256, 1, 1, 0, 255, 0, 0),
             new Viewable(),
         ]);
 

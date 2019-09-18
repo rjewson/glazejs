@@ -1,5 +1,5 @@
 import { System } from "../../ecs/System";
-import { FBOLightingRenderer } from "../render/lighting/FBOLightingRenderer";
+import { FBOLightingRenderer2 } from "../render/lighting/FBOLightingRenderer2";
 import { TileMapCollision } from "../../physics/collision/broadphase/TileMapCollision";
 import { Position } from "../../core/components/Position";
 import { Viewable } from "../../core/components/Viewable";
@@ -7,6 +7,7 @@ import { Entity } from "../../ecs/Entity";
 import { RandomFloat } from "../../util/Random";
 import { Clamp } from "../../util/Maths";
 import { Light } from "../components/Light";
+import { FBOLightingRenderer } from "../render/lighting/FBOLightingRenderer";
 
 export class PointLightingSystem extends System {
     public renderer: FBOLightingRenderer;

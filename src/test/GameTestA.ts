@@ -272,12 +272,20 @@ export class GameTestA extends GlazeEngine {
             1
         );
 
+        // NEW GPU LIGHTS
+        // const lightSystem = new PointLightingSystem(tileMapCollision);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // renderPhase.addSystem(lightSystem);
+
         const spriteRender = new SpriteRenderer();
         spriteRender.AddStage(this.renderSystem.stage);
         this.renderSystem.renderer.AddRenderer(spriteRender);
 
         this.renderSystem.itemContainer.addChild(tileMapRenderer.renderLayersMap.get("bg").sprite);
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
+        
+        // NEW GPU LIGHTS
+        //this.renderSystem.camera.addChild(lightSystem.renderer.sprite);
 
         renderPhase.addSystem(this.renderSystem);
 
@@ -293,9 +301,9 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
 
         // GPU calculated lights
-        // const lightSystem = new PointLightingSystem(tileMapCollision);
-        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // renderPhase.addSystem(lightSystem);
+        const lightSystem = new PointLightingSystem(tileMapCollision);
+        this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        renderPhase.addSystem(lightSystem);
 
         // JS calculated ights
         // const lightSystem = new FloodLightingSystem(tileMapCollision.data);

@@ -3,10 +3,12 @@ import { Entity } from "./Entity";
 import { Pool } from "../util/Pool";
 import { System } from "./System";
 import { Phase } from "./Phase";
+import { BitVector } from "../ds/BitVector";
 
 export class Engine {
     // Map constructor.name -> array of instances of that type
     public components: Map<string, ComponentInstance[]>;
+    public componentTypes: Map<string, number>;
 
     public phases: Phase[];
     public systems: System[];
@@ -17,6 +19,7 @@ export class Engine {
 
     constructor() {
         this.components = new Map();
+        this.componentTypes = new Map();
         this.phases = new Array();
         this.systems = new Array();
         this.c4e = new Map();
@@ -74,9 +77,13 @@ export class Engine {
     }
 
     public addPhaseSystemToEngine(system: System) {
-        system.engine = this;
         this.systems.push(system);
-        system.componentTypes.forEach((component: ComponentType) => this.createComponentEntryFromType(component));
+        const systemMask = new BitVector(4);
+        system.componentTypes.forEach((component: ComponentType) => {
+            const name = this.createComponentEntryFromType(component);
+            systemMask.set(this.componentTypes.get(name), true);
+        });
+        system.onAddedToEngine(this, systemMask);
     }
 
     public update(dt: number, timestamp: number) {
@@ -96,8 +103,10 @@ export class Engine {
     private createComponentEntryFromType(componentType: ComponentType): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
+            const id = this.nextId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
-            componentType.prototype[ComponentIDName] = this.nextId++;
+            this.componentTypes.set(name, id);
+            componentType.prototype[ComponentIDName] = id;
         }
         return name;
     }
@@ -105,8 +114,10 @@ export class Engine {
     private createComponentEntryFromInstance(component: ComponentInstance): string {
         const name = component.constructor.name;
         if (!this.components.has(name)) {
+            const id = this.nextId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
-            component.constructor.prototype[ComponentIDName] = this.nextId++;
+            this.componentTypes.set(name, id);
+            component.constructor.prototype[ComponentIDName] = id;
         }
         return name;
     }

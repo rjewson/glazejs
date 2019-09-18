@@ -11,7 +11,7 @@ interface EntityEntry {
 export class System {
     public engine: Engine;
     public componentTypes: ComponentType[];
-    public matchMask: BitVector
+    public matchMask: BitVector;
     public members: Map<Entity, EntityEntry>;
 
     protected dt: number;
@@ -20,6 +20,11 @@ export class System {
     constructor(componentTypes: ComponentType[]) {
         this.members = new Map();
         this.componentTypes = componentTypes;
+    }
+
+    public onAddedToEngine(engine: Engine, matchMask: BitVector) {
+        this.engine = engine;
+        this.matchMask = matchMask;
     }
 
     public addEntity(entity: Entity, components: ComponentInstance[]) {
