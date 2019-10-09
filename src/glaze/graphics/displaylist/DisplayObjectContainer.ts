@@ -87,10 +87,10 @@ export class DisplayObjectContainer extends DisplayObject {
 
         const a00 = this.localTransform[0];
         const a01 = this.localTransform[1];
-        const a02 = positionx - this.localTransform[0] * this.pivot.x - this.pivot.y * this.localTransform[1];
+        const a02 = positionx - ((this.localTransform[0] * this.pivot.x) - (this.pivot.y * this.localTransform[1]));
         const a10 = this.localTransform[3];
         const a11 = this.localTransform[4];
-        const a12 = positiony - this.localTransform[4] * this.pivot.y - this.pivot.x * this.localTransform[3];
+        const a12 = positiony - ((this.localTransform[4] * this.pivot.y) - (this.pivot.x * this.localTransform[3]));
         const b00 = parentTransform[0];
         const b01 = parentTransform[1];
         const b02 = parentTransform[2];

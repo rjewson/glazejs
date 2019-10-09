@@ -257,7 +257,7 @@ export class GameTestA extends GlazeEngine {
             1,
             1
         );
-        tileMapRenderer.SetTileLayerFromData(
+        const mainlayer = tileMapRenderer.SetTileLayerFromData(
             foreground1,
             this.renderSystem.textureManager.baseTextures.get(TILE_SPRITE_SHEET),
             "Foreground1",
@@ -273,9 +273,13 @@ export class GameTestA extends GlazeEngine {
         );
 
         // NEW GPU LIGHTS
-        // const lightSystem = new PointLightingSystem(tileMapCollision);
-        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        // renderPhase.addSystem(lightSystem);
+        const lightSystem = new PointLightingSystem(tileMapCollision, mainlayer);
+        this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        renderPhase.addSystem(lightSystem);
+
+        renderPhase.addSystem(
+            new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision)
+        );
 
         const spriteRender = new SpriteRenderer();
         spriteRender.AddStage(this.renderSystem.stage);
@@ -285,7 +289,7 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
         
         // NEW GPU LIGHTS
-        //this.renderSystem.camera.addChild(lightSystem.renderer.sprite);
+        this.renderSystem.camera.addChild(lightSystem.renderer.sprite);
 
         renderPhase.addSystem(this.renderSystem);
 
@@ -294,16 +298,12 @@ export class GameTestA extends GlazeEngine {
         renderPhase.addSystem(debugRenderSystem);
         this.debugGraphics = debugRenderSystem.debugRender;
 
-        renderPhase.addSystem(
-            new TileGraphicsRenderSystem(this.assets.assets.get(TILE_FRAMES_CONFIG), tileMapRenderer, tileMapCollision)
-        );
-
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
 
         // GPU calculated lights
-        const lightSystem = new PointLightingSystem(tileMapCollision);
-        this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
-        renderPhase.addSystem(lightSystem);
+        // const lightSystem = new PointLightingSystem(tileMapCollision);
+        // this.renderSystem.renderer.AddRenderer(lightSystem.renderer);
+        // renderPhase.addSystem(lightSystem);
 
         // JS calculated ights
         // const lightSystem = new FloodLightingSystem(tileMapCollision.data);
@@ -353,7 +353,7 @@ export class GameTestA extends GlazeEngine {
                 new PhysicsBody(chickenBody, true),
                 new Moveable(),
                 new Active(),
-                // new Light(64, 1, 1, 1, 255, 255, 255),
+                new Light(64, 1, 1, 1, 255, 255, 255),
                 new Viewable(),
                 new DebugGraphics()
                 // new Controllable(150),

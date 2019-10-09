@@ -4,6 +4,7 @@ import { Ray } from "../Ray";
 import { RayAABB, Collide } from "../Intersect";
 import { DebugRenderer } from "../../../graphics/render/debug/DebugRenderer";
 import { Pool } from "../../../util/Pool";
+import { MAXINT } from "../../../util/Maths";
 
 const boundsPadding: number = 5;
 const dynamicTreeVelocityMultiplyer: number = 3;
@@ -517,7 +518,7 @@ export class DynamicTree {
     //   * callback indicates that your are complete with your query and do not want to continue. Return false will continue searching
     //   * the tree until all possible bodies that would intersect with the ray have been returned.
     //   */
-    public rayCastQuery(ray: Ray, max: number = Infinity, callback: (other: BFProxy) => boolean): void {
+    public rayCastQuery(ray: Ray, max: number = MAXINT, callback: (other: BFProxy) => boolean): void {
         var helper = (currentNode: TreeNode): boolean => {
             if (currentNode && RayAABB(ray, currentNode.body)) {
                 //if (currentNode && currentNode.bounds.rayCast(ray, max)) {

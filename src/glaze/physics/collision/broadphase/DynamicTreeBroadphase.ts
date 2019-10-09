@@ -16,6 +16,8 @@ export class DynamicTreeBroadphase implements IBroadphase {
 
     public tree: DynamicTree;
 
+    public tempArea: AABB2;
+
     constructor(map: TileMapCollision) {
         this.map = map;
         this.staticProxies = new Array<BFProxy>();
@@ -23,6 +25,7 @@ export class DynamicTreeBroadphase implements IBroadphase {
         this.sleepingProxies = new Array<BFProxy>();
 
         this.tree = new DynamicTree();
+        this.tempArea = new AABB2();
     }
 
     public addProxy(proxy: BFProxy) {
@@ -69,9 +72,8 @@ export class DynamicTreeBroadphase implements IBroadphase {
     }
 
     public QueryArea(aabb: AABB, result: QueryCallback, checkDynamic: boolean = true, checkStatic: boolean = true) {
-        const area = new AABB2();
-        area.copyAABB(aabb);
-        this.tree.queryArea(area,result);
+        this.tempArea.copyAABB(aabb);
+        this.tree.queryArea(this.tempArea,result);
     }
 
     public CastRay(ray: Ray, result: QueryCallback, checkDynamic: boolean = true, checkStatic: boolean = true) {

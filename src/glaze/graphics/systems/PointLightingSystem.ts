@@ -7,24 +7,24 @@ import { Entity } from "../../ecs/Entity";
 import { RandomFloat } from "../../util/Random";
 import { Clamp } from "../../util/Maths";
 import { Light } from "../components/Light";
-import { FBOLightingRenderer } from "../render/lighting/FBOLightingRenderer";
+import { TileLayer } from "../render/tile/TileLayer";
 
 export class PointLightingSystem extends System {
-    public renderer: FBOLightingRenderer;
+    public renderer: FBOLightingRenderer2;
 
     public map: TileMapCollision;
 
-    constructor(map: TileMapCollision) {
+    constructor(map: TileMapCollision, layer: TileLayer) {
         super([Position, Light, Viewable]);
         this.map = map;
-        this.renderer = new FBOLightingRenderer();
+        this.renderer = new FBOLightingRenderer2(layer);
     }
 
     public preUpdate():boolean {
         this.renderer.reset();
         return true;
     }
-
+    //#region stuff
     updateEntity(entity: Entity, position: Position, light: Light, viewable: Viewable) {
         if (light.flicker > 0) {
             light.intensity = this.nexLightIntensity(light.intensity);
@@ -47,7 +47,8 @@ export class PointLightingSystem extends System {
             );
         }
     }
-
+    //#endregion
+    
     nexLightIntensity(lastIntensity: number) {
         return Clamp(lastIntensity + (Math.random() - 0.3) / 10, 0, 1);
     }

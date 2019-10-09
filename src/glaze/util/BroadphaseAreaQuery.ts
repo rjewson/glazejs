@@ -30,6 +30,7 @@ export class BroadphaseAreaQuery {
     }
 
     public query(position: Vector2, range: number, filterEntity: Entity, visibleCheck: boolean) {
+        return;
         // js.Lib.debug();
         this.entityCollection.clear();
 

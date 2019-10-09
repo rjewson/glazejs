@@ -65,30 +65,51 @@ export class TileMapRenderer implements IRenderer {
         this.quadVertBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.quadVertBuffer);
 
+        // Tri
+        // BL BR TR   BL TR TL
+        // UV
+        // 
+        //  Quad verts and UVs.  UV maps from TL 0,0 to BR 1,1
+        //  Used to interpolate the coord of the fragment
         var quadVerts = new Float32Array([
+            // 1
+            // V BL
             -1,
             -1,
+            // T TM
             0,
             1,
+            // V BR
             1,
             -1,
+            // T TR
             1,
             1,
+            // V TR
             1,
             1,
+            // T MR
+            1,
+            0,
+
+            // 2
+            // BR
+            -1,
+            -1,
+            
+            0,
+            1,
+
+            // TR
+            1,
+            1,
+
             1,
             0,
 
             -1,
-            -1,
-            0,
             1,
-            1,
-            1,
-            1,
-            0,
-            -1,
-            1,
+
             0,
             0,
         ]);
@@ -179,7 +200,7 @@ export class TileMapRenderer implements IRenderer {
         layerId: string,
         scrollScaleX: number,
         scrollScaleY: number,
-    ) {
+    ): TileLayer {
         var layer = new TileLayer();
         layer.setTextureFromMap(this.gl, data);
         layer.setSpriteTexture(sprite);
@@ -187,6 +208,7 @@ export class TileMapRenderer implements IRenderer {
         layer.scrollScale.y = scrollScaleY;
         this.layers.push(layer);
         this.layersMap.set(layerId, layer);
+        return layer;
     }
 
     public SetTileRenderLayer(id:string, layers: Array<string>) {

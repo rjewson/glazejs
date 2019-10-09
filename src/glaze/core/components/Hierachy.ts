@@ -13,7 +13,6 @@ export class Hierachy {
     }
 
     static addChild(engine: Engine, parent: Entity, child: Entity) {
-        debugger;
         let parentHierachy = engine.getComponentForEntity(parent, Hierachy);
         if (!parentHierachy) {
             parentHierachy = new Hierachy();

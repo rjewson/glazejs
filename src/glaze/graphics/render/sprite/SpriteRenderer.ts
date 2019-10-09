@@ -47,6 +47,8 @@ export class SpriteRenderer implements IRenderer {
     }
 
     public Render(clip: AABB2) {
+        // console.log("SPR:" + this.camera.position.x);
+
         this.stage.updateTransform();
 
         this.gl.useProgram(this.spriteShader.program);

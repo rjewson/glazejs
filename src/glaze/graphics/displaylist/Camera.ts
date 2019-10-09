@@ -24,7 +24,7 @@ export class Camera extends DisplayObjectContainer {
 
     private rf(v: number) {
         return v;
-        // return Std.number(v);
+        // return Math.round(v);
     }
 
     public Focus(x: number, y: number) {
