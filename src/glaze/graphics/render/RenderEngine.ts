@@ -92,9 +92,8 @@ export class RendererEngine {
         // gl.clearColor(1.0, 0.0, 0.0, 1.0);
         this.gl.clearColor(159 / 255, 188 / 255, 197 / 255, 1.0);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
-        this.gl.colorMask(true, true, true, false);
+        //this.gl.colorMask(true, true, true, false);
         this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA,WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
-
         // this.gl.disable(WebGLRenderingContext.BLEND);
         // this.gl.disable(WebGLRenderingContext.DEPTH_TEST);
 
@@ -107,6 +106,9 @@ export class RendererEngine {
         this.renderers.forEach(renderer => {
             renderer.Render(clip);
         });
+        // this.gl.clearColor(1, 1, 1, 1);
+        // this.gl.colorMask(false, false, false, true);
+        // this.gl.clear(this.gl.COLOR_BUFFER_BIT);
     }
 
     private onContextLost(event: Event) {
