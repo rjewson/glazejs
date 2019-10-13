@@ -57,6 +57,7 @@ export class SpriteRenderer implements IRenderer {
         this.gl.enableVertexAttribArray(this.spriteShader.attribute.aVertexPosition);
         this.gl.enableVertexAttribArray(this.spriteShader.attribute.aTextureCoord);
         this.gl.enableVertexAttribArray(this.spriteShader.attribute.aColor);
+
         //     first=false;
         // }
         this.gl.vertexAttribPointer(

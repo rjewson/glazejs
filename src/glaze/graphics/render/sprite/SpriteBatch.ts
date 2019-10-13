@@ -56,18 +56,6 @@ export class WebGLBatch {
         this.gl.bufferData(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, this.indices, WebGLRenderingContext.STATIC_DRAW);
     }
 
-    public Flush(shader: ShaderWrapper, texture: Texture, size: number) {
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        // this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,data,WebGLRenderingContext.STATIC_DRAW);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
-        this.gl.vertexAttribPointer(shader.attribute.aVertexPosition, 2, WebGLRenderingContext.FLOAT, false, 20, 0);
-        this.gl.vertexAttribPointer(shader.attribute.aTextureCoord, 2, WebGLRenderingContext.FLOAT, false, 20, 8);
-        this.gl.vertexAttribPointer(shader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, 20, 16);
-        this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
-        this.gl.drawElements(WebGLRenderingContext.TRIANGLES, size * 6, WebGLRenderingContext.UNSIGNED_SHORT, 0);
-    }
-
     public AddSpriteToBatch(sprite: Sprite, indexRun: number) {
         const index = indexRun * 20;
         const frame = sprite.texture.frame;
@@ -155,6 +143,18 @@ export class WebGLBatch {
         }
 
         if (indexRun > 0) this.Flush(shader, currentTexture, indexRun);
+    }
+
+    private Flush(shader: ShaderWrapper, texture: Texture, size: number) {
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
+        // this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,data,WebGLRenderingContext.STATIC_DRAW);
+        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+        this.gl.vertexAttribPointer(shader.attribute.aVertexPosition, 2, WebGLRenderingContext.FLOAT, false, 20, 0);
+        this.gl.vertexAttribPointer(shader.attribute.aTextureCoord, 2, WebGLRenderingContext.FLOAT, false, 20, 8);
+        this.gl.vertexAttribPointer(shader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, 20, 16);
+        this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
+        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+        this.gl.drawElements(WebGLRenderingContext.TRIANGLES, size * 6, WebGLRenderingContext.UNSIGNED_SHORT, 0);
     }
 
 }

@@ -17,7 +17,7 @@ export class PointLightingSystem extends System {
     constructor(map: TileMapCollision, layer: TileLayer) {
         super([Position, Light, Viewable]);
         this.map = map;
-        this.renderer = new FBOLightingRenderer2(layer);
+        this.renderer = new FBOLightingRenderer2([4, 10, 16, 20, 30], layer);
     }
 
     public preUpdate():boolean {
@@ -28,7 +28,7 @@ export class PointLightingSystem extends System {
     updateEntity(entity: Entity, position: Position, light: Light, viewable: Viewable) {
         if (light.flicker > 0) {
             light.intensity = this.nexLightIntensity(light.intensity);
-            this.renderer.addLight(
+            this.renderer.addBlockedLight(
                 position.coords.x + RandomFloat(-10, 10),
                 position.coords.y + RandomFloat(-10, 10),
                 light.range * light.intensity,
@@ -37,7 +37,7 @@ export class PointLightingSystem extends System {
                 light.blue,
             );
         } else {
-            this.renderer.addLight(
+            this.renderer.addBlockedLight(
                 position.coords.x,
                 position.coords.y,
                 light.range * light.intensity,

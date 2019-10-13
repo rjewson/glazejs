@@ -10,6 +10,7 @@ import { Texture } from "../../texture/Texture";
 import { Sprite } from "../../displaylist/Sprite";
 import { Rectangle } from "../../../geom/Rectangle";
 import { TileLayer } from "../tile/TileLayer";
+import { LightGroup } from "./LightGroup";
 
 export class FBOLightingRenderer2 implements IRenderer {
     public gl: WebGLRenderingContext;
@@ -45,14 +46,16 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public lights: Array<Vector2>;
     public layer: TileLayer;
-    // public tileDataTexture: WebGLTexture;
+
+    private ranges: Array<number>;
+    private lightGroups: Array<LightGroup>;
+    private lightGroupsMap: Array<LightGroup>;
 
     private tileSize: number;
     private halfTileSize: number;
 
-    private ext: EXT_blend_minmax;
-
-    constructor(layer: TileLayer) {
+    constructor(ranges: Array<number>, layer: TileLayer) {
+        this.ranges = ranges;
         this.renderSurface = this.renderSurface.bind(this);
         this.lastSnap = new Vector2(0, 0);
         this.thisSnap = new Vector2(-1000, -1000);
@@ -64,7 +67,6 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public Init(gl: WebGLRenderingContext, camera: Camera) {
         this.gl = gl;
-        this.ext = this.gl.getExtension('EXT_blend_minmax');
         this.camera = camera;
         this.projection = new Vector2();
         this.indexRun = 0;
@@ -73,7 +75,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             WebGLShaderUtils.CompileProgram(
                 gl,
                 FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-                FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER
+                FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(10)
             )
         );
         this.indexBuffer = gl.createBuffer();
@@ -82,8 +84,27 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.viewportSize = new Vector2();
         this.sprite = new Sprite();
         this.sprite.id = "lightTexture";
-        this.ResizeBatch(100);
+        this.ResizeBatch(this.ranges.length * 20);
         this.lights = [];
+        this.lightGroups = this.ranges.map(
+            range =>
+                new LightGroup(
+                    range,
+                    20,
+                    new ShaderWrapper(
+                        gl,
+                        WebGLShaderUtils.CompileProgram(
+                            gl,
+                            FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
+                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range)
+                        )
+                    )
+                )
+        );
+        this.lightGroupsMap = new Array(this.ranges[this.ranges.length-1]);
+        this.ranges.forEach( (range, i) => {
+            this.lightGroupsMap[range] = this.lightGroups[i];
+        })
     }
 
     public ResizeBatch(size: number) {
@@ -112,8 +133,8 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     public Resize(width: number, height: number) {
-        var expandedWidth: number = Math.floor(width / (this.tileSize)) + 2;
-        var expandedHeight: number = Math.floor(height / (this.tileSize)) + 2;
+        var expandedWidth: number = Math.floor(width / this.tileSize) + 2;
+        var expandedHeight: number = Math.floor(height / this.tileSize) + 2;
         this.viewportSize.x = expandedWidth;
         this.viewportSize.y = expandedHeight;
         this.scaledViewportSize[0] = this.viewportSize.x;
@@ -133,7 +154,16 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.indexRun = 0;
     }
 
-    public addLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
+    public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
+        intensity = 64 + 8;
+        this.lights[this.indexRun] = new Vector2(x, y);
+        this.indexRun++;
+    }
+
+    public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
+        const group = this.lightGroupsMap[Math.round(intensity/this.tileSize)];
+        group.addLight(x,y,intensity,red,green,blue);
+
         intensity = 64 + 8;
         this.lights[this.indexRun] = new Vector2(x, y);
         this.indexRun++;
@@ -141,7 +171,7 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public processLights() {
         const size = 10;
-        const intensity = (this.tileSize * size) + this.halfTileSize;
+        const intensity = this.tileSize * size + this.halfTileSize;
 
         for (let i = 0; i < this.indexRun; i++) {
             const light = this.lights[i];
@@ -161,8 +191,8 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.data[index + 0] = x + transformedVerts[0] * intensity;
             this.data[index + 1] = y + transformedVerts[1] * intensity;
             //UV
-            this.data[index + 2] = uvs[0]* size; //frame.x / tw;
-            this.data[index + 3] = uvs[1]* size; //frame.y / th;
+            this.data[index + 2] = uvs[0] * size; //frame.x / tw;
+            this.data[index + 3] = uvs[1] * size; //frame.y / th;
             //Colour
             this.data[index + 4] = 1;
 
@@ -171,8 +201,8 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.data[index + 5] = x + transformedVerts[2] * intensity;
             this.data[index + 6] = y + transformedVerts[3] * intensity;
             //UV
-            this.data[index + 7] = uvs[2]* size; //(frame.x + frame.width) / tw;
-            this.data[index + 8] = uvs[3]* size; //frame.y / th;
+            this.data[index + 7] = uvs[2] * size; //(frame.x + frame.width) / tw;
+            this.data[index + 8] = uvs[3] * size; //frame.y / th;
             //Colour
             this.data[index + 9] = 1;
 
@@ -181,8 +211,8 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.data[index + 10] = x + transformedVerts[4] * intensity;
             this.data[index + 11] = y + transformedVerts[5] * intensity;
             //UV
-            this.data[index + 12] = uvs[4]* size; //(frame.x + frame.width) / tw;
-            this.data[index + 13] = uvs[5]* size; //(frame.y + frame.height) / th;
+            this.data[index + 12] = uvs[4] * size; //(frame.x + frame.width) / tw;
+            this.data[index + 13] = uvs[5] * size; //(frame.y + frame.height) / th;
             //Colour
             this.data[index + 14] = 1;
 
@@ -191,8 +221,8 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.data[index + 15] = x + transformedVerts[6] * intensity;
             this.data[index + 16] = y + transformedVerts[7] * intensity;
             //UV
-            this.data[index + 17] = uvs[6]* size; //frame.x / tw;
-            this.data[index + 18] = uvs[7]* size; //(frame.y + frame.height) / th;
+            this.data[index + 17] = uvs[6] * size; //frame.x / tw;
+            this.data[index + 18] = uvs[7] * size; //(frame.y + frame.height) / th;
             //Colour
             this.data[index + 19] = 1;
         }
@@ -222,53 +252,29 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.gl.colorMask(true, true, true, true);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
-        this.gl.blendEquation( WebGLRenderingContext.FUNC_ADD );
+        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
         this.gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         // Source = from shader
         // Dest = target framebuffer
+        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
+        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+
+        this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
+        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.layer.tileDataTexture);
+
 
         this.gl.useProgram(this.lightingShader.program);
 
         this.gl.uniform2f(this.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
-        
         this.gl.uniform1i(this.lightingShader.uniform.tiles, 0);
-        this.gl.uniform2f(this.lightingShader.uniform.viewOffset, this.thisSnap.x/16, this.thisSnap.y/16);
+        this.gl.uniform2f(this.lightingShader.uniform.viewOffset, this.thisSnap.x / 16, this.thisSnap.y / 16);
         this.gl.uniform2fv(this.lightingShader.uniform.inverseTileTextureSize, this.layer.inverseTileDataTextureSize);
-
-        this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.layer.tileDataTexture);
 
         this.gl.enableVertexAttribArray(this.lightingShader.attribute.aVertexPosition);
         this.gl.enableVertexAttribArray(this.lightingShader.attribute.aTextureCoord);
         this.gl.enableVertexAttribArray(this.lightingShader.attribute.aColor);
 
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aVertexPosition,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            0
-        );
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aTextureCoord,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            8
-        );
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aColor,
-            1,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            16
-        );
-
-        this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+        
         this.gl.vertexAttribPointer(
             this.lightingShader.attribute.aVertexPosition,
             2,
@@ -299,39 +305,47 @@ export class FBOLightingRenderer2 implements IRenderer {
             WebGLRenderingContext.UNSIGNED_SHORT,
             0
         );
-        this.gl.blendEquation( WebGLRenderingContext.FUNC_ADD );
-        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA,WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+
+        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
+        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         this.gl.colorMask(true, true, true, true);
+        for (const lightGroup of this.lightGroups) {
+            lightGroup.reset();
+        }
     }
 
     static LIGHTING_VERTEX_SHADER: string = `
         precision mediump float;
+
+        uniform vec2 projectionVector;
+        uniform vec2 viewOffset;
+        
         attribute vec2 aVertexPosition;
         attribute vec2 aTextureCoord;
         attribute float aColor;
-        uniform vec2 projectionVector;
-        uniform vec2 viewOffset;
+
         varying vec2 vTextureCoord;
         varying float vColor;
+
         void main(void) {
             gl_Position = vec4( aVertexPosition.x / projectionVector.x -1.0, aVertexPosition.y / -projectionVector.y + 1.0 , 0.0, 1.0);
             vTextureCoord = aTextureCoord;
             vColor = aColor;
         }`;
 
-    static LIGHTING_FRAGMENT_SHADER: string = `
+    static LIGHTING_FRAGMENT_SHADER_FACTORY = (count: number) => `
         precision mediump float;
 
-        const int PATH_TRACKING_SAMPLES = 10;
+        const int PATH_TRACKING_SAMPLES = ${count};
         const float INV_PATH_TRACKING_SAMPLES = 1.0 / float(PATH_TRACKING_SAMPLES);
         const vec2 EMPTY_TILE = vec2(1.0, 1.0);
 
-        precision mediump float;
-        varying vec2 vTextureCoord;
-        varying float vColor;
         uniform sampler2D uSampler;
         uniform vec2 viewOffset;
         uniform vec2 inverseTileTextureSize;
+
+        varying vec2 vTextureCoord;
+        varying float vColor;
 
         void main(void) {
             vec2 fragToCenterPos = vTextureCoord.xy;
@@ -361,7 +375,6 @@ export class FBOLightingRenderer2 implements IRenderer {
             gl_FragColor.a = clamp(obs,0.,1.);
         }`;
 
-
     static xxxLIGHTING_FRAGMENT_SHADER: string = `
         precision mediump float;
         varying vec2 vTextureCoord;
@@ -381,5 +394,5 @@ export class FBOLightingRenderer2 implements IRenderer {
             gl_FragColor.a = d;
         }`;
 }
-// 82 
+// 82
 // 47
