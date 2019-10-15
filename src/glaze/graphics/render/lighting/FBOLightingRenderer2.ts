@@ -18,7 +18,6 @@ export class FBOLightingRenderer2 implements IRenderer {
     public camera: Camera;
 
     public projection: Vector2;
-    public lightingShader: ShaderWrapper;
 
     public size: number;
     public dynamicSize: number;
@@ -70,14 +69,14 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.camera = camera;
         this.projection = new Vector2();
         this.indexRun = 0;
-        this.lightingShader = new ShaderWrapper(
-            gl,
-            WebGLShaderUtils.CompileProgram(
-                gl,
-                FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-                FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(10)
-            )
-        );
+        // this.lightingShader = new ShaderWrapper(
+        //     gl,
+        //     WebGLShaderUtils.CompileProgram(
+        //         gl,
+        //         FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
+        //         FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(10)
+        //     )
+        // );
         this.indexBuffer = gl.createBuffer();
         this.dataBuffer = gl.createBuffer();
         this.scaledViewportSize = new Float32Array(2);
@@ -152,6 +151,9 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public reset() {
         this.indexRun = 0;
+        for (const lightGroup of this.lightGroups) {
+            lightGroup.reset();
+        }
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
@@ -162,84 +164,94 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
         const group = this.lightGroupsMap[Math.round(intensity/this.tileSize)];
-        group.addLight(x,y,intensity,red,green,blue);
+        if (group) {
+            group.addLight(x,y,intensity,red,green,blue);
+        }
 
         intensity = 64 + 8;
         this.lights[this.indexRun] = new Vector2(x, y);
         this.indexRun++;
     }
 
-    public processLights() {
-        const size = 10;
-        const intensity = this.tileSize * size + this.halfTileSize;
+    public processLightsBatch() {
+        const bytesPerLight = 5 * 4;
+        let i = 0;
+        for (const lightGroup of this.lightGroups) {
+            for (let lightIndex=0; lightIndex<lightGroup.activeLights; lightIndex++) {
+                const light = lightGroup.lights[lightIndex];
+                const index = i * 20;
+                const uvs = this.quadVerts;
+                const transformedVerts = this.quadVerts;
 
-        for (let i = 0; i < this.indexRun; i++) {
-            const light = this.lights[i];
-            const index = i * 20;
-            const uvs = this.quadVerts;
-            const transformedVerts = this.quadVerts;
+                const size = light.intensity;
+                const intensity = this.tileSize * size + this.halfTileSize;
 
-            let x = light.x;
-            let y = light.y;
-            x += Math.floor(this.camera.position.x / 16) * 16;
-            y += Math.floor(this.camera.position.y / 16) * 16;
-            x += 32;
-            y += 32;
+                let x = light.x;
+                let y = light.y;
+                x += Math.floor(this.camera.position.x / this.tileSize) * this.tileSize;
+                y += Math.floor(this.camera.position.y / this.tileSize) * this.tileSize;
+                x += this.tileSize*2;
+                y += this.tileSize*2;
 
-            //0 bl
-            //Verts
-            this.data[index + 0] = x + transformedVerts[0] * intensity;
-            this.data[index + 1] = y + transformedVerts[1] * intensity;
-            //UV
-            this.data[index + 2] = uvs[0] * size; //frame.x / tw;
-            this.data[index + 3] = uvs[1] * size; //frame.y / th;
-            //Colour
-            this.data[index + 4] = 1;
+                const colour = light.red << 24 | light.green << 16 | light.blue << 8 | 1
 
-            //1 br
-            //Verts
-            this.data[index + 5] = x + transformedVerts[2] * intensity;
-            this.data[index + 6] = y + transformedVerts[3] * intensity;
-            //UV
-            this.data[index + 7] = uvs[2] * size; //(frame.x + frame.width) / tw;
-            this.data[index + 8] = uvs[3] * size; //frame.y / th;
-            //Colour
-            this.data[index + 9] = 1;
+                //0 bl
+                //Verts
+                this.data[index + 0] = x + transformedVerts[0] * intensity;
+                this.data[index + 1] = y + transformedVerts[1] * intensity;
+                //UV
+                this.data[index + 2] = uvs[0] * size; //frame.x / tw;
+                this.data[index + 3] = uvs[1] * size; //frame.y / th;
+                //Colour
+                this.data[index + 4] = 1;
 
-            //2 tr
-            //Verts
-            this.data[index + 10] = x + transformedVerts[4] * intensity;
-            this.data[index + 11] = y + transformedVerts[5] * intensity;
-            //UV
-            this.data[index + 12] = uvs[4] * size; //(frame.x + frame.width) / tw;
-            this.data[index + 13] = uvs[5] * size; //(frame.y + frame.height) / th;
-            //Colour
-            this.data[index + 14] = 1;
+                //1 br
+                //Verts
+                this.data[index + 5] = x + transformedVerts[2] * intensity;
+                this.data[index + 6] = y + transformedVerts[3] * intensity;
+                //UV
+                this.data[index + 7] = uvs[2] * size; //(frame.x + frame.width) / tw;
+                this.data[index + 8] = uvs[3] * size; //frame.y / th;
+                //Colour
+                this.data[index + 9] = 1;
 
-            //3
-            //Verts
-            this.data[index + 15] = x + transformedVerts[6] * intensity;
-            this.data[index + 16] = y + transformedVerts[7] * intensity;
-            //UV
-            this.data[index + 17] = uvs[6] * size; //frame.x / tw;
-            this.data[index + 18] = uvs[7] * size; //(frame.y + frame.height) / th;
-            //Colour
-            this.data[index + 19] = 1;
+                //2 tr
+                //Verts
+                this.data[index + 10] = x + transformedVerts[4] * intensity;
+                this.data[index + 11] = y + transformedVerts[5] * intensity;
+                //UV
+                this.data[index + 12] = uvs[4] * size; //(frame.x + frame.width) / tw;
+                this.data[index + 13] = uvs[5] * size; //(frame.y + frame.height) / th;
+                //Colour
+                this.data[index + 14] = 1;
+
+                //3
+                //Verts
+                this.data[index + 15] = x + transformedVerts[6] * intensity;
+                this.data[index + 16] = y + transformedVerts[7] * intensity;
+                //UV
+                this.data[index + 17] = uvs[6] * size; //frame.x / tw;
+                this.data[index + 18] = uvs[7] * size; //(frame.y + frame.height) / th;
+                //Colour
+                this.data[index + 19] = 1;
+
+                i++;
+            }
         }
     }
 
     public calcSnap(cameraPos: Vector2): boolean {
         this.lastSnap.copy(this.thisSnap);
-        this.thisSnap.x = Math.floor(cameraPos.x / 16) * 16;
-        this.thisSnap.y = Math.floor(cameraPos.y / 16) * 16;
-        this.thisSnap.x += 16;
-        this.thisSnap.y += 16;
+        this.thisSnap.x = Math.floor(cameraPos.x / this.tileSize) * this.tileSize;
+        this.thisSnap.y = Math.floor(cameraPos.y / this.tileSize) * this.tileSize;
+        this.thisSnap.x += this.tileSize;
+        this.thisSnap.y += this.tileSize;
         this.snapChanged = this.lastSnap.x != this.thisSnap.x || this.lastSnap.y != this.thisSnap.y;
         return this.snapChanged;
     }
 
     public Render(clip: AABB2) {
-        this.processLights();
+        this.processLightsBatch();
         this.calcSnap(this.camera.position);
         this.sprite.position.setTo(1280 / 2, 720 / 2);
         this.sprite.position.minusEquals(this.thisSnap);
@@ -248,7 +260,7 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     private renderSurface() {
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        this.gl.clearColor(0.0, 0.0, 0.0, 0.5);
         this.gl.colorMask(true, true, true, true);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
@@ -262,56 +274,60 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
         this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.layer.tileDataTexture);
 
+        let startPosition = 0;
+        for (const lightGroup of this.lightGroups) {
+            if (lightGroup.activeLights==0) {
+                continue;
+            }
+            this.gl.useProgram(lightGroup.lightingShader.program);
 
-        this.gl.useProgram(this.lightingShader.program);
+            this.gl.uniform2f(lightGroup.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
+            this.gl.uniform1i(lightGroup.lightingShader.uniform.tiles, 0);
+            this.gl.uniform2f(lightGroup.lightingShader.uniform.viewOffset, this.thisSnap.x / this.tileSize, this.thisSnap.y / this.tileSize);
+            this.gl.uniform2fv(lightGroup.lightingShader.uniform.inverseTileTextureSize, this.layer.inverseTileDataTextureSize);
 
-        this.gl.uniform2f(this.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
-        this.gl.uniform1i(this.lightingShader.uniform.tiles, 0);
-        this.gl.uniform2f(this.lightingShader.uniform.viewOffset, this.thisSnap.x / 16, this.thisSnap.y / 16);
-        this.gl.uniform2fv(this.lightingShader.uniform.inverseTileTextureSize, this.layer.inverseTileDataTextureSize);
+            this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aVertexPosition);
+            this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aTextureCoord);
+            this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aColor);
 
-        this.gl.enableVertexAttribArray(this.lightingShader.attribute.aVertexPosition);
-        this.gl.enableVertexAttribArray(this.lightingShader.attribute.aTextureCoord);
-        this.gl.enableVertexAttribArray(this.lightingShader.attribute.aColor);
-
-        
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aVertexPosition,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            0
-        );
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aTextureCoord,
-            2,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            8
-        );
-        this.gl.vertexAttribPointer(
-            this.lightingShader.attribute.aColor,
-            1,
-            WebGLRenderingContext.FLOAT,
-            false,
-            20,
-            16
-        );
-        this.gl.drawElements(
-            WebGLRenderingContext.TRIANGLES,
-            this.indexRun * 6,
-            WebGLRenderingContext.UNSIGNED_SHORT,
-            0
-        );
+            
+            this.gl.vertexAttribPointer(
+                lightGroup.lightingShader.attribute.aVertexPosition,
+                2,
+                WebGLRenderingContext.FLOAT,
+                false,
+                20,
+                0
+            );
+            this.gl.vertexAttribPointer(
+                lightGroup.lightingShader.attribute.aTextureCoord,
+                2,
+                WebGLRenderingContext.FLOAT,
+                false,
+                20,
+                8
+            );
+            this.gl.vertexAttribPointer(
+                lightGroup.lightingShader.attribute.aColor,
+                1,
+                WebGLRenderingContext.FLOAT,
+                false,
+                20,
+                16
+            );
+            this.gl.drawElements(
+                WebGLRenderingContext.TRIANGLES,
+                lightGroup.activeLights * 6,
+                WebGLRenderingContext.UNSIGNED_SHORT,
+                startPosition
+            );
+            startPosition += lightGroup.activeLights * 12;
+        }
 
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
         this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         this.gl.colorMask(true, true, true, true);
-        for (const lightGroup of this.lightGroups) {
-            lightGroup.reset();
-        }
+        
     }
 
     static LIGHTING_VERTEX_SHADER: string = `
