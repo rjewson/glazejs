@@ -176,6 +176,7 @@ export class FBOLightingRenderer2 implements IRenderer {
     public processLightsBatch() {
         const bytesPerLight = 5 * 4;
         let i = 0;
+        debugger;
         for (const lightGroup of this.lightGroups) {
             for (let lightIndex=0; lightIndex<lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
@@ -183,8 +184,8 @@ export class FBOLightingRenderer2 implements IRenderer {
                 const uvs = this.quadVerts;
                 const transformedVerts = this.quadVerts;
 
-                const size = light.intensity;
-                const intensity = this.tileSize * size + this.halfTileSize;
+                const intensity = light.intensity + this.halfTileSize;
+                const size = light.intensity / this.tileSize;
 
                 let x = light.x;
                 let y = light.y;
@@ -282,7 +283,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.gl.useProgram(lightGroup.lightingShader.program);
 
             this.gl.uniform2f(lightGroup.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
-            this.gl.uniform1i(lightGroup.lightingShader.uniform.tiles, 0);
+            // this.gl.uniform1i(lightGroup.lightingShader.uniform.tiles, 0);
             this.gl.uniform2f(lightGroup.lightingShader.uniform.viewOffset, this.thisSnap.x / this.tileSize, this.thisSnap.y / this.tileSize);
             this.gl.uniform2fv(lightGroup.lightingShader.uniform.inverseTileTextureSize, this.layer.inverseTileDataTextureSize);
 
@@ -389,6 +390,8 @@ export class FBOLightingRenderer2 implements IRenderer {
             }
         
             gl_FragColor.a = clamp(obs,0.,1.);
+            // gl_FragColor = vec4(1.,1.,1.,1.0-d);
+
         }`;
 
     static xxxLIGHTING_FRAGMENT_SHADER: string = `
