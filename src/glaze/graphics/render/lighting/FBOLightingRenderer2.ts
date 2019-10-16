@@ -28,8 +28,6 @@ export class FBOLightingRenderer2 implements IRenderer {
     public dataBuffer: WebGLBuffer;
     public data: Float32Array;
 
-    public indexRun: number;
-
     public quadVerts = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
 
     public scaledViewportSize: Float32Array;
@@ -43,7 +41,6 @@ export class FBOLightingRenderer2 implements IRenderer {
     public thisSnap: Vector2;
     public snapChanged: boolean;
 
-    public lights: Array<Vector2>;
     public layer: TileLayer;
 
     private ranges: Array<number>;
@@ -68,15 +65,6 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.gl = gl;
         this.camera = camera;
         this.projection = new Vector2();
-        this.indexRun = 0;
-        // this.lightingShader = new ShaderWrapper(
-        //     gl,
-        //     WebGLShaderUtils.CompileProgram(
-        //         gl,
-        //         FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-        //         FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(10)
-        //     )
-        // );
         this.indexBuffer = gl.createBuffer();
         this.dataBuffer = gl.createBuffer();
         this.scaledViewportSize = new Float32Array(2);
@@ -84,7 +72,6 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.sprite = new Sprite();
         this.sprite.id = "lightTexture";
         this.ResizeBatch(this.ranges.length * 20);
-        this.lights = [];
         this.lightGroups = this.ranges.map(
             range =>
                 new LightGroup(
@@ -95,7 +82,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range)
+                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range / this.tileSize)
                         )
                     )
                 )
@@ -150,27 +137,19 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     public reset() {
-        this.indexRun = 0;
         for (const lightGroup of this.lightGroups) {
             lightGroup.reset();
         }
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
-        intensity = 64 + 8;
-        this.lights[this.indexRun] = new Vector2(x, y);
-        this.indexRun++;
     }
 
     public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
-        const group = this.lightGroupsMap[Math.round(intensity/this.tileSize)];
+        const group = this.lightGroupsMap[Math.round(intensity)];
         if (group) {
             group.addLight(x,y,intensity,red,green,blue);
         }
-
-        intensity = 64 + 8;
-        this.lights[this.indexRun] = new Vector2(x, y);
-        this.indexRun++;
     }
 
     public processLightsBatch() {
@@ -257,7 +236,6 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.sprite.position.setTo(1280 / 2, 720 / 2);
         this.sprite.position.minusEquals(this.thisSnap);
         this.surface.drawTo(this.renderSurface);
-        this.indexRun = 0;
     }
 
     private renderSurface() {
@@ -369,11 +347,11 @@ export class FBOLightingRenderer2 implements IRenderer {
             float d = length(fragToCenterPos) / float(PATH_TRACKING_SAMPLES);
             
             vec2 pos = vec2(gl_FragCoord.x - 1., 46. - gl_FragCoord.y);
+
             vec2 currentPos = (pos - viewOffset) * inverseTileTextureSize;
-            
             vec2 centerPos = currentPos - fragToCenterPos * inverseTileTextureSize;
 
-            float m = INV_PATH_TRACKING_SAMPLES * d * 0.5;
+            float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
 
             float stepPos = 0.;
             float obs = 1. - d;

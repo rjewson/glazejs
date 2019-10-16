@@ -2,14 +2,14 @@ import { ShaderWrapper } from "../util/ShaderWrapper";
 
 export class LightGroup {
 
-    public range: number;
+    public radius: number;
     public maxLights: number;
     public lights: Array<LightData>;
     public activeLights: number;
     public lightingShader: ShaderWrapper;
 
-    constructor(range: number, maxLights: number, lightingShader: ShaderWrapper) {
-        this.range = range;
+    constructor(radius: number, maxLights: number, lightingShader: ShaderWrapper) {
+        this.radius = radius;
         this.maxLights = maxLights;
         this.lightingShader = lightingShader;
         this.lights = [];
