@@ -82,15 +82,15 @@ export class FBOLightingRenderer2 implements IRenderer {
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range / this.tileSize)
+                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range / this.tileSize, 1.0)
                         )
                     )
                 )
         );
-        this.lightGroupsMap = new Array(this.ranges[this.ranges.length-1]);
-        this.ranges.forEach( (range, i) => {
+        this.lightGroupsMap = new Array(this.ranges[this.ranges.length - 1]);
+        this.ranges.forEach((range, i) => {
             this.lightGroupsMap[range] = this.lightGroups[i];
-        })
+        });
     }
 
     public ResizeBatch(size: number) {
@@ -142,22 +142,20 @@ export class FBOLightingRenderer2 implements IRenderer {
         }
     }
 
-    public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
-    }
+    public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
 
     public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
         const group = this.lightGroupsMap[Math.round(intensity)];
         if (group) {
-            group.addLight(x,y,intensity,red,green,blue);
+            group.addLight(x, y, intensity, red, green, blue);
         }
     }
 
     public processLightsBatch() {
         const bytesPerLight = 5 * 4;
         let i = 0;
-        debugger;
         for (const lightGroup of this.lightGroups) {
-            for (let lightIndex=0; lightIndex<lightGroup.activeLights; lightIndex++) {
+            for (let lightIndex = 0; lightIndex < lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
                 const index = i * 20;
                 const uvs = this.quadVerts;
@@ -170,10 +168,10 @@ export class FBOLightingRenderer2 implements IRenderer {
                 let y = light.y;
                 x += Math.floor(this.camera.position.x / this.tileSize) * this.tileSize;
                 y += Math.floor(this.camera.position.y / this.tileSize) * this.tileSize;
-                x += this.tileSize*2;
-                y += this.tileSize*2;
+                x += this.tileSize * 2;
+                y += this.tileSize * 2;
 
-                const colour = light.red << 24 | light.green << 16 | light.blue << 8 | 1
+                const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 1;
 
                 //0 bl
                 //Verts
@@ -255,21 +253,28 @@ export class FBOLightingRenderer2 implements IRenderer {
 
         let startPosition = 0;
         for (const lightGroup of this.lightGroups) {
-            if (lightGroup.activeLights==0) {
+            if (lightGroup.activeLights == 0) {
                 continue;
             }
             this.gl.useProgram(lightGroup.lightingShader.program);
 
             this.gl.uniform2f(lightGroup.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
             // this.gl.uniform1i(lightGroup.lightingShader.uniform.tiles, 0);
-            this.gl.uniform2f(lightGroup.lightingShader.uniform.viewOffset, this.thisSnap.x / this.tileSize, this.thisSnap.y / this.tileSize);
-            this.gl.uniform2fv(lightGroup.lightingShader.uniform.inverseTileTextureSize, this.layer.inverseTileDataTextureSize);
+            this.gl.uniform2fv(lightGroup.lightingShader.uniform.viewportSize, this.scaledViewportSize);
+            this.gl.uniform2f(
+                lightGroup.lightingShader.uniform.viewOffset,
+                this.thisSnap.x / this.tileSize,
+                this.thisSnap.y / this.tileSize
+            );
+            this.gl.uniform2fv(
+                lightGroup.lightingShader.uniform.inverseTileTextureSize,
+                this.layer.inverseTileDataTextureSize
+            );
 
             this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aVertexPosition);
             this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aTextureCoord);
             this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aColor);
 
-            
             this.gl.vertexAttribPointer(
                 lightGroup.lightingShader.attribute.aVertexPosition,
                 2,
@@ -306,7 +311,6 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
         this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         this.gl.colorMask(true, true, true, true);
-        
     }
 
     static LIGHTING_VERTEX_SHADER: string = `
@@ -328,15 +332,17 @@ export class FBOLightingRenderer2 implements IRenderer {
             vColor = aColor;
         }`;
 
-    static LIGHTING_FRAGMENT_SHADER_FACTORY = (count: number) => `
+    static LIGHTING_FRAGMENT_SHADER_FACTORY = (count: number, ratio: number) => `
         precision mediump float;
 
         const int PATH_TRACKING_SAMPLES = ${count};
         const float INV_PATH_TRACKING_SAMPLES = 1.0 / float(PATH_TRACKING_SAMPLES);
         const vec2 EMPTY_TILE = vec2(1.0, 1.0);
+        const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio}); // 0.5;
 
         uniform sampler2D uSampler;
         uniform vec2 viewOffset;
+        uniform vec2 viewportSize;
         uniform vec2 inverseTileTextureSize;
 
         varying vec2 vTextureCoord;
@@ -346,24 +352,27 @@ export class FBOLightingRenderer2 implements IRenderer {
             vec2 fragToCenterPos = vTextureCoord.xy;
             float d = length(fragToCenterPos) / float(PATH_TRACKING_SAMPLES);
             
-            vec2 pos = vec2(gl_FragCoord.x - 1., 46. - gl_FragCoord.y);
+            vec2 pos = vec2(gl_FragCoord.x - 1., viewportSize.y - gl_FragCoord.y);
 
-            vec2 currentPos = (pos - viewOffset) * inverseTileTextureSize;
-            vec2 centerPos = currentPos - fragToCenterPos * inverseTileTextureSize;
+            vec2 currentPos = (pos - viewOffset) - vec2(0.5,0.5); // * inverseTileTextureSize;
+            vec2 centerPos = currentPos - fragToCenterPos; // * inverseTileTextureSize;
 
             float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
 
             float stepPos = 0.;
             float obs = 1. - d;
-	
+    
+            vec2 scaledTilesSize = inverseTileTextureSize * LIGHT_TO_MAP_RESOLUTION_RATIO;
+
             for(int i = 0; i < PATH_TRACKING_SAMPLES; i++)
             {
                 stepPos += INV_PATH_TRACKING_SAMPLES; 
-                vec4 tile = texture2D(uSampler, mix(centerPos, currentPos, stepPos));
+                vec4 tile = texture2D(uSampler, floor(mix(centerPos, currentPos, stepPos)) * scaledTilesSize);
 
                 if (all(lessThan(tile.xy, EMPTY_TILE))) {
                     obs -= m;
-                    //col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
+                    // obs *= m;
+                    // col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
                 }
             }
         
@@ -371,25 +380,4 @@ export class FBOLightingRenderer2 implements IRenderer {
             // gl_FragColor = vec4(1.,1.,1.,1.0-d);
 
         }`;
-
-    static xxxLIGHTING_FRAGMENT_SHADER: string = `
-        precision mediump float;
-        varying vec2 vTextureCoord;
-        varying float vColor;
-        uniform sampler2D uSampler;
-        uniform vec2 viewOffset;
-        uniform vec2 inverseTileTextureSize;
-
-        void main(void) {
-            vec2 fragToCenterPos = vTextureCoord.xy;
-            float d = 1. - (10. / length(fragToCenterPos));
-            // gl_FragColor = vec4(1.0, 0.0, 0.0, d);
-
-            vec2 pos = vec2(gl_FragCoord.x - 1., 46. - gl_FragCoord.y);
-            vec2 p = (pos - viewOffset) * inverseTileTextureSize ;
-            gl_FragColor = texture2D(uSampler, p);
-            gl_FragColor.a = d;
-        }`;
 }
-// 82
-// 47
