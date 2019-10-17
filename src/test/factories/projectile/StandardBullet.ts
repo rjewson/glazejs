@@ -22,6 +22,8 @@ import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { State } from "../../../glaze/core/components/State";
 import { CombatUtils } from "../../../glaze/util/CombatUtils";
+import { Light } from "../../../glaze/graphics/components/Light";
+import { Viewable } from "../../../glaze/core/components/Viewable";
 
 export class StandardBullet {
     static states: SimpleFSMStates = {
@@ -59,6 +61,8 @@ export class StandardBullet {
             new Health(10, 10, 0, "destroy"),
             new Age(1000, "destroy"),
             new Active(),
+            new Light(64, 1, 1, 1, 255, 255, 255),
+            new Viewable(),
         ]);
         Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2000);
 
