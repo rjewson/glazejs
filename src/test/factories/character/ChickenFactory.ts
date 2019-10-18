@@ -43,7 +43,7 @@ export class ChickenFactory {
             new PhysicsBody(chickenBody, true),
             new Moveable(),
             new Active(),
-            new Light(64, 1, 1, 1, 255, 255, 255),
+            // new Light(64, 1, 1, 1, 255, 255, 255),
             new Viewable(),
             // new Controllable(150),
             // new ParticleEmitter([new Explosion(4,100)])

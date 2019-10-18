@@ -57,7 +57,7 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.thisSnap = new Vector2(-1000, -1000);
         this.snapChanged = false;
         this.layer = layer;
-        this.tileSize = 16;
+        this.tileSize = 8;
         this.halfTileSize = this.tileSize / 2;
     }
 
@@ -82,7 +82,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             FBOLightingRenderer2.LIGHTING_VERTEX_SHADER,
-                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range / this.tileSize, 1.0)
+                            FBOLightingRenderer2.LIGHTING_FRAGMENT_SHADER_FACTORY(range / this.tileSize, 0.5)
                         )
                     )
                 )
@@ -354,13 +354,17 @@ export class FBOLightingRenderer2 implements IRenderer {
             
             vec2 pos = vec2(gl_FragCoord.x - 1., viewportSize.y - gl_FragCoord.y);
 
-            vec2 currentPos = (pos - viewOffset) - vec2(0.5,0.5); // * inverseTileTextureSize;
+            vec2 currentPos = (pos - viewOffset) - vec2(0.5,1.5); // * inverseTileTextureSize;
             vec2 centerPos = currentPos - fragToCenterPos; // * inverseTileTextureSize;
 
             float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
 
+            float light = 1. - d; // Linear
+            // float light = pow(1. - d, 5.); // Ease in
+            // float light = 1. - pow(1. - (1. - d), 3.); // Ease out
+
             float stepPos = 0.;
-            float obs = 1. - d;
+            float obs = light;
     
             vec2 scaledTilesSize = inverseTileTextureSize * LIGHT_TO_MAP_RESOLUTION_RATIO;
 
