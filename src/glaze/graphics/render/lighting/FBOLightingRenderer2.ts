@@ -171,7 +171,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 x += this.tileSize * 2;
                 y += this.tileSize * 2;
 
-                const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 1;
+                const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
 
                 //0 bl
                 //Verts
@@ -181,7 +181,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 2] = uvs[0] * size; //frame.x / tw;
                 this.data[index + 3] = uvs[1] * size; //frame.y / th;
                 //Colour
-                this.data[index + 4] = 1;
+                this.data[index + 4] = colour;
 
                 //1 br
                 //Verts
@@ -191,7 +191,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 7] = uvs[2] * size; //(frame.x + frame.width) / tw;
                 this.data[index + 8] = uvs[3] * size; //frame.y / th;
                 //Colour
-                this.data[index + 9] = 1;
+                this.data[index + 9] = colour;
 
                 //2 tr
                 //Verts
@@ -201,7 +201,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 12] = uvs[4] * size; //(frame.x + frame.width) / tw;
                 this.data[index + 13] = uvs[5] * size; //(frame.y + frame.height) / th;
                 //Colour
-                this.data[index + 14] = 1;
+                this.data[index + 14] = colour;
 
                 //3
                 //Verts
@@ -211,7 +211,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 17] = uvs[6] * size; //frame.x / tw;
                 this.data[index + 18] = uvs[7] * size; //(frame.y + frame.height) / th;
                 //Colour
-                this.data[index + 19] = 1;
+                this.data[index + 19] = colour;
 
                 i++;
             }
@@ -293,9 +293,9 @@ export class FBOLightingRenderer2 implements IRenderer {
             );
             this.gl.vertexAttribPointer(
                 lightGroup.lightingShader.attribute.aColor,
-                1,
-                WebGLRenderingContext.FLOAT,
-                false,
+                4,
+                WebGLRenderingContext.UNSIGNED_BYTE,
+                true,
                 20,
                 16
             );
@@ -321,10 +321,10 @@ export class FBOLightingRenderer2 implements IRenderer {
         
         attribute vec2 aVertexPosition;
         attribute vec2 aTextureCoord;
-        attribute float aColor;
+        attribute vec4 aColor;
 
         varying vec2 vTextureCoord;
-        varying float vColor;
+        varying vec4 vColor;
 
         void main(void) {
             gl_Position = vec4( aVertexPosition.x / projectionVector.x -1.0, aVertexPosition.y / -projectionVector.y + 1.0 , 0.0, 1.0);
@@ -346,7 +346,7 @@ export class FBOLightingRenderer2 implements IRenderer {
         uniform vec2 inverseTileTextureSize;
 
         varying vec2 vTextureCoord;
-        varying float vColor;
+        varying vec4 vColor;
 
         void main(void) {
             vec2 fragToCenterPos = vTextureCoord.xy;
@@ -354,7 +354,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             
             vec2 pos = vec2(gl_FragCoord.x - 1., viewportSize.y - gl_FragCoord.y);
 
-            vec2 currentPos = (pos - viewOffset) - vec2(0.5,1.5); // * inverseTileTextureSize;
+            vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.0); // * inverseTileTextureSize;
             vec2 centerPos = currentPos - fragToCenterPos; // * inverseTileTextureSize;
 
             float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
@@ -381,6 +381,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             }
         
             gl_FragColor.a = clamp(obs,0.,1.);
+            // gl_FragColor.rgb = vec3(1.,0.,0.); // vColor.rgb
             // gl_FragColor = vec4(1.,1.,1.,1.0-d);
 
         }`;
