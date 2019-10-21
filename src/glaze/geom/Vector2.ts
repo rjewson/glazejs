@@ -1,7 +1,4 @@
-export type V2 = Vector2;
-
 export class Vector2 {
-
     public x: number;
     public y: number;
 
@@ -148,5 +145,4 @@ export class Vector2 {
         var dY = this.y - v.y;
         return dX * dX + dY * dY;
     }
-
 }

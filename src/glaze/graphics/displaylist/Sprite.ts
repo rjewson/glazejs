@@ -5,7 +5,9 @@ import { Texture } from "../texture/Texture";
 export class Sprite extends DisplayObjectContainer {
     public anchor: Vector2;
     public texture: Texture;
-    public blendMode: number;
+    public blendEquation: number;
+    public blendFuncRGB: number;
+    public blendFuncA: number;
 
     public transformedVerts: Float32Array;
 
@@ -14,6 +16,9 @@ export class Sprite extends DisplayObjectContainer {
         this.renderable = true;
         this.anchor = new Vector2();
         this.transformedVerts = new Float32Array(8);
+        this.blendEquation = WebGLRenderingContext.FUNC_ADD;
+        this.blendFuncRGB = WebGLRenderingContext.ONE;
+        this.blendFuncA = WebGLRenderingContext.ZERO;
     }
 
     public calcExtents() {

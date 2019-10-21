@@ -172,7 +172,6 @@ export class FBOLightingRenderer2 implements IRenderer {
                 y += this.tileSize * 2;
 
                 const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
-
                 //0 bl
                 //Verts
                 this.data[index + 0] = x + transformedVerts[0] * intensity;
@@ -237,7 +236,7 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     private renderSurface() {
-        this.gl.clearColor(0.0, 0.0, 0.0, 0.5);
+        this.gl.clearColor(0.0, 0.0, 0.0, 0.9);
         this.gl.colorMask(true, true, true, true);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
@@ -351,7 +350,7 @@ export class FBOLightingRenderer2 implements IRenderer {
         void main(void) {
             vec2 fragToCenterPos = vTextureCoord.xy;
             float d = length(fragToCenterPos) / float(PATH_TRACKING_SAMPLES);
-            
+
             vec2 pos = vec2(gl_FragCoord.x - 1., viewportSize.y - gl_FragCoord.y);
 
             vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.0); // * inverseTileTextureSize;
@@ -360,11 +359,19 @@ export class FBOLightingRenderer2 implements IRenderer {
             float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
 
             float light = 1. - d; // Linear
+            
             // float light = pow(1. - d, 5.); // Ease in
             // float light = 1. - pow(1. - (1. - d), 3.); // Ease out
 
+            // Torch
+            float cone = 1.;
+            // vec2 dir = vec2(1.,0.);
+            // cone = dot(dir, normalize(fragToCenterPos));
+            // cone *= smoothstep(0.9 ,1., cone);
+            // cone *= float( cone > 0.8 );
+
             float stepPos = 0.;
-            float obs = light;
+            float obs = light * cone;
     
             vec2 scaledTilesSize = inverseTileTextureSize * LIGHT_TO_MAP_RESOLUTION_RATIO;
 

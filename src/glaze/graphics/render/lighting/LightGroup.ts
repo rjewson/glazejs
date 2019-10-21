@@ -1,14 +1,17 @@
 import { ShaderWrapper } from "../util/ShaderWrapper";
 
 export class LightGroup {
-
     public radius: number;
     public maxLights: number;
     public lights: Array<LightData>;
     public activeLights: number;
     public lightingShader: ShaderWrapper;
 
-    constructor(radius: number, maxLights: number, lightingShader: ShaderWrapper) {
+    constructor(
+        radius: number,
+        maxLights: number,
+        lightingShader: ShaderWrapper
+    ) {
         this.radius = radius;
         this.maxLights = maxLights;
         this.lightingShader = lightingShader;
@@ -23,7 +26,14 @@ export class LightGroup {
         this.activeLights = 0;
     }
 
-    public addLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
+    public addLight(
+        x: number,
+        y: number,
+        intensity: number,
+        red: number,
+        green: number,
+        blue: number
+    ) {
         const nextLight = this.lights[this.activeLights++];
         nextLight.x = x;
         nextLight.y = y;
