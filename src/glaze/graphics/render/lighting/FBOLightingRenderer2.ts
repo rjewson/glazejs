@@ -144,20 +144,20 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
 
-    public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {
+    public addBlockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number, arc: number, angle: number) {
         const group = this.lightGroupsMap[Math.round(intensity)];
         if (group) {
-            group.addLight(x, y, intensity, red, green, blue);
+            group.addLight(x, y, intensity, red, green, blue, arc, angle);
         }
     }
 
     public processLightsBatch() {
-        const bytesPerLight = 5 * 4;
+        const bytesPerLight = 8 * 4;
         let i = 0;
         for (const lightGroup of this.lightGroups) {
             for (let lightIndex = 0; lightIndex < lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
-                const index = i * 20;
+                const index = i * bytesPerLight;
                 const uvs = this.quadVerts;
                 const transformedVerts = this.quadVerts;
 
@@ -172,6 +172,11 @@ export class FBOLightingRenderer2 implements IRenderer {
                 y += this.tileSize * 2;
 
                 const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
+                const angleX = Math.cos(light.angle);
+                const angleY = Math.sin(light.angle);
+
+                const arc = 1; // 1;
+
                 //0 bl
                 //Verts
                 this.data[index + 0] = x + transformedVerts[0] * intensity;
@@ -181,36 +186,52 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 3] = uvs[1] * size; //frame.y / th;
                 //Colour
                 this.data[index + 4] = colour;
+                //Cone
+                this.data[index + 5] = angleX;
+                this.data[index + 6] = angleY;
+                this.data[index + 7] = arc;
 
                 //1 br
                 //Verts
-                this.data[index + 5] = x + transformedVerts[2] * intensity;
-                this.data[index + 6] = y + transformedVerts[3] * intensity;
+                this.data[index + 8] = x + transformedVerts[2] * intensity;
+                this.data[index + 9] = y + transformedVerts[3] * intensity;
                 //UV
-                this.data[index + 7] = uvs[2] * size; //(frame.x + frame.width) / tw;
-                this.data[index + 8] = uvs[3] * size; //frame.y / th;
+                this.data[index + 10] = uvs[2] * size; //(frame.x + frame.width) / tw;
+                this.data[index + 11] = uvs[3] * size; //frame.y / th;
                 //Colour
-                this.data[index + 9] = colour;
+                this.data[index + 12] = colour;
+                //Cone
+                this.data[index + 13] = angleX;
+                this.data[index + 14] = angleY;
+                this.data[index + 15] = arc;
 
                 //2 tr
                 //Verts
-                this.data[index + 10] = x + transformedVerts[4] * intensity;
-                this.data[index + 11] = y + transformedVerts[5] * intensity;
+                this.data[index + 16] = x + transformedVerts[4] * intensity;
+                this.data[index + 17] = y + transformedVerts[5] * intensity;
                 //UV
-                this.data[index + 12] = uvs[4] * size; //(frame.x + frame.width) / tw;
-                this.data[index + 13] = uvs[5] * size; //(frame.y + frame.height) / th;
+                this.data[index + 18] = uvs[4] * size; //(frame.x + frame.width) / tw;
+                this.data[index + 19] = uvs[5] * size; //(frame.y + frame.height) / th;
                 //Colour
-                this.data[index + 14] = colour;
+                this.data[index + 20] = colour;
+                //Cone
+                this.data[index + 21] = angleX;
+                this.data[index + 22] = angleY;
+                this.data[index + 23] = arc;
 
                 //3
                 //Verts
-                this.data[index + 15] = x + transformedVerts[6] * intensity;
-                this.data[index + 16] = y + transformedVerts[7] * intensity;
+                this.data[index + 24] = x + transformedVerts[6] * intensity;
+                this.data[index + 25] = y + transformedVerts[7] * intensity;
                 //UV
-                this.data[index + 17] = uvs[6] * size; //frame.x / tw;
-                this.data[index + 18] = uvs[7] * size; //(frame.y + frame.height) / th;
+                this.data[index + 26] = uvs[6] * size; //frame.x / tw;
+                this.data[index + 27] = uvs[7] * size; //(frame.y + frame.height) / th;
                 //Colour
-                this.data[index + 19] = colour;
+                this.data[index + 28] = colour;
+                //Cone
+                this.data[index + 29] = angleX;
+                this.data[index + 30] = angleY;
+                this.data[index + 31] = arc;
 
                 i++;
             }
@@ -279,7 +300,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 2,
                 WebGLRenderingContext.FLOAT,
                 false,
-                20,
+                32,
                 0
             );
             this.gl.vertexAttribPointer(
@@ -287,7 +308,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 2,
                 WebGLRenderingContext.FLOAT,
                 false,
-                20,
+                32,
                 8
             );
             this.gl.vertexAttribPointer(
@@ -295,8 +316,16 @@ export class FBOLightingRenderer2 implements IRenderer {
                 4,
                 WebGLRenderingContext.UNSIGNED_BYTE,
                 true,
-                20,
+                32,
                 16
+            );
+            this.gl.vertexAttribPointer(
+                lightGroup.lightingShader.attribute.aArc,
+                3,
+                WebGLRenderingContext.FLOAT,
+                false,
+                32,
+                20
             );
             this.gl.drawElements(
                 WebGLRenderingContext.TRIANGLES,
@@ -321,14 +350,17 @@ export class FBOLightingRenderer2 implements IRenderer {
         attribute vec2 aVertexPosition;
         attribute vec2 aTextureCoord;
         attribute vec4 aColor;
+        attribute vec3 aArc;
 
         varying vec2 vTextureCoord;
         varying vec4 vColor;
+        varying vec3 vArc;
 
         void main(void) {
             gl_Position = vec4( aVertexPosition.x / projectionVector.x -1.0, aVertexPosition.y / -projectionVector.y + 1.0 , 0.0, 1.0);
             vTextureCoord = aTextureCoord;
             vColor = aColor;
+            vArc = aArc;
         }`;
 
     static LIGHTING_FRAGMENT_SHADER_FACTORY = (count: number, ratio: number) => `
@@ -346,6 +378,7 @@ export class FBOLightingRenderer2 implements IRenderer {
 
         varying vec2 vTextureCoord;
         varying vec4 vColor;
+        varying vec3 vArc;
 
         void main(void) {
             vec2 fragToCenterPos = vTextureCoord.xy;
@@ -365,26 +398,30 @@ export class FBOLightingRenderer2 implements IRenderer {
 
             // Torch
             float cone = 1.;
-            // vec2 dir = vec2(1.,0.);
-            // cone = dot(dir, normalize(fragToCenterPos));
-            // cone *= smoothstep(0.9 ,1., cone);
-            // cone *= float( cone > 0.8 );
-
-            float stepPos = 0.;
+            if (bool(vArc.z)) {
+                vec2 dir = vArc.xy; // vec2(1.,0.);
+                float projection = dot(dir, normalize(fragToCenterPos));
+                cone *= smoothstep(0.5 ,0.7, projection);
+                // cone *= float( projection < 0.8 );
+            }
+            
             float obs = light * cone;
     
             vec2 scaledTilesSize = inverseTileTextureSize * LIGHT_TO_MAP_RESOLUTION_RATIO;
 
+            float stepPos = 0.;
             for(int i = 0; i < PATH_TRACKING_SAMPLES; i++)
             {
                 stepPos += INV_PATH_TRACKING_SAMPLES; 
                 vec4 tile = texture2D(uSampler, floor(mix(centerPos, currentPos, stepPos)) * scaledTilesSize);
 
-                if (all(lessThan(tile.xy, EMPTY_TILE))) {
-                    obs -= m;
-                    // obs *= m;
-                    // col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
-                }
+                obs -= m * float(all(lessThan(tile.xy, EMPTY_TILE)));
+                
+                // if (all(lessThan(tile.xy, EMPTY_TILE))) {
+                //     obs -= m;
+                //     // obs *= m;
+                //     // col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
+                // }
             }
         
             gl_FragColor.a = clamp(obs,0.,1.);

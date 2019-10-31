@@ -32,7 +32,9 @@ export class LightGroup {
         intensity: number,
         red: number,
         green: number,
-        blue: number
+        blue: number,
+        arc: number = 0.,
+        angle: number = 0.,
     ) {
         const nextLight = this.lights[this.activeLights++];
         nextLight.x = x;
@@ -41,6 +43,8 @@ export class LightGroup {
         nextLight.red = red;
         nextLight.green = green;
         nextLight.blue = blue;
+        nextLight.arc = arc;
+        nextLight.angle = angle;
     }
 }
 
@@ -51,4 +55,6 @@ class LightData {
     public red: number;
     public green: number;
     public blue: number;
+    public arc: number;
+    public angle: number;
 }

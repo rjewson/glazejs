@@ -7,7 +7,7 @@ export function CompileFragmentShader(gl: WebGLRenderingContext, shaderSrc: stri
 }
 
 export function CompileShader(gl: WebGLRenderingContext, shaderSrc: string, shaderType: number): WebGLShader {
-    var shader = gl.createShader(shaderType);
+    const shader = gl.createShader(shaderType);
     gl.shaderSource(shader, shaderSrc);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS)) {
@@ -18,9 +18,9 @@ export function CompileShader(gl: WebGLRenderingContext, shaderSrc: string, shad
 }
 
 export function CompileProgram(gl: WebGLRenderingContext, vertexSrc: string, fragmentSrc: string): WebGLProgram {
-    var vertexShader = CompileVertexShader(gl, vertexSrc);
-    var fragmentShader = CompileFragmentShader(gl, fragmentSrc);
-    var shaderProgram = gl.createProgram();
+    const vertexShader = CompileVertexShader(gl, vertexSrc);
+    const fragmentShader = CompileFragmentShader(gl, fragmentSrc);
+    const shaderProgram = gl.createProgram();
 
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);

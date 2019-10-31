@@ -6,6 +6,8 @@ export class Light {
     public red: number;
     public green: number;
     public blue: number;
+    public arc: number;
+    public angle: number;
 
     constructor(
         range: number,
@@ -15,6 +17,8 @@ export class Light {
         red: number,
         green: number,
         blue: number,
+        arc: number = 0.,
+        angle: number = 0.,
     ) {
         this.range = range;
         this.attenuation = attenuation;
@@ -23,5 +27,7 @@ export class Light {
         this.red = red;
         this.green = green;
         this.blue = blue;
+        this.arc = arc;
+        this.angle = angle;
     }
 }

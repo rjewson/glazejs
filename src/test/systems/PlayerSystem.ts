@@ -24,6 +24,7 @@ import { PlasmaBall } from "../factories/projectile/PlasmaBall";
 import { Hierachy } from "../../glaze/core/components/Hierachy";
 import { Attachment } from "../../glaze/core/components/Attachment";
 import { Vector2 } from "../../glaze/geom/Vector2";
+import { Light } from "../../glaze/graphics/components/Light";
 
 /*
 backspace   8
@@ -92,7 +93,7 @@ export class PlayerSystem extends System {
     position: Position;
     physicsBody: PhysicsBody;
 
-    playerLight: Entity;
+    playerLight: Light;
     playerHolder: Entity;
     holder: Holder;
     //  inventory:Inventory;
@@ -136,6 +137,8 @@ export class PlayerSystem extends System {
         //     new Active()
         //     ],"player light");
         // TODO
+        this.playerLight = new Light(256, 1, 1, 0, 255, 0, 0),
+        this.engine.addComponentsToEntity(entity, [this.playerLight]);
         this.holder = new Holder(entity);
         // TODO
         // inventory = new Inventory(4);
@@ -333,5 +336,10 @@ export class PlayerSystem extends System {
 
         if (this.input.JustPressed(49)) this.currentWeapon = 0;
         if (this.input.JustPressed(50)) this.currentWeapon = 1;
+
+        const inputAngle = this.input.ViewCorrectedMousePosition().clone();
+        inputAngle.minusEquals(position.coords);
+        inputAngle.normalize();
+        this.playerLight.angle = inputAngle.heading();
     }
 }

@@ -35,6 +35,8 @@ export class PointLightingSystem extends System {
                 light.red,
                 light.green,
                 light.blue,
+                light.arc,
+                light.angle
             );
         } else {
             this.renderer.addBlockedLight(
@@ -44,6 +46,8 @@ export class PointLightingSystem extends System {
                 light.red,
                 light.green,
                 light.blue,
+                light.arc,
+                light.angle
             );
         }
     }
