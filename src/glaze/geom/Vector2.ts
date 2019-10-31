@@ -145,4 +145,10 @@ export class Vector2 {
         var dY = this.y - v.y;
         return dX * dX + dY * dY;
     }
+
+    roundDown(closest): Vector2 {
+        this.x = Math.floor(this.x / closest) * closest;
+        this.y = Math.floor(this.y / closest) * closest;
+        return this;
+    }
 }

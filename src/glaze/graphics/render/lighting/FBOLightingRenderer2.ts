@@ -20,7 +20,6 @@ export class FBOLightingRenderer2 implements IRenderer {
     public projection: Vector2;
 
     public size: number;
-    public dynamicSize: number;
 
     public indexBuffer: WebGLBuffer;
     public indices: Uint16Array;
@@ -30,8 +29,7 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public quadVerts = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
 
-    public scaledViewportSize: Float32Array;
-    public viewportSize: Vector2;
+    public resolution: Vector2;
 
     public surface: BaseTexture;
     public texture: Texture;
@@ -67,8 +65,7 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.projection = new Vector2();
         this.indexBuffer = gl.createBuffer();
         this.dataBuffer = gl.createBuffer();
-        this.scaledViewportSize = new Float32Array(2);
-        this.viewportSize = new Vector2();
+        this.resolution = new Vector2();
         this.sprite = new Sprite();
         this.sprite.id = "lightTexture";
         this.ResizeBatch(this.ranges.length * 20);
@@ -95,15 +92,13 @@ export class FBOLightingRenderer2 implements IRenderer {
 
     public ResizeBatch(size: number) {
         this.size = size;
-        this.dynamicSize = size;
 
-        this.data = new Float32Array(this.dynamicSize * 20);
+        this.data = new Float32Array(this.size * FBOLightingRenderer2.BYTES_PER_QUAD);
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, this.data, WebGLRenderingContext.DYNAMIC_DRAW);
 
-        this.indices = new Uint16Array(this.dynamicSize * 6);
-
-        for (let i = 0; i < this.dynamicSize; i++) {
+        this.indices = new Uint16Array(this.size * 6);
+        for (let i = 0; i < this.size; i++) {
             const index2 = i * 6;
             const index3 = i * 4;
             this.indices[index2 + 0] = index3 + 0;
@@ -119,12 +114,8 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     public Resize(width: number, height: number) {
-        var expandedWidth: number = Math.floor(width / this.tileSize) + 2;
-        var expandedHeight: number = Math.floor(height / this.tileSize) + 2;
-        this.viewportSize.x = expandedWidth;
-        this.viewportSize.y = expandedHeight;
-        this.scaledViewportSize[0] = this.viewportSize.x;
-        this.scaledViewportSize[1] = this.viewportSize.y;
+        const expandedWidth = this.resolution.x = Math.floor(width / this.tileSize) + 2;
+        const expandedHeight = this.resolution.y = Math.floor(height / this.tileSize) + 2;
 
         this.projection.x = (expandedWidth * this.tileSize) / 2;
         this.projection.y = (expandedHeight * this.tileSize) / 2;
@@ -152,14 +143,11 @@ export class FBOLightingRenderer2 implements IRenderer {
     }
 
     public processLightsBatch() {
-        const bytesPerLight = 8 * 4;
-        let i = 0;
+        let lightCount = 0;
         for (const lightGroup of this.lightGroups) {
             for (let lightIndex = 0; lightIndex < lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
-                const index = i * bytesPerLight;
-                const uvs = this.quadVerts;
-                const transformedVerts = this.quadVerts;
+                const index = lightCount * FBOLightingRenderer2.BYTES_PER_QUAD;
 
                 const intensity = light.intensity + this.halfTileSize;
                 const size = light.intensity / this.tileSize;
@@ -174,16 +162,15 @@ export class FBOLightingRenderer2 implements IRenderer {
                 const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
                 const angleX = Math.cos(light.angle);
                 const angleY = Math.sin(light.angle);
-
                 const arc = 1; // 1;
 
                 //0 bl
                 //Verts
-                this.data[index + 0] = x + transformedVerts[0] * intensity;
-                this.data[index + 1] = y + transformedVerts[1] * intensity;
+                this.data[index + 0] = x + this.quadVerts[0] * intensity;
+                this.data[index + 1] = y + this.quadVerts[1] * intensity;
                 //UV
-                this.data[index + 2] = uvs[0] * size; //frame.x / tw;
-                this.data[index + 3] = uvs[1] * size; //frame.y / th;
+                this.data[index + 2] = this.quadVerts[0] * size;
+                this.data[index + 3] = this.quadVerts[1] * size;
                 //Colour
                 this.data[index + 4] = colour;
                 //Cone
@@ -193,11 +180,11 @@ export class FBOLightingRenderer2 implements IRenderer {
 
                 //1 br
                 //Verts
-                this.data[index + 8] = x + transformedVerts[2] * intensity;
-                this.data[index + 9] = y + transformedVerts[3] * intensity;
+                this.data[index + 8] = x + this.quadVerts[2] * intensity;
+                this.data[index + 9] = y + this.quadVerts[3] * intensity;
                 //UV
-                this.data[index + 10] = uvs[2] * size; //(frame.x + frame.width) / tw;
-                this.data[index + 11] = uvs[3] * size; //frame.y / th;
+                this.data[index + 10] = this.quadVerts[2] * size;
+                this.data[index + 11] = this.quadVerts[3] * size;
                 //Colour
                 this.data[index + 12] = colour;
                 //Cone
@@ -207,11 +194,11 @@ export class FBOLightingRenderer2 implements IRenderer {
 
                 //2 tr
                 //Verts
-                this.data[index + 16] = x + transformedVerts[4] * intensity;
-                this.data[index + 17] = y + transformedVerts[5] * intensity;
+                this.data[index + 16] = x + this.quadVerts[4] * intensity;
+                this.data[index + 17] = y + this.quadVerts[5] * intensity;
                 //UV
-                this.data[index + 18] = uvs[4] * size; //(frame.x + frame.width) / tw;
-                this.data[index + 19] = uvs[5] * size; //(frame.y + frame.height) / th;
+                this.data[index + 18] = this.quadVerts[4] * size;
+                this.data[index + 19] = this.quadVerts[5] * size;
                 //Colour
                 this.data[index + 20] = colour;
                 //Cone
@@ -221,11 +208,11 @@ export class FBOLightingRenderer2 implements IRenderer {
 
                 //3
                 //Verts
-                this.data[index + 24] = x + transformedVerts[6] * intensity;
-                this.data[index + 25] = y + transformedVerts[7] * intensity;
+                this.data[index + 24] = x + this.quadVerts[6] * intensity;
+                this.data[index + 25] = y + this.quadVerts[7] * intensity;
                 //UV
-                this.data[index + 26] = uvs[6] * size; //frame.x / tw;
-                this.data[index + 27] = uvs[7] * size; //(frame.y + frame.height) / th;
+                this.data[index + 26] = this.quadVerts[6] * size;
+                this.data[index + 27] = this.quadVerts[7] * size;
                 //Colour
                 this.data[index + 28] = colour;
                 //Cone
@@ -233,7 +220,7 @@ export class FBOLightingRenderer2 implements IRenderer {
                 this.data[index + 30] = angleY;
                 this.data[index + 31] = arc;
 
-                i++;
+                lightCount++;
             }
         }
     }
@@ -279,8 +266,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             this.gl.useProgram(lightGroup.lightingShader.program);
 
             this.gl.uniform2f(lightGroup.lightingShader.uniform.projectionVector, this.projection.x, this.projection.y);
-            // this.gl.uniform1i(lightGroup.lightingShader.uniform.tiles, 0);
-            this.gl.uniform2fv(lightGroup.lightingShader.uniform.viewportSize, this.scaledViewportSize);
+            this.gl.uniform2f(lightGroup.lightingShader.uniform.resolution, this.resolution.x, this.resolution.y);
             this.gl.uniform2f(
                 lightGroup.lightingShader.uniform.viewOffset,
                 this.thisSnap.x / this.tileSize,
@@ -341,6 +327,8 @@ export class FBOLightingRenderer2 implements IRenderer {
         this.gl.colorMask(true, true, true, true);
     }
 
+    static BYTES_PER_QUAD = 8 * 4;
+
     static LIGHTING_VERTEX_SHADER: string = `
         precision mediump float;
 
@@ -373,7 +361,7 @@ export class FBOLightingRenderer2 implements IRenderer {
 
         uniform sampler2D uSampler;
         uniform vec2 viewOffset;
-        uniform vec2 viewportSize;
+        uniform vec2 resolution;
         uniform vec2 inverseTileTextureSize;
 
         varying vec2 vTextureCoord;
@@ -384,7 +372,7 @@ export class FBOLightingRenderer2 implements IRenderer {
             vec2 fragToCenterPos = vTextureCoord.xy;
             float d = length(fragToCenterPos) / float(PATH_TRACKING_SAMPLES);
 
-            vec2 pos = vec2(gl_FragCoord.x - 1., viewportSize.y - gl_FragCoord.y);
+            vec2 pos = vec2(gl_FragCoord.x - 1., resolution.y - gl_FragCoord.y);
 
             vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.0); // * inverseTileTextureSize;
             vec2 centerPos = currentPos - fragToCenterPos; // * inverseTileTextureSize;

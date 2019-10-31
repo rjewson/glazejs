@@ -95,6 +95,8 @@ export class SpriteRenderer implements IRenderer {
             vColor = aColor;
         }`;
 
+
+
     static SPRITE_FRAGMENT_SHADER: string = `
         precision mediump float;
         varying vec2 vTextureCoord;

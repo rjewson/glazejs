@@ -106,18 +106,18 @@ export class WebGLBatch {
     public Render(shader: ShaderWrapper, stage: Stage, clip: AABB2) {
         // this.gl.useProgram(shader.program);
 
-        var node: DisplayObjectContainer;
-        var stack: Array<DisplayObjectContainer>;
-        var top: number;
+        let node: DisplayObjectContainer;
+        let stack: Array<DisplayObjectContainer>;
+        let top: number;
 
         node = stage;
-        stack = new Array<DisplayObjectContainer>();
+        stack = new Array<DisplayObjectContainer>(1000); // Arbitary assignment of 1000 stack slots
 
         stack[0] = node;
         top = 1;
 
-        var indexRun = 0;
-        var currentTexture = null;
+        let indexRun = 0;
+        let currentTexture = null;
 
         while (top > 0) {
             var thisNode = stack[--top];

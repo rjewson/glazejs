@@ -1,23 +1,23 @@
-import { ComponentType, ComponentInstance } from "./Component";
+import { ComponentType, Component } from "./Component";
 import { Entity } from "./Entity";
 import { Engine } from "./Engine";
 import { BitVector } from "../ds/BitVector";
 
 interface EntityEntry {
-    components: ComponentInstance[];
+    components: Component[];
     boundUpdate: () => void;
 }
 
 export class System {
     public engine: Engine;
-    public componentTypes: ComponentType[];
+    public componentTypes: ComponentType<Component>[];
     public matchMask: BitVector;
     public members: Map<Entity, EntityEntry>;
 
     protected dt: number;
     protected timestamp: number;
 
-    constructor(componentTypes: ComponentType[]) {
+    constructor(componentTypes: ComponentType<Component>[]) {
         this.members = new Map();
         this.componentTypes = componentTypes;
     }
@@ -27,7 +27,7 @@ export class System {
         this.matchMask = matchMask;
     }
 
-    public addEntity(entity: Entity, components: ComponentInstance[]) {
+    public addEntity(entity: Entity, components: Component[]) {
         if (this.members.has(entity)) return;
         const boundUpdate = this.updateEntity.bind(this, entity, ...components);
         const entry = { components, boundUpdate };
@@ -35,7 +35,7 @@ export class System {
         this.onEntityAdded(entity, ...components);
     }
 
-    public onEntityAdded(entity: Entity, ...components: ComponentInstance[]) {}
+    public onEntityAdded(entity: Entity, ...components: Component[]) {}
 
     public removeEntity(entity: Entity) {
         if (!this.members.has(entity)) return;
@@ -44,7 +44,7 @@ export class System {
         this.members.delete(entity);
     }
 
-    public onEntityRemoved(entity: Entity, ...components: ComponentInstance[]) {}
+    public onEntityRemoved(entity: Entity, ...components: Component[]) {}
 
     public updateSystem(dt: number, timestamp: number) {
         this.dt = dt;
@@ -61,12 +61,12 @@ export class System {
     }
 
     public updateAllEntities() {
-        for (const i of this.members) {
-            i[1].boundUpdate();
+        for (const entity of this.members) {
+            entity[1].boundUpdate();
         }
     }
 
     public postUpdate() {}
 
-    public updateEntity(entity: Entity, ...components: ComponentInstance[]) {}
+    public updateEntity(entity: Entity, ...components: Component[]) {}
 }

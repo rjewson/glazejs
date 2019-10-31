@@ -1,4 +1,4 @@
-import { ComponentType, ComponentInstance, ComponentIDName } from "./Component";
+import { ComponentType, Component, ComponentIDName } from "./Component";
 import { Entity } from "./Entity";
 import { Pool } from "../util/Pool";
 import { System } from "./System";
@@ -7,12 +7,12 @@ import { BitVector } from "../ds/BitVector";
 
 export class Engine {
     // Map constructor.name -> array of instances of that type
-    public components: Map<string, ComponentInstance[]>;
+    public components: Map<string, Component[]>;
     public componentTypes: Map<string, number>;
 
     public phases: Phase[];
     public systems: System[];
-    public c4e: Map<Entity, GetC4E>;
+    public c4e: Map<Entity, GetC4E<Component>>;
     public entityPool: Pool<Entity>;
 
     private nextId: number;
@@ -47,13 +47,14 @@ export class Engine {
         this.c4e.delete(entity);
     }
 
-    public getComponentForEntity(entity: Entity, componentType: ComponentType) {
+    public getComponentForEntity<T>(entity: Entity, componentType: ComponentType<T>): T {
         const name = componentType.name;
-        if (this.components.has(name)) return this.components.get(name)[entity];
-        return null;
+        return this.components.get(name)[entity] as T;
+        // if (this.components.has(name)) return this.components.get(name)[entity] as T;
+        // return null;
     }
 
-    public addComponentsToEntity(entity: Entity, componentsToAdd: ComponentInstance[]) {
+    public addComponentsToEntity(entity: Entity, componentsToAdd: Component[]) {
         // This code is required to add component types
         // that might not have been seen by already registered systems
         componentsToAdd.forEach(component => {
@@ -63,7 +64,7 @@ export class Engine {
         this.matchEntity(entity);
     }
 
-    public removeComponentsFromEntityByType(entity: Entity, componentTypesToRemove: ComponentType[]) {
+    public removeComponentsFromEntityByType(entity: Entity, componentTypesToRemove: ComponentType<Component>[]) {
         componentTypesToRemove.forEach(componentType => {
             const name = componentType.name;
             if (this.components.has(name)) this.components.get(name)[entity] = null;
@@ -79,7 +80,7 @@ export class Engine {
     public addPhaseSystemToEngine(system: System) {
         this.systems.push(system);
         const systemMask = new BitVector(4);
-        system.componentTypes.forEach((component: ComponentType) => {
+        system.componentTypes.forEach((component: ComponentType<Component>) => {
             const name = this.createComponentEntryFromType(component);
             systemMask.set(this.componentTypes.get(name), true);
         });
@@ -87,10 +88,12 @@ export class Engine {
     }
 
     public update(dt: number, timestamp: number) {
-        this.phases.forEach(phase => phase.updatePhase(dt, timestamp));
+        for (const phase of this.phases) {
+            phase.updatePhase(dt, timestamp);
+        }
     }
 
-    public query(query: ComponentType[]): Entity[] {
+    public query(query: ComponentType<Component>[]): Entity[] {
         const result = [];
         for (let i = 0; i < this.entityPool.capacity; i++) {
             if (query.every(component => this.components.get(component.name)[i] !== null)) {
@@ -100,7 +103,7 @@ export class Engine {
         return result;
     }
 
-    private createComponentEntryFromType(componentType: ComponentType): string {
+    private createComponentEntryFromType(componentType: ComponentType<Component>): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
             const id = this.nextId++;
@@ -111,7 +114,7 @@ export class Engine {
         return name;
     }
 
-    private createComponentEntryFromInstance(component: ComponentInstance): string {
+    private createComponentEntryFromInstance(component: Component): string {
         const name = component.constructor.name;
         if (!this.components.has(name)) {
             const id = this.nextId++;
@@ -142,10 +145,10 @@ export class Engine {
     }
 
     private clearAllComponentsForEntity(entity: Entity) {
-        this.components.forEach((component: ComponentInstance[]) => (component[entity] = null));
+        this.components.forEach((component: Component[]) => (component[entity] = null));
     }
 
-    public snapshot(): ComponentInstance {
+    public snapshot(): Component {
         return {
             activeEntities: this.entityPool.assigned,
             totalEntitiesCreated: this.entityPool.totalAllocations
@@ -157,9 +160,10 @@ export class Engine {
 const emptyArray = () => [];
 const emptyNullArray = count => Array(count).fill(null);
 
-export interface GetC4E {
-    (component: ComponentType): ComponentInstance;
+export interface GetC4E<T> {
+    (component: ComponentType<T>): T;
 }
 
-export const createGetComponentForEntity = (engine: Engine, entity: Entity): GetC4E => (component: ComponentType) =>
-    engine.getComponentForEntity(entity, component);
+export const createGetComponentForEntity = <T>(engine: Engine, entity: Entity): GetC4E<T> => 
+    <T>(component: ComponentType<T>): T =>
+        engine.getComponentForEntity(entity, component);
