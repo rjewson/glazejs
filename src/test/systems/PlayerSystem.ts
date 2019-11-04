@@ -25,7 +25,7 @@ import { Hierachy } from "../../glaze/core/components/Hierachy";
 import { Attachment } from "../../glaze/core/components/Attachment";
 import { Vector2 } from "../../glaze/geom/Vector2";
 import { Light } from "../../glaze/graphics/components/Light";
-
+import { Key } from "../../glaze/util/Keycodes";
 /*
 backspace   8
 tab 9
@@ -62,12 +62,12 @@ a   65
 b   66
 c   67
 d   68
-e   69
+e   Key.E
 f   70
 g   71
-h   72
+h   Key.H
 i   73
-j   74
+j   Jey.Jey
 k   75
 l   76
 m   77
@@ -188,8 +188,8 @@ export class PlayerSystem extends System {
 
         var fire = this.input.JustPressed(32);
         var search = this.input.JustPressed(71);
-        var hold = this.input.Pressed(72);
-        var ray = this.input.Pressed(82);
+        var hold = this.input.Pressed(Key.J);
+        var ray = this.input.Pressed(Key.R);
 
         // TODO
         // if (this.input.JustPressed(84)) {
@@ -201,19 +201,19 @@ export class PlayerSystem extends System {
         //         playerLight.addComponent(new Viewable());
         // }
         // TODO
-        if (this.input.Pressed(85)) {
+        if (this.input.Pressed(Key.U)) {
             BeeFactory.create(this.engine, position.clone());
         }
         // TODO
-        this.holder.activate = this.input.JustPressed(72);
+        this.holder.activate = this.input.JustPressed(Key.H);
         // trace("x");
 
         // TODO
-        if (this.input.JustPressed(74)) {
+        if (this.input.JustPressed(Key.J)) {
             //Drop Item 'J'
             // var item = this.holder.drop();
             Holder.drop(this.engine, this.holder);
-        } else if (this.input.JustPressed(75)) {
+        } else if (this.input.JustPressed(Key.K)) {
             //Throw Item 'K'
             const item = Holder.drop(this.engine, this.holder);
             if (item != null) {
@@ -263,7 +263,7 @@ export class PlayerSystem extends System {
                 );
         }
         //'e' aim
-        if (this.input.Pressed(69)) {
+        if (this.input.Pressed(Key.E)) {
             var vel = this.input.ViewCorrectedMousePosition().clone();
             vel.minusEquals(position.coords);
             vel.normalize();
@@ -334,8 +334,16 @@ export class PlayerSystem extends System {
             }
         }
 
-        if (this.input.JustPressed(49)) this.currentWeapon = 0;
-        if (this.input.JustPressed(50)) this.currentWeapon = 1;
+        if (this.input.JustPressed(Key.One)) this.currentWeapon = 0;
+        if (this.input.JustPressed(Key.Two)) this.currentWeapon = 1;
+
+        if (this.input.JustPressed(Key.L)) {
+            if (this.engine.getComponentForEntity(entity, Light)) {
+                this.engine.removeComponentsFromEntityByType(entity, [Light]);
+            } else {
+                this.engine.addComponentsToEntity(entity, [this.playerLight]);
+            }
+        }
 
         const inputAngle = this.input.ViewCorrectedMousePosition().clone();
         inputAngle.minusEquals(position.coords);

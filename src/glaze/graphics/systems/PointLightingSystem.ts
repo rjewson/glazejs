@@ -1,5 +1,5 @@
 import { System } from "../../ecs/System";
-import { FBOLightingRenderer2 } from "../render/lighting/FBOLightingRenderer2";
+import { LightRenderer } from "../render/lighting/LightRenderer";
 import { TileMapCollision } from "../../physics/collision/broadphase/TileMapCollision";
 import { Position } from "../../core/components/Position";
 import { Viewable } from "../../core/components/Viewable";
@@ -10,14 +10,14 @@ import { Light } from "../components/Light";
 import { TileLayer } from "../render/tile/TileLayer";
 
 export class PointLightingSystem extends System {
-    public renderer: FBOLightingRenderer2;
+    public renderer: LightRenderer;
 
     public map: TileMapCollision;
 
     constructor(map: TileMapCollision, layer: TileLayer) {
         super([Position, Light, Viewable]);
         this.map = map;
-        this.renderer = new FBOLightingRenderer2([64, 160, 256, 320, 480], layer);
+        this.renderer = new LightRenderer([64, 160, 256, 320, 480], layer);
     }
 
     public preUpdate():boolean {

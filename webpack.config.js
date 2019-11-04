@@ -13,6 +13,10 @@ module.exports = {
                     transpileOnly: true
                 }
             },
+            {
+                test: /\.(glsl|vs|fs)$/,
+                loader: 'ts-shader-loader'
+            },
         ],
     },
     resolve: {

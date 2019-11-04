@@ -6,3 +6,8 @@ declare module "worker-loader!*" {
 
   export default WebpackWorker;
 }
+
+declare module '*.glsl' {
+  const value: string
+  export default value
+}
