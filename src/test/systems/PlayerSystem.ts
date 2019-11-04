@@ -138,7 +138,7 @@ export class PlayerSystem extends System {
         //     ],"player light");
         // TODO
         this.playerLight = new Light(256, 1, 1, 0, 255, 0, 0),
-        this.engine.addComponentsToEntity(entity, [this.playerLight]);
+        // this.engine.addComponentsToEntity(entity, [this.playerLight]);
         this.holder = new Holder(entity);
         // TODO
         // inventory = new Inventory(4);
