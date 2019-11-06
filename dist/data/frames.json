@@ -206,6 +206,21 @@
         }
     },
 
+    "torch": {
+        "frames": [
+            { "id": "torch1", "name": "torch/torch1.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch2", "name": "torch/torch2.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch3", "name": "torch/torch3.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch4", "name": "torch/torch4.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch5", "name": "torch/torch5.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch6", "name": "torch/torch6.png", "scale": { "x": 2, "y": 2 } },
+            { "id": "torch7", "name": "torch/torch7.png", "scale": { "x": 2, "y": 2 } }
+        ],
+        "animations": {
+            "burn": { "frames": [0,1,2,3,4,5,6], "fps": 10, "looped": true }
+        }
+    },
+
     "explosion": {
         "frames": [
             { "id": "1", "name": "explosion/2/frame1.png", "scale": { "x": 2, "y": 2 } },

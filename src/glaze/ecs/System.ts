@@ -64,6 +64,9 @@ export class System {
         for (const entity of this.members) {
             entity[1].boundUpdate();
         }
+        // for (const entity of this.members.values()) {
+        //     entity.boundUpdate();
+        // }
     }
 
     public postUpdate() {}

@@ -8,6 +8,7 @@
     "watch": "webpack --watch",
     "dev": "webpack-serve --hmr false ./webpack.dev.js",
     "gen-sprites": "spritesheet-js -f json -n sprites.png -p ./output ./resources/sprites/*.png",
+    "validate-typescript": "tsc --noEmit",
     "game": "./startChrome.sh http://localhost:8000"
   },
   "author": "rjewson@gmail.com",
@@ -16,7 +17,7 @@
     "ts-loader": "5.3.3",
     "ts-shader-loader": "^1.0.6",
     "tslint": "^5.19.0",
-    "typescript": "^3.6.2",
+    "typescript": "^3.7",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8",
     "webpack-merge": "^4.2.1",

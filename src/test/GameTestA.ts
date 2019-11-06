@@ -399,6 +399,18 @@ export class GameTestA extends GlazeEngine {
             new BeeHive(5)
         ]);
 
+        const torch = this.engine.createEntity();
+        this.engine.addComponentsToEntity(torch, [
+            this.mapPosition(164, 182),
+            new Extents(16, 16),
+            new Graphics("torch"),        
+            new GraphicsAnimation("torch","burn"),
+            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Fixed(),
+            new Active(),
+            new Viewable(),
+        ]);
+
         const birdNest = this.engine.createEntity();
         this.engine.addComponentsToEntity(birdNest, [
             this.mapPosition(34, 30),

@@ -174,7 +174,7 @@ export class LightRenderer implements IRenderer {
                 const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
                 const angleX = Math.cos(light.angle);
                 const angleY = Math.sin(light.angle);
-                const arc = 1; // 1;
+                const arc = 0; // 1; // 1;
 
                 //0 bl
                 //Verts
@@ -257,7 +257,7 @@ export class LightRenderer implements IRenderer {
         // Temp background calc
         const percentDepth = this.camera.position.y / this.camera.worldExtentsAABB.height;
         this.Background(Math.abs(percentDepth));
-        console.log(percentDepth);
+        // console.log(percentDepth);
         // End
         this.sprite.position.copy(this.camera.halfViewportSize);
         this.sprite.position.minusEquals(this.thisSnap);
