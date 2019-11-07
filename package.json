@@ -16,13 +16,15 @@
   "devDependencies": {
     "ts-loader": "5.3.3",
     "ts-shader-loader": "^1.0.6",
-    "tslint": "^5.19.0",
+    "tslint": "^v6.0.0-beta1",
     "typescript": "^3.7",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8",
-    "webpack-merge": "^4.2.1",
-    "webpack-serve": "^2.0.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2",
+    "webpack-serve": "^2.0.3",
     "worker-loader": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "typescript-tslint-plugin": "^0.5.4"
+  }
 }

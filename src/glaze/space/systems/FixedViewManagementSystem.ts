@@ -8,26 +8,29 @@ import { Fixed } from "../../core/components/Fixed";
 import { RegularGridSpaceManager } from "../RegularGridSpaceManager";
 import { Entity } from "../../ecs/Entity";
 import { Viewable } from "../../core/components/Viewable";
+import { MetaData } from "../../core/components/MetaData";
 
 export class FixedViewManagementSystem extends System {
+    public spaceManager: RegularGridSpaceManager;
+
     private camera: Camera;
-    private spaceManager: ISpaceManager;
     private activeSpaceAABB: AABB;
 
     constructor(camera: Camera) {
         super([Position, Extents, Fixed]);
         this.camera = camera;
-        this.spaceManager = new RegularGridSpaceManager(10, 10, 500);
+        this.spaceManager = new RegularGridSpaceManager(10, 10, 320);
         this.activeSpaceAABB = new AABB();
-        this.activeSpaceAABB.extents.setTo(camera.viewportSize.x, camera.viewportSize.y); //800 / 2, 600 / 2);
         this.setEntityStatus = this.setEntityStatus.bind(this);
     }
 
     onEntityAdded(entity: Entity, position: Position, extents: Extents, fixed: Fixed) {
-        this.spaceManager.addEntity(entity, position, extents);
+        const name = this.engine.getComponentForEntity(entity,MetaData)?.name ?? "unknown";
+        this.spaceManager.addEntity(entity, position, extents, name);
     }
 
     updateAllEntities() {
+        this.activeSpaceAABB.extents.setTo(this.camera.viewportSize.x/2, this.camera.viewportSize.y/2); //800 / 2, 600 / 2);
         this.activeSpaceAABB.position.copy(this.camera.realPosition);
         this.spaceManager.search(this.activeSpaceAABB, this.setEntityStatus);
     }

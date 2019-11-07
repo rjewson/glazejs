@@ -4,7 +4,7 @@ import { Ray } from "../Ray";
 import { RayAABB, Collide } from "../Intersect";
 import { DebugRenderer } from "../../../graphics/render/debug/DebugRenderer";
 import { Pool } from "../../../util/Pool";
-import { MAXINT } from "../../../util/Maths";
+import { MAXINT, MININT } from "../../../util/Maths";
 
 const boundsPadding: number = 5;
 const dynamicTreeVelocityMultiplyer: number = 3;
@@ -42,7 +42,7 @@ export class DynamicTree {
     public nodePool: Pool<TreeNode>;
 
     constructor(
-        public worldBounds: AABB2 = new AABB2(-Number.MAX_VALUE, -Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)
+        public worldBounds: AABB2 = new AABB2(MININT, MININT, MAXINT, MAXINT)
     ) {
         this.root = null;
         this.nodes = new Map(); //{};
@@ -475,7 +475,7 @@ export class DynamicTree {
     // };
     // helper(this.root);
     // 443 289 110
-    static stack = new Array(100);
+    static stack = new Array<TreeNode>(100);
     static queryHelper(body: BFProxy, bounds: AABB2, currentNode: TreeNode): boolean {
         let sp = 1;
         DynamicTree.stack[0] = currentNode;

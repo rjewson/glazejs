@@ -54,7 +54,6 @@ export class DigitalInput {
         if (this.keyMap[event.keyCode] == 0) {
             this.keyMap[event.keyCode] = this.frameRef;
         }
-        console.log("x");
         event.preventDefault();
     }
 

@@ -11,3 +11,5 @@ declare module '*.glsl' {
   const value: string
   export default value
 }
+
+declare const __IN_DEBUG__: boolean;

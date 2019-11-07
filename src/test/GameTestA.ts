@@ -101,6 +101,7 @@ import { WorkerSystem } from "./systems/WorkerSystem";
 import { AttachmentSystem } from "../glaze/core/systems/AttachmentSystem";
 import { Hierachy } from "../glaze/core/components/Hierachy";
 import { Attachment } from "../glaze/core/components/Attachment";
+import { MetaData } from "../glaze/core/components/MetaData";
 
 interface GlazeMapLayerConfig {}
 
@@ -138,6 +139,7 @@ export class GameTestA extends GlazeEngine {
     private tmxMap: TMXMap;
     private debugGraphics: DebugRenderer;
     private dynamicTree: DynamicTree;
+    private fixedViewManagementSystem: FixedViewManagementSystem;
     constructor() {
         const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
 
@@ -197,7 +199,8 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new ParticleSystem(blockParticleEngine));
 
         // TODO Temp
-        corePhase.addSystem(new FixedViewManagementSystem(camera));
+        this.fixedViewManagementSystem = new FixedViewManagementSystem(camera);
+        corePhase.addSystem(this.fixedViewManagementSystem);
 
         corePhase.addSystem(new AgeSystem());
         corePhase.addSystem(new HealthSystem());
@@ -388,37 +391,38 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff")
         ]);
 
-        const beeHive = this.engine.createEntity();
-        this.engine.addComponentsToEntity(beeHive, [
-            this.mapPosition(20.5, 17),
-            new Extents(16, 16),
-            new Graphics("insects", "hive"),
-            new PhysicsCollision(false, null, []),
-            new Fixed(),
-            new Active(),
-            new BeeHive(5)
-        ]);
+        // const beeHive = this.engine.createEntity();
+        // this.engine.addComponentsToEntity(beeHive, [
+        //     this.mapPosition(20.5, 17),
+        //     new Extents(16, 16),
+        //     new Graphics("insects", "hive"),
+        //     new PhysicsCollision(false, null, []),
+        //     new Fixed(),
+        //     new Active(),
+        //     new BeeHive(5)
+        // ]);
 
         const torch = this.engine.createEntity();
         this.engine.addComponentsToEntity(torch, [
             this.mapPosition(164, 182),
-            new Extents(16, 16),
+            new MetaData("torch"),
+            new Extents(160, 160),
             new Graphics("torch"),        
             new GraphicsAnimation("torch","burn"),
             new Light(160, 1, 1, 1, 255, 255, 255),
             new Fixed(),
-            new Active(),
-            new Viewable(),
+            // new Active(),
+            // new Viewable(),
         ]);
 
-        const birdNest = this.engine.createEntity();
-        this.engine.addComponentsToEntity(birdNest, [
-            this.mapPosition(34, 30),
-            new Extents(7, 7),
-            new Fixed(),
-            new BirdNest(5),
-            new Active()
-        ]);
+        // const birdNest = this.engine.createEntity();
+        // this.engine.addComponentsToEntity(birdNest, [
+        //     this.mapPosition(34, 30),
+        //     new Extents(7, 7),
+        //     new Fixed(),
+        //     new BirdNest(5),
+        //     new Active()
+        // ]);
 
         const turret = this.engine.createEntity();
         const turretFilter = new Filter();
@@ -488,6 +492,9 @@ export class GameTestA extends GlazeEngine {
     }
 
     public postUpdate() {
-        if (GlazeEngine.params.debug && this.dynamicTree) this.dynamicTree.debugDraw(this.debugGraphics);
+        // if (GlazeEngine.params.debug && this.dynamicTree) this.dynamicTree.debugDraw(this.debugGraphics);
+        if (GlazeEngine.params.debug) {
+            this.fixedViewManagementSystem.spaceManager.debugDraw(this.debugGraphics);
+        }
     }
 }

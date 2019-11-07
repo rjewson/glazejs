@@ -49,9 +49,9 @@ export class Engine {
 
     public getComponentForEntity<T>(entity: Entity, componentType: ComponentType<T>): T {
         const name = componentType.name;
-        return this.components.get(name)[entity] as T;
-        // if (this.components.has(name)) return this.components.get(name)[entity] as T;
-        // return null;
+        // return this.components.get(name)[entity] as T;
+        if (this.components.has(name)) return this.components.get(name)[entity] as T;
+        return null;
     }
 
     public addComponentsToEntity(entity: Entity, componentsToAdd: Component[]) {

@@ -7,6 +7,7 @@ export class SpaceManagerProxy {
     public entity: Entity = null;
     public active: boolean = false;
     public referenceCount: number = 0;
+    public name: string;
 
     constructor() {}
 }
