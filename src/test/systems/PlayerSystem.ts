@@ -206,7 +206,6 @@ export class PlayerSystem extends System {
         }
         // TODO
         this.holder.activate = this.input.JustPressed(Key.H);
-        // trace("x");
 
         // TODO
         if (this.input.JustPressed(Key.J)) {
