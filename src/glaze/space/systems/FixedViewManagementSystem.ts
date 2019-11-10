@@ -9,7 +9,9 @@ import { RegularGridSpaceManager } from "../RegularGridSpaceManager";
 import { Entity } from "../../ecs/Entity";
 import { Viewable } from "../../core/components/Viewable";
 import { MetaData } from "../../core/components/MetaData";
-
+/*  Class representing a system that manages adding and removing a (set of) components 
+    from entities based on the intersection of the entity and another AABB (in this case)
+    the camera */
 export class FixedViewManagementSystem extends System {
     public spaceManager: RegularGridSpaceManager;
 
@@ -19,9 +21,8 @@ export class FixedViewManagementSystem extends System {
     constructor(camera: Camera) {
         super([Position, Extents, Fixed]);
         this.camera = camera;
-        this.spaceManager = new RegularGridSpaceManager(10, 10, 320);
+        this.spaceManager = new RegularGridSpaceManager(10, 10, 320); // FIXME calculate from camera
         this.activeSpaceAABB = new AABB();
-        this.setEntityStatus = this.setEntityStatus.bind(this);
     }
 
     onEntityAdded(entity: Entity, position: Position, extents: Extents, fixed: Fixed) {
@@ -35,7 +36,7 @@ export class FixedViewManagementSystem extends System {
         this.spaceManager.search(this.activeSpaceAABB, this.setEntityStatus);
     }
 
-    setEntityStatus(entity: Entity, status: boolean) {
+    private setEntityStatus = (entity: Entity, status: boolean) => {
         if (status == true) {
             this.engine.addComponentsToEntity(entity, [new Viewable()]);
         } else {

@@ -19,10 +19,10 @@ export class GlazeEngine {
 
     public canvas: HTMLCanvasElement;
 
-    static params: GlazeEngineParams = {
-        tileSize: 16,
-        debug: false
-    };
+    // static params: GlazeEngineParams = {
+    //     tileSize: 16,
+    //     debug: false
+    // };
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;

@@ -8,6 +8,7 @@ import { Position } from "../core/components/Position";
 import { Extents } from "../core/components/Extents";
 import { AABB2 } from "../geom/AABB2";
 import { DebugRenderer } from "../graphics/render/debug/DebugRenderer";
+import { GZE } from "../GZE";
 
 export class RegularGridSpaceManager implements ISpaceManager {
     public grid: Array2D<Cell>;
@@ -135,10 +136,10 @@ export class RegularGridSpaceManager implements ISpaceManager {
         cell.updateCount = 0;
     }
 
-    public debugDraw(render: DebugRenderer) {
+    public debugDraw() {
         // draw all the nodes in the Dynamic Tree
         this.currentCells.forEach((cell, i) => {
-            render.DrawAABB2(cell.aabb, "green");
+            GZE.debugRender.DrawAABB2(cell.aabb, "green");
         });
     }
 }

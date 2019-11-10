@@ -23,7 +23,7 @@ export const Collide = function(proxyA: BFProxy, proxyB: BFProxy): boolean {
     //Do filtering
     if (!Filter.CHECK(proxyA.filter, proxyB.filter)) return false;
 
-    var collided = false;
+    let collided = false;
 
     if (proxyA.isSensor || proxyB.isSensor) {
         //One is a sensor so just check for overlap
@@ -200,7 +200,7 @@ export const IsSegVsAABB = function(
     aabb_extents: Vector2,
     paddingX: number,
     paddingY: number,
-) {
+): boolean {
     return IsStaticSegmentvsStaticAABB(
         aabb_position,
         aabb_extents,

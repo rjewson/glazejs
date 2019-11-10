@@ -8,6 +8,7 @@ import { RandomFloat } from "../../util/Random";
 import { Clamp } from "../../util/Maths";
 import { Light } from "../components/Light";
 import { TileLayer } from "../render/tile/TileLayer";
+import { Component } from "../../ecs/Component";
 
 export class PointLightingSystem extends System {
     public renderer: LightRenderer;
@@ -52,7 +53,10 @@ export class PointLightingSystem extends System {
         }
     }
     //#endregion
-    
+    public onEntityRemoved(entity: Entity, ...components: Component[]) {
+        console.log("removed light");
+    }
+
     nexLightIntensity(lastIntensity: number) {
         return Clamp(lastIntensity + (Math.random() - 0.3) / 10, 0, 1);
     }

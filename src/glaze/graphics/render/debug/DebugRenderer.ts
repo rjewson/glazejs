@@ -1,8 +1,25 @@
 import { Camera } from "../../displaylist/Camera";
 import { AABB } from "../../../geom/AABB";
 import { AABB2 } from "../../../geom/AABB2";
+import { Vector2 } from "../../../geom/Vector2";
 
-export class DebugRenderer {
+export interface DebugRenderer {
+    Resize(width: number, height: number);
+    Clear();
+    DrawAABB(aabb: AABB, colour: string);
+    DrawAABB2(aabb: AABB2, colour: string);
+    DrawCross(x: number, y: number, l: number);
+}
+
+export class NullDebugRenderer implements DebugRenderer {
+    Resize(width: number, height: number) {}
+    Clear() {}
+    DrawAABB(aabb: AABB, colour: string) {}
+    DrawAABB2(aabb: AABB2, colour: string) {}
+    DrawCross(x: number, y: number, l: number) {}
+}
+
+export class CanvasDebugRenderer implements DebugRenderer {
     public view: HTMLCanvasElement;
     public ctx: CanvasRenderingContext2D;
     public camera: Camera;
@@ -30,7 +47,7 @@ export class DebugRenderer {
         this.ctx.translate(this.camera.position.x, this.camera.position.y);
     }
 
-    public DrawRect(x: number, y: number, w: number, h: number, colour:string) {
+    public DrawRect(x: number, y: number, w: number, h: number, colour: string) {
         this.ctx.strokeRect(x, y, w, h);
     }
 
@@ -38,7 +55,7 @@ export class DebugRenderer {
     //     this.ctx.strokeRect(aabb.l, aabb.t, aabb.width, aabb.height);
     // }
 
-    public DrawAABB(aabb: AABB, colour:string = "white") {
+    public DrawAABB(aabb: AABB, colour: string = "white") {
         this.ctx.strokeStyle = colour;
         this.ctx.beginPath();
         this.ctx.moveTo(aabb.l, aabb.t);
@@ -48,7 +65,7 @@ export class DebugRenderer {
         this.ctx.stroke();
     }
 
-    public DrawAABB2(aabb: AABB2, colour:string = "white") {
+    public DrawAABB2(aabb: AABB2, colour: string = "white") {
         this.ctx.strokeStyle = colour;
         this.ctx.beginPath();
         this.ctx.moveTo(aabb.l, aabb.t);

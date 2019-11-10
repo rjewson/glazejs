@@ -7,6 +7,7 @@ import { PhysicsBody } from "../physics/components/PhysicsBody";
 import { Vector2 } from "../geom/Vector2";
 import { RandomInteger } from "../util/Random";
 import { GlazeEngine } from "../GlazeEngine";
+import { GZE } from "../GZE";
 
 export const listenDebugButtons = (engine: Engine) => {
     document.getElementById("debugDump").addEventListener("click", () => {
@@ -27,7 +28,7 @@ export const listenDebugButtons = (engine: Engine) => {
     });
     document.getElementById("debugDraw").addEventListener("click", (event:any) => {
         document.getElementById("viewDebug").style.display = event.target.checked ? "block" : "none";
-        GlazeEngine.params.debug = event.target.checked;
+        GZE.debug = event.target.checked;
     });
 
 };

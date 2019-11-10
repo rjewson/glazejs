@@ -13,7 +13,7 @@ module.exports = merge(common, {
     mode: "development",
     plugins: [ 
         new webpack.DefinePlugin({
-            __IN_DEBUG__: JSON.stringify(false),
+            __IN_DEBUG__: JSON.stringify(true),
         }),
     ],
 });

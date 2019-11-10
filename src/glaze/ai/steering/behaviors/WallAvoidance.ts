@@ -46,7 +46,7 @@ export class WallAvoidance extends Behavior {
         this.lastPos = new Vector2();
     }
 
-    checkAABB(aabb: AABB) {
+    checkAABB = (aabb: AABB) => {
         for (var i = 0; i < this.feelers.length; i++) {
             // for (feeler in feelers) {
             const feeler = this.feelers[i];
@@ -105,23 +105,22 @@ export class WallAvoidance extends Behavior {
         var unit: Vector2 = agent.velocity.clone();
         unit.normalize(); //GetVelocity().unit();
 
+        this.searchAABB.reset();
+        this.searchAABB.addPoint(agent.position.x, agent.position.y);
         for (var i = 0; i < this.feelers.length; i++) {
             const feeler = this.feelers[i];
-
             feeler.Reset(unit, agent.position);
+            this.searchAABB.addPoint(feeler.tip.x, feeler.tip.y);
         }
 
         this.closestFeeler = null;
         this.closestDist = MAXINT;
-
-        this.searchAABB.reset();
-        this.searchAABB.addPoint(agent.position.x, agent.position.y);
-        this.searchAABB.addPoint(this.feelers[0].tip.x, this.feelers[0].tip.y);
-        this.searchAABB.addPoint(this.feelers[1].tip.x, this.feelers[1].tip.y);
-        this.searchAABB.addPoint(this.feelers[2].tip.x, this.feelers[2].tip.y);
         // searchAABB.expand(20);
         params.map.iterateCells(this.searchAABB, this.checkAABB);
 
-        if (this.closestFeeler != null) this.closestFeeler.CalculateForce(result);
+        if (this.closestFeeler != null) {
+            this.closestFeeler.CalculateForce(result);
+        }
+
     }
 }

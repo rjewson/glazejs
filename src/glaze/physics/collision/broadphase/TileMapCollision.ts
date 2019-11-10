@@ -38,6 +38,8 @@ export class TileMapCollision {
     public halftilePosition: Vector2 = new Vector2();
     public halftileExtents: Vector2 = new Vector2();
 
+    private workingAABB: AABB = new AABB();
+
     public bias: Vector2 = new Vector2(1, 1);
     public step: Vector2 = new Vector2(0, -1);
 
@@ -254,26 +256,23 @@ export class TileMapCollision {
     }
 
     public iterateCells(aabb: AABB2, cb: (aabb: AABB) => void) {
-        var startX = this.data.Index(aabb.l);
-        var startY = this.data.Index(aabb.t);
+        const startX = this.data.Index(aabb.l);
+        const startY = this.data.Index(aabb.t);
 
-        var endX = this.data.Index(aabb.r) + 1;
-        var endY = this.data.Index(aabb.b) + 1;
+        const endX = this.data.Index(aabb.r) + 1;
+        const endY = this.data.Index(aabb.b) + 1;
 
-        var aabbArg = new AABB();
-        aabbArg.extents.setTo(this.tileHalfSize, this.tileHalfSize);
+        this.workingAABB.extents.setTo(this.tileHalfSize, this.tileHalfSize);
 
         for (var y = startY; y < endY; y++) {
             for (var x = startX; x < endX; x++) {
-                // for (x in startX...endX) {
-                //     for (y in startY...endY) {
                 var cell = this.data.get(x, y, 0);
                 if ((cell & SOLID) == SOLID) {
-                    aabbArg.position.setTo(
+                    this.workingAABB.position.setTo(
                         x * this.tileSize + this.tileHalfSize,
                         y * this.tileSize + this.tileHalfSize
                     );
-                    cb(aabbArg);
+                    cb(this.workingAABB);
                 }
             }
         }

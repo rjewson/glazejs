@@ -24,17 +24,17 @@ export class Seek extends Behavior {
         params: SteeringAgentParameters,
         result: Vector2,
         target: Vector2,
-        seekDist: number = 0,
+        seekDist: number = 0
     ): boolean {
-        var dX: number = target.x - agent.position.x + 0.000001;
-        var dY: number = target.y - agent.position.y + 0.000001;
-        var d: number = dX * dX + dY * dY;
+        const dX: number = target.x - agent.position.x + 0.000001;
+        const dY: number = target.y - agent.position.y + 0.000001;
+        const d: number = dX * dX + dY * dY;
 
         if (seekDist > 0 && d < seekDist * seekDist) {
             return false;
         }
 
-        var t = Math.sqrt(d);
+        const t = Math.sqrt(d);
 
         result.x = dX / t;
         result.x *= params.maxSteeringForcePerStep;

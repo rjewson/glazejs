@@ -15,6 +15,7 @@ export class BeeHiveSystem extends System {
     }
 
     onEntityRemoved(entity: Entity, beehive: BeeHive, viewable: Viewable, active: Active) {
+        debugger;
         beehive.group.members.forEach(bee => {
             // this.engine.destroyEntity(bee);
             const state:State = this.engine.getComponentForEntity(bee,State);

@@ -79,7 +79,7 @@ import { ChickenSystem } from "./systems/ChickenSystem";
 import { DebugRenderSystem } from "../glaze/graphics/systems/DebugRendererSystem";
 import { DebugGraphics } from "../glaze/graphics/components/DebugGraphics";
 import { DynamicTree } from "../glaze/physics/collision/broadphase/DynamicTree";
-import { DebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
+import { DebugRenderer, CanvasDebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
 import { GunTurret } from "./components/GunTurret";
 import { GunTurretSystem } from "./systems/GunTurretSystem";
 import { throttle } from "../glaze/util/FnUtils";
@@ -102,6 +102,7 @@ import { AttachmentSystem } from "../glaze/core/systems/AttachmentSystem";
 import { Hierachy } from "../glaze/core/components/Hierachy";
 import { Attachment } from "../glaze/core/components/Attachment";
 import { MetaData } from "../glaze/core/components/MetaData";
+import { GZE } from "../glaze/GZE";
 
 interface GlazeMapLayerConfig {}
 
@@ -132,12 +133,9 @@ const TILE_FRAMES_CONFIG: string = "data/tileFrames.json";
 
 const TILE_SPRITE_SHEET: string = "data/superSet.png";
 
-const TILE_SIZE = 16;
-
 export class GameTestA extends GlazeEngine {
     private renderSystem: GraphicsRenderSystem;
     private tmxMap: TMXMap;
-    private debugGraphics: DebugRenderer;
     private dynamicTree: DynamicTree;
     private fixedViewManagementSystem: FixedViewManagementSystem;
     constructor() {
@@ -152,15 +150,18 @@ export class GameTestA extends GlazeEngine {
 
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
 
-        var cameraRange = new AABB2(0, TILE_SIZE * tmxMap.width, TILE_SIZE * tmxMap.height, 0);
-        cameraRange.expand(-TILE_SIZE);
+        var cameraRange = new AABB2(0, GZE.tileSize * tmxMap.width, GZE.tileSize * tmxMap.height, 0);
+        cameraRange.expand(-GZE.tileSize);
         const camera = new Camera();
         camera.worldExtentsAABB = cameraRange;
+
+        const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
+        GZE.debuggingRender = new CanvasDebugRenderer(debugCanvas, camera, 1280, 768);
 
         const collisionData = LayerToCollisionData(
             TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
             GetTileSet(tmxMap, "Collision").firstgid,
-            TILE_SIZE
+            GZE.tileSize
         );
 
         const tileMapCollision = new TileMapCollision(collisionData);
@@ -296,10 +297,8 @@ export class GameTestA extends GlazeEngine {
 
         renderPhase.addSystem(this.renderSystem);
 
-        const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
-        const debugRenderSystem = new DebugRenderSystem(debugCanvas, this.renderSystem.camera);
+        const debugRenderSystem = new DebugRenderSystem();
         renderPhase.addSystem(debugRenderSystem);
-        this.debugGraphics = debugRenderSystem.debugRender;
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
 
@@ -391,30 +390,45 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff")
         ]);
 
-        // const beeHive = this.engine.createEntity();
-        // this.engine.addComponentsToEntity(beeHive, [
-        //     this.mapPosition(20.5, 17),
-        //     new Extents(16, 16),
-        //     new Graphics("insects", "hive"),
-        //     new PhysicsCollision(false, null, []),
-        //     new Fixed(),
-        //     new Active(),
-        //     new BeeHive(5)
-        // ]);
+        const beeHive = this.engine.createEntity();
+        this.engine.addComponentsToEntity(beeHive, [
+            new MetaData("BeeHive"),
+            this.mapPosition(20.5, 17),
+            new Extents(16, 16),
+            new Graphics("insects", "hive"),
+            new PhysicsCollision(false, null, []),
+            new Fixed(),
+            new Active(),
+            new BeeHive(5)
+        ]);
 
-        const torch = this.engine.createEntity();
-        this.engine.addComponentsToEntity(torch, [
+        this.engine.addComponentsToEntity(this.engine.createEntity(), [
             this.mapPosition(164, 182),
-            new MetaData("torch"),
+            new MetaData("torch1"),
             new Extents(160, 160),
             new Graphics("torch"),        
             new GraphicsAnimation("torch","burn"),
             new Light(160, 1, 1, 1, 255, 255, 255),
             new Fixed(),
-            // new Active(),
-            // new Viewable(),
         ]);
-
+        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+            this.mapPosition(184, 187),
+            new MetaData("torch2"),
+            new Extents(160, 160),
+            new Graphics("torch"),        
+            new GraphicsAnimation("torch","burn"),
+            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Fixed(),
+        ]);
+        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+            this.mapPosition(175, 68),
+            new MetaData("torch3"),
+            new Extents(160, 160),
+            new Graphics("torch"),        
+            new GraphicsAnimation("torch","burn"),
+            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Fixed(),
+        ]);
         // const birdNest = this.engine.createEntity();
         // this.engine.addComponentsToEntity(birdNest, [
         //     this.mapPosition(34, 30),
@@ -478,23 +492,24 @@ export class GameTestA extends GlazeEngine {
     }
 
     mapPosition(xTiles: number, yTiles: number): Position {
-        return new Position(xTiles * TILE_SIZE, yTiles * TILE_SIZE);
+        return new Position(xTiles * GZE.tileSize, yTiles * GZE.tileSize);
     }
 
     fireBullet(position: Vector2, target: Vector2) {
         var filter = new Filter();
         filter.groupIndex = TestFilters.TURRET_GROUP;
-        var bullet = StandardBullet.create(this.engine, new Position(position.x, position.y), filter, target);
+        StandardBullet.create(this.engine, new Position(position.x, position.y), filter, target);
     }
 
     preUpdate() {
+        GZE.debugRender.Clear();
         this.input.Update(-this.renderSystem.camera.position.x, -this.renderSystem.camera.position.y);
     }
 
     public postUpdate() {
-        // if (GlazeEngine.params.debug && this.dynamicTree) this.dynamicTree.debugDraw(this.debugGraphics);
-        if (GlazeEngine.params.debug) {
-            this.fixedViewManagementSystem.spaceManager.debugDraw(this.debugGraphics);
+        if (GZE.debug) {
+            // if (this.dynamicTree) this.dynamicTree.debugDraw(GZE.debugRender);
+            this.fixedViewManagementSystem.spaceManager.debugDraw();
         }
     }
 }

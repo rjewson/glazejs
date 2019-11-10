@@ -1,6 +1,7 @@
 import { Vector2 } from "../../../geom/Vector2";
 import { lineIntersection } from "../../../util/Geometry";
 import { MAXINT } from "../../../util/Maths";
+import { GZE } from "../../../GZE";
 
 export class Feeler {
     public base: Vector2;
@@ -38,7 +39,7 @@ export class Feeler {
             this.tip.x = Math.cos(a);
             this.tip.y = Math.sin(a);
         }
-        this.tip.multEquals(length);
+        this.tip.multEquals(this.length);
         this.tip.plusEquals(this.base);
 
         //glaze.debug.DebugEngine.DrawParticle(tip.x,tip.y,4,255,0,0);
@@ -61,6 +62,7 @@ export class Feeler {
             sf.minusEquals(this.closestIP);
             this.normal.multEquals(sf.length());
             force.plusEquals(this.normal);
+            GZE.debugRender.DrawCross(this.closestIP.x,this.closestIP.y,10);
         }
     }
 }
