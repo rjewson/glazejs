@@ -9,25 +9,25 @@
     </head>
 
     <body>
+        <div id="playControls" class="">
+            <span>GlazeJS</span>
+            <button id="startbutton">Run</button>
+            <button id="stopbutton">Pause</button>
+            <button id="debugChickens">Chickens</button>
+            <button id="debugDump">Dump</button>
+            <input type="checkbox" id="debugDraw" /><label for="debugDraw">Draw Debug</label>
+            <select>
+                <option value="none">Normal</option>
+                <option value="lightA">A</option>
+                <option value="lightB">B</option>
+                <option value="lightC">C</option>
+                </select>
+        </div>
         <div id="viewContainer">
             <canvas id="view"></canvas>
             <canvas id="viewDebug"></canvas>
-            <div id="playControls" class="">
-                <div class="play"></div>
-                <button id="startbutton">Run</button>
-                <button id="stopbutton">Pause</button>
-                <button id="debugChickens">Chickens</button>
-                <button id="debugDump">Dump</button>
-                <input type="checkbox" id="debugDraw" /><label for="debugDraw">Draw Debug</label>
-                <select>
-                    <option value="none">Normal</option>
-                    <option value="lightA">A</option>
-                    <option value="lightB">B</option>
-                    <option value="lightC">C</option>
-                  </select>
-            </div>
         </div>
         <div id="debugResult"></div>
-        <script src="./dist/index.js"></script>
+        <script src="./index.js"></script>
     </body>
 </html>

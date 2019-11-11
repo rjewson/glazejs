@@ -44,9 +44,7 @@ export class LightRenderer implements IRenderer {
     public texture: Texture;
     public sprite: Sprite;
 
-    public lastSnap: Vector2;
-    public thisSnap: Vector2;
-    public snapChanged: boolean;
+    public snapPosition: Vector2;
 
     public layer: TileLayer;
 
@@ -62,9 +60,7 @@ export class LightRenderer implements IRenderer {
     constructor(ranges: Array<number>, layer: TileLayer) {
         this.ranges = ranges;
         this.renderSurface = this.renderSurface.bind(this);
-        this.lastSnap = new Vector2(0, 0);
-        this.thisSnap = new Vector2(-1000, -1000);
-        this.snapChanged = false;
+        this.snapPosition = new Vector2(-1000, -1000);
         this.layer = layer;
         this.tileSize = 8;
         this.halfTileSize = this.tileSize / 2;
@@ -237,14 +233,11 @@ export class LightRenderer implements IRenderer {
         }
     }
 
-    public calcSnap(cameraPos: Vector2): boolean {
-        this.lastSnap.copy(this.thisSnap);
-        this.thisSnap.x = Math.floor(cameraPos.x / this.tileSize) * this.tileSize;
-        this.thisSnap.y = Math.floor(cameraPos.y / this.tileSize) * this.tileSize;
-        this.thisSnap.x += this.tileSize;
-        this.thisSnap.y += this.tileSize;
-        this.snapChanged = this.lastSnap.x != this.thisSnap.x || this.lastSnap.y != this.thisSnap.y;
-        return this.snapChanged;
+    public calcSnap(cameraPos: Vector2) {
+        this.snapPosition.x = Math.floor(cameraPos.x / this.tileSize) * this.tileSize;
+        this.snapPosition.y = Math.floor(cameraPos.y / this.tileSize) * this.tileSize;
+        this.snapPosition.x += this.tileSize;
+        this.snapPosition.y += this.tileSize;
     }
 
     public Background(backgroundLight: number) {
@@ -260,7 +253,7 @@ export class LightRenderer implements IRenderer {
         // console.log(percentDepth);
         // End
         this.sprite.position.copy(this.camera.halfViewportSize);
-        this.sprite.position.minusEquals(this.thisSnap);
+        this.sprite.position.minusEquals(this.snapPosition);
         this.surface.drawTo(this.renderSurface);
     }
 
@@ -290,8 +283,8 @@ export class LightRenderer implements IRenderer {
             this.gl.uniform2f(lightGroup.lightingShader.uniform.resolution, this.resolution.x, this.resolution.y);
             this.gl.uniform2f(
                 lightGroup.lightingShader.uniform.viewOffset,
-                this.thisSnap.x / this.tileSize,
-                this.thisSnap.y / this.tileSize
+                this.snapPosition.x / this.tileSize,
+                this.snapPosition.y / this.tileSize
             );
             this.gl.uniform2fv(
                 lightGroup.lightingShader.uniform.inverseTileTextureSize,

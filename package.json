@@ -7,9 +7,8 @@
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --watch",
     "dev": "webpack-serve --hmr false ./webpack.dev.js",
-    "gen-sprites": "spritesheet-js -f json -n sprites.png -p ./output ./resources/sprites/*.png",
     "validate-typescript": "tsc --noEmit",
-    "game": "./startChrome.sh http://localhost:8000"
+    "game": "./scripts/startChrome.sh http://localhost:8000"
   },
   "author": "rjewson@gmail.com",
   "license": "ISC",
@@ -22,9 +21,9 @@
     "webpack-cli": "^3.3.10",
     "webpack-merge": "^4.2.2",
     "webpack-serve": "^2.0.3",
-    "worker-loader": "^2.0.0"
+    "worker-loader": "^2.0.0",
+    "typescript-tslint-plugin": "^0.5.4"
   },
   "dependencies": {
-    "typescript-tslint-plugin": "^0.5.4"
   }
 }

@@ -4,7 +4,7 @@ import { AABB2 } from "../../../geom/AABB2";
 import { Vector2 } from "../../../geom/Vector2";
 
 export interface DebugRenderer {
-    Resize(width: number, height: number);
+    Resize(size:Vector2);
     Clear();
     DrawAABB(aabb: AABB, colour: string);
     DrawAABB2(aabb: AABB2, colour: string);
@@ -12,7 +12,7 @@ export interface DebugRenderer {
 }
 
 export class NullDebugRenderer implements DebugRenderer {
-    Resize(width: number, height: number) {}
+    Resize(size: Vector2) {}
     Clear() {}
     DrawAABB(aabb: AABB, colour: string) {}
     DrawAABB2(aabb: AABB2, colour: string) {}
@@ -23,26 +23,24 @@ export class CanvasDebugRenderer implements DebugRenderer {
     public view: HTMLCanvasElement;
     public ctx: CanvasRenderingContext2D;
     public camera: Camera;
-    public width: number;
-    public height: number;
+    public size: Vector2;
 
-    constructor(view: HTMLCanvasElement, camera: Camera, width: number = 800, height: number = 600) {
+    constructor(view: HTMLCanvasElement, camera: Camera, size: Vector2) {
         this.view = view;
         this.camera = camera;
         this.ctx = view.getContext("2d");
-        this.Resize(width, height);
+        this.Resize(size);
     }
 
-    public Resize(width: number, height: number) {
-        this.width = width;
-        this.height = height;
-        this.view.width = width;
-        this.view.height = height;
+    public Resize(size: Vector2) {
+        this.size = size;
+        this.view.width = size.x;
+        this.view.height = size.y;
     }
 
     public Clear() {
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.size.x, this.size.y);
         this.ctx.strokeStyle = "rgba(0,255,0,1)";
         this.ctx.translate(this.camera.position.x, this.camera.position.y);
     }

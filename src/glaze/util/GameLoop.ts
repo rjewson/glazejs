@@ -14,16 +14,13 @@ export class GameLoop {
         this.update = this.update.bind(this);
     }
 
-    public update(timestamp: number): boolean {
+    public update(timestamp: number) {
         this.delta = this.prevAnimationTime == 0 ? MIN_DELTA : timestamp - this.prevAnimationTime;
         this.prevAnimationTime = timestamp;
-        if (this.updateFunc != null)
-            //trace(Math.max(delta,MIN_DELTA));
-            //updateFunc(Math.max(delta,MIN_DELTA),Math.floor(timestamp));
-            // updateFunc(1000/60,Math.floor(timestamp));
+        if (this.updateFunc != null) {
             this.updateFunc(MIN_DELTA, Math.floor(timestamp));
+        }
         this.rafID = window.requestAnimationFrame(this.update);
-        return false;
     }
 
     public start() {

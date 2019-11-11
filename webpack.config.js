@@ -3,7 +3,7 @@ var path = require("path");
 
 module.exports = {
     entry: "./src/index.ts",
-    output: { filename: "./dist/index.js", globalObject: 'this' },
+    output: { filename: "./index.js", globalObject: 'this' },
     module: {
         rules: [
             {

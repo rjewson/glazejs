@@ -219,7 +219,7 @@
         {
          "columns":32,
          "firstgid":1,
-         "image":"..\/..\/resources\/tiles2\/set1.png",
+         "image":".\/tiles\/set1.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -238,7 +238,7 @@
         {
          "columns":32,
          "firstgid":1025,
-         "image":"..\/..\/resources\/tiles2\/set2.png",
+         "image":".\/tiles\/set2.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -251,7 +251,7 @@
         {
          "columns":32,
          "firstgid":2049,
-         "image":"..\/..\/resources\/tiles2\/set3.png",
+         "image":".\/tiles\/set3.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -264,7 +264,7 @@
         {
          "columns":32,
          "firstgid":3073,
-         "image":"..\/..\/resources\/tiles2\/set4.png",
+         "image":".\/tiles\/set4.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -277,7 +277,7 @@
         {
          "columns":32,
          "firstgid":4097,
-         "image":"..\/..\/resources\/tiles2\/set5.png",
+         "image":".\/tiles\/set5.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -290,7 +290,7 @@
         {
          "columns":32,
          "firstgid":5121,
-         "image":"..\/..\/resources\/tiles2\/set6.png",
+         "image":".\/tiles\/set6.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -303,7 +303,7 @@
         {
          "columns":32,
          "firstgid":6145,
-         "image":"..\/..\/resources\/tiles2\/set7.png",
+         "image":".\/tiles\/set7.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -316,7 +316,7 @@
         {
          "columns":32,
          "firstgid":7169,
-         "image":"..\/..\/resources\/tiles2\/set8.png",
+         "image":".\/tiles\/set8.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -329,7 +329,7 @@
         {
          "columns":32,
          "firstgid":8193,
-         "image":"..\/..\/resources\/tiles2\/set9.png",
+         "image":".\/tiles\/set9.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,

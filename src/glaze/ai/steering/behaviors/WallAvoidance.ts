@@ -28,10 +28,12 @@ export class WallAvoidance extends Behavior {
     left: Vector2 = new Vector2(-1, 0);
     searchAABB: AABB2 = new AABB2();
 
+    tempVector: Vector2 = new Vector2();
+
     closestFeeler: Feeler = null;
     closestDist: number = MAXINT;
 
-    constructor( feelerLength: number) {
+    constructor(feelerLength: number) {
         super(SteeringSettings.wallAvoidanceWeight, SteeringSettings.wallAvoidancePriority);
         this.feelerLength = feelerLength;
 
@@ -44,31 +46,6 @@ export class WallAvoidance extends Behavior {
         this.feelers.push(new Feeler(toRad(40), feelerLength * 0.5));
 
         this.lastPos = new Vector2();
-    }
-
-    checkAABB = (aabb: AABB) => {
-        for (var i = 0; i < this.feelers.length; i++) {
-            // for (feeler in feelers) {
-            const feeler = this.feelers[i];
-            //top
-            this.pA.setTo(aabb.l, aabb.t);
-            this.pB.setTo(aabb.r, aabb.t);
-            feeler.TestSegment(this.pA, this.pB, this.top);
-            //right
-            this.pA.setTo(aabb.r, aabb.b);
-            feeler.TestSegment(this.pB, this.pA, this.right);
-            //bottom
-            this.pB.setTo(aabb.l, aabb.b);
-            feeler.TestSegment(this.pA, this.pB, this.bottom);
-            //left
-            this.pA.setTo(aabb.l, aabb.t);
-            feeler.TestSegment(this.pB, this.pA, this.left);
-
-            if (feeler.distToClosestIP < this.closestDist) {
-                this.closestDist = feeler.distToClosestIP;
-                this.closestFeeler = feeler;
-            }
-        }
     }
 
     // function check(shape:GeometricShape, pos:Vector2):Void {
@@ -102,14 +79,14 @@ export class WallAvoidance extends Behavior {
         if (this.lastPos.distSqrd(agent.position) < 1) return;
         this.lastPos.copy(agent.position);
 
-        var unit: Vector2 = agent.velocity.clone();
-        unit.normalize(); //GetVelocity().unit();
+        this.tempVector.copy(agent.velocity);
+        this.tempVector.normalize();
 
         this.searchAABB.reset();
         this.searchAABB.addPoint(agent.position.x, agent.position.y);
         for (var i = 0; i < this.feelers.length; i++) {
             const feeler = this.feelers[i];
-            feeler.Reset(unit, agent.position);
+            feeler.Reset(this.tempVector, agent.position);
             this.searchAABB.addPoint(feeler.tip.x, feeler.tip.y);
         }
 
@@ -121,6 +98,30 @@ export class WallAvoidance extends Behavior {
         if (this.closestFeeler != null) {
             this.closestFeeler.CalculateForce(result);
         }
-
     }
+
+    checkAABB = (aabb: AABB) => {
+        for (var i = 0; i < this.feelers.length; i++) {
+            // for (feeler in feelers) {
+            const feeler = this.feelers[i];
+            //top
+            this.pA.setTo(aabb.l, aabb.t);
+            this.pB.setTo(aabb.r, aabb.t);
+            feeler.TestSegment(this.pA, this.pB, this.top);
+            //right
+            this.pA.setTo(aabb.r, aabb.b);
+            feeler.TestSegment(this.pB, this.pA, this.right);
+            //bottom
+            this.pB.setTo(aabb.l, aabb.b);
+            feeler.TestSegment(this.pA, this.pB, this.bottom);
+            //left
+            this.pA.setTo(aabb.l, aabb.t);
+            feeler.TestSegment(this.pB, this.pA, this.left);
+
+            if (feeler.distToClosestIP < this.closestDist) {
+                this.closestDist = feeler.distToClosestIP;
+                this.closestFeeler = feeler;
+            }
+        }
+    };
 }

@@ -6,11 +6,6 @@ import { Vector2 } from "./geom/Vector2";
 import { Entity } from "./ecs/Entity";
 import { GZE } from "./GZE";
 
-export interface GlazeEngineParams {
-    tileSize: number;
-    debug: boolean;
-}
-
 export class GlazeEngine {
     public assets: AssetLoader;
     public loop: GameLoop;
@@ -18,11 +13,6 @@ export class GlazeEngine {
     public engine: Engine;
 
     public canvas: HTMLCanvasElement;
-
-    // static params: GlazeEngineParams = {
-    //     tileSize: 16,
-    //     debug: false
-    // };
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;

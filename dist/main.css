@@ -35,12 +35,7 @@ button {
     position: absolute;
     top: 0px;
     left: 0px;
-}
-
-#playControls {
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    pointer-events: none;
 }
 
 .table-header-rotated {
@@ -59,7 +54,7 @@ button {
     white-space: nowrap;
 }
 .table-header-rotated th.rotate > div {
-    -webkit-transform: translate(25px, 51px) rotate(315deg);
+    -webkit-transform: translate(25px, 51px) rotate(270deg);
     transform: translate(25px, 51px) rotate(315deg);
     width: 30px;
 }

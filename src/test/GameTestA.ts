@@ -149,14 +149,14 @@ export class GameTestA extends GlazeEngine {
         this.engine.addCapacityToEngine(1000);
 
         const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
+        const cameraRange = new AABB2(0, GZE.tileSize * tmxMap.width, GZE.tileSize * tmxMap.height, 0);
+        cameraRange.expand(-GZE.tileSize); // Remove outer tiles
 
-        var cameraRange = new AABB2(0, GZE.tileSize * tmxMap.width, GZE.tileSize * tmxMap.height, 0);
-        cameraRange.expand(-GZE.tileSize);
         const camera = new Camera();
         camera.worldExtentsAABB = cameraRange;
 
         const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
-        GZE.debuggingRender = new CanvasDebugRenderer(debugCanvas, camera, 1280, 768);
+        GZE.debuggingRender = new CanvasDebugRenderer(debugCanvas, camera, GZE.resolution);
 
         const collisionData = LayerToCollisionData(
             TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
@@ -233,7 +233,7 @@ export class GameTestA extends GlazeEngine {
 
         const renderPhase = new Phase();
         this.engine.addPhase(renderPhase);
-        this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, new Vector2(1280, 720));
+        this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, GZE.resolution);
         this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
         this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
 
@@ -292,7 +292,6 @@ export class GameTestA extends GlazeEngine {
         this.renderSystem.itemContainer.addChild(tileMapRenderer.renderLayersMap.get("bg").sprite);
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
         
-        // NEW GPU LIGHTS
         this.renderSystem.camera.addChild(lightSystem.renderer.sprite);
 
         renderPhase.addSystem(this.renderSystem);
@@ -506,7 +505,7 @@ export class GameTestA extends GlazeEngine {
         this.input.Update(-this.renderSystem.camera.position.x, -this.renderSystem.camera.position.y);
     }
 
-    public postUpdate() {
+    postUpdate() {
         if (GZE.debug) {
             // if (this.dynamicTree) this.dynamicTree.debugDraw(GZE.debugRender);
             this.fixedViewManagementSystem.spaceManager.debugDraw();
