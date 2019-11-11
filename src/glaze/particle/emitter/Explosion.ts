@@ -4,7 +4,7 @@ import { Entity } from "../../ecs/Entity";
 import { Vector2 } from "../../geom/Vector2";
 import { RandomFloat } from "../../util/Random";
 import { Engine, GetC4E } from "../../ecs/Engine";
-
+const g = new Vector2(0,9);
 export class Explosion implements IParticleEmitter {
     public mass: number;
     public power: number;
@@ -27,11 +27,11 @@ export class Explosion implements IParticleEmitter {
                 vy,
                 0,
                 1,
-                RandomFloat(250, 300),
+                RandomFloat(250, 500),
                 0.999,
                 true,
                 true,
-                null,
+                g,
                 4,
                 255,
                 255,
@@ -46,11 +46,11 @@ export class Explosion implements IParticleEmitter {
             vy,
             0,
             1,
-            RandomFloat(250, 300),
+            RandomFloat(250, 500),
             0.999,
             true,
             true,
-            null,
+            g,
             4,
             0,
             0,

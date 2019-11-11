@@ -33,7 +33,7 @@ export class Wander extends Behavior {
 
         // glaze.debug.DebugEngine.DrawParticle(circleCenter.x,circleCenter.y,4,0,0,255);
 
-        var h: number = Math.atan2(agent.velocity.y, agent.velocity.x);
+        let h: number = Math.atan2(agent.velocity.y, agent.velocity.x);
         h += Math.PI / 2;
         this.displacement.setTo(
             this.circleRadius * Math.cos(this.wanderAngle + h),

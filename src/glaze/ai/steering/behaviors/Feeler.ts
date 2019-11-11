@@ -16,6 +16,7 @@ export class Feeler {
     public ip: Vector2;
 
     public normal: Vector2;
+    public sf: Vector2;
 
     constructor(angle: number, length: number) {
         this.angle = angle;
@@ -27,6 +28,7 @@ export class Feeler {
         this.closestIP = new Vector2();
         this.ip = new Vector2();
         this.normal = new Vector2();
+        this.sf = new Vector2();
     }
 
     public Reset(unitDirection: Vector2, position: Vector2) {
@@ -41,6 +43,7 @@ export class Feeler {
         }
         this.tip.multEquals(this.length);
         this.tip.plusEquals(this.base);
+        GZE.debugRender.DrawLine(this.tip.x,this.tip.y,this.base.x,this.base.y);
 
         //glaze.debug.DebugEngine.DrawParticle(tip.x,tip.y,4,255,0,0);
     }
@@ -56,13 +59,11 @@ export class Feeler {
 
     public CalculateForce(force: Vector2) {
         if (this.distToClosestIP != MAXINT) {
-            //glaze.debug.DebugEngine.DrawParticle(closestIP.x,closestIP.y,4,255,255,255);
-            // var sf =  normal.mult( tip.minus( closestIP ).length() );
-            var sf = this.tip.clone();
-            sf.minusEquals(this.closestIP);
-            this.normal.multEquals(sf.length());
+            this.sf.copy(this.tip);
+            this.sf.minusEquals(this.closestIP);
+            this.normal.multEquals(this.sf.length());
             force.plusEquals(this.normal);
-            GZE.debugRender.DrawCross(this.closestIP.x,this.closestIP.y,10);
+            GZE.debugRender.DrawLine(this.tip.x,this.tip.y,this.base.x,this.base.y);
         }
     }
 }

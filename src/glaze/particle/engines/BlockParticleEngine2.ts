@@ -3,17 +3,18 @@ import { PointBlockParticleRender } from "../../graphics/render/particle/PointBl
 import { Vector2 } from "../../geom/Vector2";
 import { Bytes2D } from "../../ds/Bytes2D";
 import { BlockParticle } from "./BlockParticle";
+import { BlockParticle2 } from "./BlockParticle2";
 
 export class BlockParticleEngine2 implements IParticleEngine {
     public particleCount: number;
     public deltaTime: number;
     public invDeltaTime: number;
 
-    public activeParticles: BlockParticle[][];
+    public activeParticles: BlockParticle2[][];
     public activeParticlesCount: number;
     public activePool: number;
 
-    public cachedParticles: BlockParticle[];
+    public cachedParticles: BlockParticle2[];
     public availableParticleCount: number;
 
     public renderer: PointBlockParticleRender;
@@ -32,7 +33,7 @@ export class BlockParticleEngine2 implements IParticleEngine {
         this.activeParticles[1] = new Array(this.particleCount);
         this.cachedParticles = new Array(this.particleCount);
         for (let i = 0; i < particleCount; i++) {
-            this.cachedParticles[i] = new BlockParticle();
+            this.cachedParticles[i] = new BlockParticle2();
         }
         this.availableParticleCount = this.particleCount;
         this.activeParticlesCount = 0;
@@ -92,9 +93,22 @@ export class BlockParticleEngine2 implements IParticleEngine {
         for (var i = 0; i < this.activeParticlesCount; i++) {
             const particle = poolA[i];
             if (
-                particle.Update(this.deltaTime, this.invDeltaTime) &&
-                (this.map.getReal(particle.pX, particle.pY, 0) & 1) != 1
+                particle.Update(this.deltaTime, this.invDeltaTime)
             ) {
+                if ((this.map.getReal(particle.pX, particle.pY, 0) & 1) === 1) {
+                    const plX = this.map.Index(particle.plX);
+                    const plY = this.map.Index(particle.plY);
+                    const pX = this.map.Index(particle.pX);
+                    const pY = this.map.Index(particle.pY);
+                    if (pX != plX) {
+                        particle.vX *= -0.99;
+                        particle.pX = particle.plX;
+                    }
+                    if (pY != plY) {
+                        particle.vY *= -0.99;
+                        particle.pY = particle.plY;
+                    } 
+                }
                 this.renderer.AddSpriteToBatch(
                     particle.pX,
                     particle.pY,

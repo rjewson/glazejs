@@ -15,7 +15,6 @@ export class BeeHiveSystem extends System {
     }
 
     onEntityRemoved(entity: Entity, beehive: BeeHive, viewable: Viewable, active: Active) {
-        debugger;
         beehive.group.members.forEach(bee => {
             // this.engine.destroyEntity(bee);
             const state:State = this.engine.getComponentForEntity(bee,State);
@@ -27,7 +26,7 @@ export class BeeHiveSystem extends System {
     updateEntity(entity: Entity, beehive: BeeHive, viewable: Viewable, active: Active) {
         if (beehive.group.hasCapacity()) {
             if (RandomBoolean(0.01)) {
-                var newBee = BeeFactory.create(
+                const newBee = BeeFactory.create(
                     this.engine,
                     this.engine.getComponentForEntity(entity, Position).clone(),
                 );

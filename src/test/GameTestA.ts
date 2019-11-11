@@ -407,7 +407,7 @@ export class GameTestA extends GlazeEngine {
             new Extents(160, 160),
             new Graphics("torch"),        
             new GraphicsAnimation("torch","burn"),
-            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed(),
         ]);
         this.engine.addComponentsToEntity(this.engine.createEntity(), [
@@ -416,7 +416,7 @@ export class GameTestA extends GlazeEngine {
             new Extents(160, 160),
             new Graphics("torch"),        
             new GraphicsAnimation("torch","burn"),
-            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed(),
         ]);
         this.engine.addComponentsToEntity(this.engine.createEntity(), [
@@ -425,7 +425,7 @@ export class GameTestA extends GlazeEngine {
             new Extents(160, 160),
             new Graphics("torch"),        
             new GraphicsAnimation("torch","burn"),
-            new Light(160, 1, 1, 1, 255, 255, 255),
+            new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed(),
         ]);
         // const birdNest = this.engine.createEntity();

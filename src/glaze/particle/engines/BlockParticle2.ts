@@ -6,6 +6,9 @@ export class BlockParticle2 {
     public pX: number;
     public pY: number;
 
+    public plX: number;
+    public plY: number;
+
     public vX: number;
     public vY: number;
 
@@ -48,8 +51,8 @@ export class BlockParticle2 {
         data4: number,
         data5: number,
     ) {
-        this.pX = x;
-        this.pY = y;
+        this.pX = this.plX = x;
+        this.pY = this.plY = y;
         this.vX = vX;
         this.vY = vY;
         this.fX = fX;
@@ -71,6 +74,8 @@ export class BlockParticle2 {
         this.vY += this.fY + this.externalForce.y;
         this.vX *= this.damping;
         this.vY *= this.damping;
+        this.plX = this.pX;
+        this.plY = this.pY;
         this.pX += this.vX * invDeltaTime;
         this.pY += this.vY * invDeltaTime;
         this.age -= deltaTime;

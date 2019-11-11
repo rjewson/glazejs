@@ -137,7 +137,7 @@ export class PlayerSystem extends System {
         //     new Active()
         //     ],"player light");
         // TODO
-        this.playerLight = new Light(256, 1, 1, 0, 255, 0, 0),
+        this.playerLight = new Light(256, 1, 1, 0, 255, 0, 0, 1),
         // this.engine.addComponentsToEntity(entity, [this.playerLight]);
         this.holder = new Holder(entity);
         // TODO
@@ -186,10 +186,10 @@ export class PlayerSystem extends System {
 
         physicsBody.body.collideOneWay = !(this.characterController.down > 0);
 
-        var fire = this.input.JustPressed(32);
-        var search = this.input.JustPressed(71);
-        var hold = this.input.Pressed(Key.J);
-        var ray = this.input.Pressed(Key.R);
+        const fire = this.input.JustPressed(Key.Space);
+        const search = this.input.JustPressed(71);
+        const hold = this.input.Pressed(Key.J);
+        const ray = this.input.Pressed(Key.R);
 
         // TODO
         // if (this.input.JustPressed(84)) {

@@ -3,20 +3,28 @@ import { AABB } from "../../../geom/AABB";
 import { AABB2 } from "../../../geom/AABB2";
 import { Vector2 } from "../../../geom/Vector2";
 
+export enum DebugColors {
+    WHITE = "white",
+    RED = "red",
+    BLUE = "blue"
+}
+
 export interface DebugRenderer {
-    Resize(size:Vector2);
+    Resize(size: Vector2);
     Clear();
-    DrawAABB(aabb: AABB, colour: string);
-    DrawAABB2(aabb: AABB2, colour: string);
-    DrawCross(x: number, y: number, l: number);
+    DrawAABB(aabb: AABB, color?: string);
+    DrawAABB2(aabb: AABB2, color?: string);
+    DrawCross(x: number, y: number, l: number, color?: string);
+    DrawLine(sx: number, sy: number, ex: number, ey: number, color?: string);
 }
 
 export class NullDebugRenderer implements DebugRenderer {
     Resize(size: Vector2) {}
     Clear() {}
-    DrawAABB(aabb: AABB, colour: string) {}
-    DrawAABB2(aabb: AABB2, colour: string) {}
-    DrawCross(x: number, y: number, l: number) {}
+    DrawAABB(aabb: AABB, color: string) {}
+    DrawAABB2(aabb: AABB2, color: string) {}
+    DrawCross(x: number, y: number, l: number, color: string) {}
+    DrawLine(sx: number, sy: number, ex: number, ey: number, color: string) {}
 }
 
 export class CanvasDebugRenderer implements DebugRenderer {
@@ -45,16 +53,12 @@ export class CanvasDebugRenderer implements DebugRenderer {
         this.ctx.translate(this.camera.position.x, this.camera.position.y);
     }
 
-    public DrawRect(x: number, y: number, w: number, h: number, colour: string) {
+    public DrawRect(x: number, y: number, w: number, h: number, color: string) {
         this.ctx.strokeRect(x, y, w, h);
     }
 
-    // public DrawAABB(aabb: AABB) {
-    //     this.ctx.strokeRect(aabb.l, aabb.t, aabb.width, aabb.height);
-    // }
-
-    public DrawAABB(aabb: AABB, colour: string = "white") {
-        this.ctx.strokeStyle = colour;
+    public DrawAABB(aabb: AABB, color: string = DebugColors.WHITE) {
+        this.ctx.strokeStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(aabb.l, aabb.t);
         this.ctx.lineTo(aabb.r, aabb.t);
@@ -63,8 +67,8 @@ export class CanvasDebugRenderer implements DebugRenderer {
         this.ctx.stroke();
     }
 
-    public DrawAABB2(aabb: AABB2, colour: string = "white") {
-        this.ctx.strokeStyle = colour;
+    public DrawAABB2(aabb: AABB2, color: string = DebugColors.WHITE) {
+        this.ctx.strokeStyle = color;
         this.ctx.beginPath();
         this.ctx.moveTo(aabb.l, aabb.t);
         this.ctx.lineTo(aabb.r, aabb.t);
@@ -74,12 +78,18 @@ export class CanvasDebugRenderer implements DebugRenderer {
         this.ctx.stroke();
     }
 
-    public DrawCross(x: number, y: number, l: number) {
+    public DrawCross(x: number, y: number, l: number, color: string = DebugColors.WHITE) {
         this.ctx.beginPath();
         this.ctx.moveTo(x - l, y);
         this.ctx.lineTo(x + l, y);
         this.ctx.moveTo(x, y - l);
         this.ctx.lineTo(x, y + l);
+        this.ctx.stroke();
+    }
+    public DrawLine(sx: number, sy: number, ex: number, ey: number, color: string = DebugColors.WHITE) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(sx, sy);
+        this.ctx.lineTo(ex, ey);
         this.ctx.stroke();
     }
 }
