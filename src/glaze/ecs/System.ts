@@ -8,7 +8,7 @@ interface EntityEntry {
     boundUpdate: () => void;
 }
 
-export class System {
+export abstract class System {
     public engine: Engine;
     public componentTypes: ComponentType<Component>[];
     public matchMask: BitVector;

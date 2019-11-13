@@ -15,6 +15,8 @@ export class Phase {
     }
 
     public updatePhase(dt: number, timestamp: number) {
-        this.systems.forEach(system => system.updateSystem(dt, timestamp));
+        for (const system of this.systems) {
+            system.updateSystem(dt, timestamp);
+        }
     }
 }

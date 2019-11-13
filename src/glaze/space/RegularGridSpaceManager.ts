@@ -103,14 +103,16 @@ export class RegularGridSpaceManager implements ISpaceManager {
                 this.currentCells.splice(i, 1);
             }
         }
-        this.currentCells.forEach(
-            c => {
-                const refCount = c.proxies.reduce<number>((sum, v) => sum + v.referenceCount,0);
-                if (__IN_DEBUG__ && refCount>0) {
-                    console.log(`${c.id}[${refCount}]`);
+        if (__IN_DEBUG__) {
+            this.currentCells.forEach(
+                c => {
+                    const refCount = c.proxies.reduce<number>((sum, v) => sum + v.referenceCount,0);
+                    if (__IN_DEBUG__ && refCount>0) {
+                        console.log(`${c.id}[${refCount}]`);
+                    }
                 }
-            }
-        );
+            );
+        }
 
         this.count++;
     }

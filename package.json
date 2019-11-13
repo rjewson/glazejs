@@ -13,17 +13,17 @@
   "author": "rjewson@gmail.com",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.7.0",
+    "@typescript-eslint/parser": "^2.7.0",
+    "eslint": "^6.6.0",
     "ts-loader": "5.3.3",
     "ts-shader-loader": "^1.0.6",
-    "tslint": "^v6.0.0-beta1",
     "typescript": "^3.7",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-merge": "^4.2.2",
     "webpack-serve": "^2.0.3",
-    "worker-loader": "^2.0.0",
-    "typescript-tslint-plugin": "^0.5.4"
+    "worker-loader": "^2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

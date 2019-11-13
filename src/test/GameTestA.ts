@@ -3,22 +3,19 @@ import { GraphicsRenderSystem } from "../glaze/graphics/systems/GraphicsRenderSy
 import { AABB2 } from "../glaze/geom/AABB2";
 import { Position } from "../glaze/core/components/Position";
 import { Graphics } from "../glaze/graphics/components/Graphics";
-import { Vector2 } from "../glaze/geom/Vector2";
 import { SpriteRenderer } from "../glaze/graphics/render/sprite/SpriteRenderer";
 import {
-    TMXMap,
-    TMXLayer,
     TMXdecodeLayer,
     GetLayer,
     LayerToCoordTexture,
     LayerToCollisionData,
-    GetTileSet
+    GetTileSet,
+    TMXMap
 } from "../glaze/tmx/TMXMap";
 import { TileMapRenderer } from "../glaze/graphics/render/tile/TileMapRenderer";
 import { GraphicsAnimation } from "../glaze/graphics/components/GraphicsAnimation";
 import { AnimationSystem } from "../glaze/graphics/systems/AnimationSystem";
 import { TileMapCollision } from "../glaze/physics/collision/broadphase/TileMapCollision";
-import { BruteforceBroadphase } from "../glaze/physics/collision/broadphase/BruteforceBroadphase";
 import { PhysicsStaticSystem } from "../glaze/physics/systems/PhysicsStaticSystem";
 import { PhysicsMoveableSystem } from "../glaze/physics/systems/PhysicsMoveableSystem";
 import { PhysicsCollisionSystem } from "../glaze/physics/systems/PhysicsCollisionSystem";
@@ -33,18 +30,14 @@ import { PhysicsBody } from "../glaze/physics/components/PhysicsBody";
 import { Moveable } from "../glaze/core/components/Moveable";
 import { Active } from "../glaze/core/components/Active";
 import { PhysicsUpdateSystem } from "../glaze/physics/systems/PhysicsUpdateSystem";
-import { Controllable } from "../glaze/core/components/Controllable";
 import { ControllerSystem } from "../glaze/core/systems/ControllerSystem";
 import { TileGraphicsRenderSystem } from "../glaze/graphics/systems/TileGraphicsRenderSystem";
 import { TileGraphics } from "../glaze/graphics/components/TileGraphics";
 import { Fixed } from "../glaze/core/components/Fixed";
 import { BlockParticleEngine2 } from "../glaze/particle/engines/BlockParticleEngine2";
 import { ParticleSystem } from "../glaze/particle/systems/ParticleSystem";
-import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
-import { Explosion } from "../glaze/particle/emitter/Explosion";
 import { FixedViewManagementSystem } from "../glaze/space/systems/FixedViewManagementSystem";
 import { AgeSystem } from "../glaze/core/systems/AgeSystem";
-import { Health } from "../glaze/core/components/Health";
 import { HealthSystem } from "../glaze/core/systems/HealthSystem";
 import { CollsionCountSystem } from "../glaze/core/systems/CollisionCountSystem";
 import { TestFilters } from "./config/Filters";
@@ -61,7 +54,6 @@ import { Viewable } from "../glaze/core/components/Viewable";
 import { SteeringSystem } from "../glaze/ai/steering/systems/SteeringSystem";
 import { BeeHive } from "./components/BeeHive";
 import { BeeHiveSystem } from "./systems/BeeHiveSystem";
-import { BirdNest } from "./components/BirdNest";
 import { BirdNestSystem } from "./systems/BirdNestSystem";
 import { CombatUtils } from "../glaze/util/CombatUtils";
 import { BirdSystem } from "./systems/BirdSystem";
@@ -71,24 +63,17 @@ import { WaterFactory } from "../glaze/tmx/factories/WaterFactory";
 import { DoorFactory } from "./factories/item/DoorFactory";
 import { StateSystem } from "../glaze/core/systems/StateSystem";
 import { MessageBus } from "../glaze/util/MessageBus";
-import { StateUpdater } from "../glaze/core/components/StateUpdater";
 import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
 import { listenDebugButtons } from "../glaze/tools/HTMLDevTools";
 import { DynamicTreeBroadphase } from "../glaze/physics/collision/broadphase/DynamicTreeBroadphase";
 import { ChickenSystem } from "./systems/ChickenSystem";
 import { DebugRenderSystem } from "../glaze/graphics/systems/DebugRendererSystem";
 import { DebugGraphics } from "../glaze/graphics/components/DebugGraphics";
-import { DynamicTree } from "../glaze/physics/collision/broadphase/DynamicTree";
-import { DebugRenderer, CanvasDebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
+import { CanvasDebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
 import { GunTurret } from "./components/GunTurret";
 import { GunTurretSystem } from "./systems/GunTurretSystem";
 import { throttle } from "../glaze/util/FnUtils";
 import { Camera } from "../glaze/graphics/displaylist/Camera";
-import { FloodLightingSystem } from "../glaze/graphics/systems/FloodLightingSystem";
-import { RecursiveLightingSystem } from "../glaze/graphics/systems/RecursiveLightingSystem";
-import { CALightingSystem } from "../glaze/graphics/systems/CALightingSystem";
-import { WaterRenderSystem } from "../glaze/graphics/systems/WaterRenderSystem";
-import { BFSLightingSystem } from "../glaze/graphics/systems/BFSLightingSystem";
 import { Holdable } from "../glaze/core/components/Holdable";
 import { HolderSystem } from "../glaze/core/systems/HolderSystem";
 import { HoldableSystem } from "../glaze/core/systems/HoldableSystem";
@@ -97,34 +82,20 @@ import { Phase } from "../glaze/ecs/Phase";
 import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
-import { WorkerSystem } from "./systems/WorkerSystem";
 import { AttachmentSystem } from "../glaze/core/systems/AttachmentSystem";
-import { Hierachy } from "../glaze/core/components/Hierachy";
-import { Attachment } from "../glaze/core/components/Attachment";
 import { MetaData } from "../glaze/core/components/MetaData";
 import { GZE } from "../glaze/GZE";
-import { SimpleContactManager } from "../glaze/physics/collision/contact/SimpleContactManager";
+import { PostContactManager } from "../glaze/physics/collision/contact/PostContactManager";
+import { Vector2 } from "../glaze/geom/Vector2";
 
 interface GlazeMapLayerConfig {}
 
-interface GlazeGameConfig {
-    tileSize: number;
-    map: string;
-    spriteConfig: string;
-    spriteTexture: string;
-    spriteFrames: string;
-    tilesTexture: string;
-    mapLayers: GlazeMapLayerConfig[];
-}
 
 const MAP_DATA: string = "data/16map.json";
 const TEXTURE_CONFIG: string = "data/sprites.json";
 const TEXTURE_DATA: string = "data/sprites.png";
 const FRAMES_CONFIG: string = "data/frames.json";
 
-const PARTICLE_TEXTURE_CONFIG: string = "data/particles.json";
-const PARTICLE_TEXTURE_DATA: string = "data/particles.png";
-const PARTICLE_FRAMES_CONFIG: string = "data/particleFrames.json";
 const TILE_FRAMES_CONFIG: string = "data/tileFrames.json";
 
 // const COL_SPRITE_SHEET:string = "data/superSet.png";
@@ -136,8 +107,6 @@ const TILE_SPRITE_SHEET: string = "data/superSet.png";
 
 export class GameTestA extends GlazeEngine {
     private renderSystem: GraphicsRenderSystem;
-    private tmxMap: TMXMap;
-    private dynamicTree: DynamicTree;
     private fixedViewManagementSystem: FixedViewManagementSystem;
     constructor() {
         const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
@@ -149,7 +118,7 @@ export class GameTestA extends GlazeEngine {
     initalize() {
         this.engine.addCapacityToEngine(1000);
 
-        const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)) as TMXMap;
+        const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA));// as TMXMap;
         const cameraRange = new AABB2(0, GZE.tileSize * tmxMap.width, GZE.tileSize * tmxMap.height, 0);
         cameraRange.expand(-GZE.tileSize); // Remove outer tiles
 
@@ -170,7 +139,6 @@ export class GameTestA extends GlazeEngine {
 
         // const broadphase = new BruteforceBroadphase(tileMapCollision);
         const broadphase = new DynamicTreeBroadphase(tileMapCollision);
-        this.dynamicTree = broadphase.tree;
 
         CombatUtils.setup(this.engine, broadphase);
 
@@ -188,7 +156,7 @@ export class GameTestA extends GlazeEngine {
 
         // Dynamic
         corePhase.addSystem(new PhysicsUpdateSystem());
-        corePhase.addSystem(new PhysicsCollisionSystem(broadphase, new SimpleContactManager()));
+        corePhase.addSystem(new PhysicsCollisionSystem(broadphase, new PostContactManager()));
         corePhase.addSystem(new PhysicsPositionSystem());
         corePhase.addSystem(new AttachmentSystem());
         corePhase.addSystem(new HeldSystem());

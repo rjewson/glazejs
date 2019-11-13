@@ -103,9 +103,9 @@ export class RendererEngine {
         // this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA,WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         // return;
         // console.log("----");
-        this.renderers.forEach(renderer => {
+        for (const renderer of this.renderers) {
             renderer.Render(clip);
-        });
+        }
         // this.gl.clearColor(1, 1, 1, 1);
         // this.gl.colorMask(false, false, false, true);
         // this.gl.clear(this.gl.COLOR_BUFFER_BIT);

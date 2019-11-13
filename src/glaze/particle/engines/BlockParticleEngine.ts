@@ -22,7 +22,7 @@ export class BlockParticleEngine implements IParticleEngine {
         this.invDeltaTime = deltaTime / 1000;
         this.map = map;
         this.ZERO_FORCE = new Vector2();
-        for (let i = 0; i < particleCount; i++) {
+        for (var i = 0; i < particleCount; i++) {
             var p = new BlockParticle();
             p.next = this.cachedParticles;
             this.cachedParticles = p;

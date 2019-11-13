@@ -258,7 +258,9 @@ export class TileMapRenderer implements IRenderer {
     }
 
     public Render(clip: AABB2) {
-        this.renderLayers.forEach(renderLayer => renderLayer.Render(clip));
+        for (const renderLayer of this.renderLayers) {
+            renderLayer.Render(clip);
+        }
     }
 
     public RenderLayers(renderLayer: TileLayerRenderProxy) {

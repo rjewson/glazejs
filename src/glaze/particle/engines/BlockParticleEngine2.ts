@@ -89,7 +89,7 @@ export class BlockParticleEngine2 implements IParticleEngine {
         this.renderer.ResetBatch();
         const poolA = this.activeParticles[this.activePool];
         const poolB = this.activeParticles[this.activePool === 1 ? 0 : 1];
-        let newCount = 0;
+        var newCount = 0;
         for (var i = 0; i < this.activeParticlesCount; i++) {
             const particle = poolA[i];
             if (

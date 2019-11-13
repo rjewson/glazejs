@@ -13,7 +13,7 @@ export class PostContactManager implements ContactManager {
         this.contacts = new Map();
         this.contactPairPool = new Pool(i => new ContactPair());
         this.stamp = 0;
-        this.contactPairPool.addCapacity(1000);
+        this.contactPairPool.addCapacity(5000);
     }
 
     public UpdateContacts(proxyA: BFProxy, proxyB: BFProxy, contact: Contact) {
@@ -42,13 +42,14 @@ export class PostContactManager implements ContactManager {
     }
 
     public ProcessContacts() {
-        this.stamp++;
+        var c = 0;
         for (const contact of this.contacts.values()) {
             if (contact.stamp < this.stamp) {
                 contact.endContact = true;
-            } else {
-
-            }
+            } 
+            contact.proxyA.collide(contact.proxyB, contact.contact);
+            contact.proxyB.collide(contact.proxyA, contact.contact);
+            
 
             // contact.proxyA.collide(contact.proxyB, c);
 
@@ -71,7 +72,11 @@ export class PostContactManager implements ContactManager {
 
             if (contact.endContact) {
                 this.contacts.delete(contact.hash);
+                this.contactPairPool.free(contact);
             }
+            this.stamp++;
+            c++;
         }
+        // console.log(c);
     }
 }

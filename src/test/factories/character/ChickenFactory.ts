@@ -39,7 +39,7 @@ export class ChickenFactory {
             new Extents(12, 12),
             new Graphics("chicken"),
             new GraphicsAnimation("chicken", "walk"),
-            new PhysicsCollision(false, new Filter(), []),
+            new PhysicsCollision(false, new Filter(0x1, 0xffffffff, 0x1), []),
             new PhysicsBody(chickenBody, true),
             new Moveable(),
             new Active(),

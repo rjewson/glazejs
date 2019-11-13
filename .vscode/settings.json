@@ -1,3 +1,14 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.tsserver.log": "terse",
+    "eslint.validate":[
+        {  
+            "language":"html",
+            "autoFix":true
+        },
+        {  
+            "language":"typescript",
+            "autoFix":true
+        }
+    ]
 }

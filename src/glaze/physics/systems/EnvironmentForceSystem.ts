@@ -6,7 +6,7 @@ import { Active } from "../../core/components/Active";
 import { Vector2 } from "../../geom/Vector2";
 import { Entity } from "../../ecs/Entity";
 import { BFProxy } from "../collision/BFProxy";
-import { Contact } from "../collision/Contact";
+import { Contact } from "../collision/contact/Contact";
 import { RandomFloat } from "../../util/Random";
 
 export class EnvironmentForceSystem extends System {

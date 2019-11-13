@@ -57,18 +57,18 @@ export class Engine {
     public addComponentsToEntity(entity: Entity, componentsToAdd: Component[]) {
         // This code is required to add component types
         // that might not have been seen by already registered systems
-        componentsToAdd.forEach(component => {
+        for (const component of componentsToAdd) {
             const name = this.createComponentEntryFromInstance(component);
             this.components.get(name)[entity] = component;
-        });
+        }
         this.matchEntity(entity);
     }
 
     public removeComponentsFromEntityByType(entity: Entity, componentTypesToRemove: ComponentType<Component>[]) {
-        componentTypesToRemove.forEach(componentType => {
+        for (const componentType of componentTypesToRemove) {
             const name = componentType.name;
             if (this.components.has(name)) this.components.get(name)[entity] = null;
-        });
+        }
         this.matchEntity(entity);
     }
 
@@ -103,6 +103,13 @@ export class Engine {
         return result;
     }
 
+    public snapshot(): Component {
+        return {
+            activeEntities: this.entityPool.assigned,
+            totalEntitiesCreated: this.entityPool.totalAllocations
+        };
+    }
+
     private createComponentEntryFromType(componentType: ComponentType<Component>): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
@@ -126,14 +133,19 @@ export class Engine {
     }
 
     private matchEntity(entity: Entity) {
-        this.systems.forEach(system =>
-            system.componentTypes.reduce(
-                (sum, componentType) => (this.components.get(componentType.name)[entity] ? sum - 1 : sum),
-                system.componentTypes.length
-            ) === 0
-                ? system.addEntity(entity, this.entityComponentsForSystem(entity, system))
-                : system.removeEntity(entity)
-        );
+        for (const system of this.systems) {
+            var count = system.componentTypes.length;
+            for (const componentType of system.componentTypes) {
+                if (this.components.get(componentType.name)[entity]) {
+                    count--;
+                }
+            }
+            if (count === 0) {
+                system.addEntity(entity, this.entityComponentsForSystem(entity, system));
+            } else {
+                system.removeEntity(entity);
+            }
+        }
     }
 
     private entityComponentsForSystem(entity: Entity, system: System) {
@@ -147,23 +159,15 @@ export class Engine {
     private clearAllComponentsForEntity(entity: Entity) {
         this.components.forEach((component: Component[]) => (component[entity] = null));
     }
-
-    public snapshot(): Component {
-        return {
-            activeEntities: this.entityPool.assigned,
-            totalEntitiesCreated: this.entityPool.totalAllocations
-        };
-    }
 }
 
 // const setIdOnComponent = (component: IComponent<ComponentInstance>, id: number) => (component._id_ = id);
-const emptyArray = () => [];
 const emptyNullArray = count => Array(count).fill(null);
 
 export interface GetC4E<T> {
     (component: ComponentType<T>): T;
 }
 
-export const createGetComponentForEntity = <T>(engine: Engine, entity: Entity): GetC4E<T> => 
-    <T>(component: ComponentType<T>): T =>
-        engine.getComponentForEntity(entity, component);
+export const createGetComponentForEntity = <T>(engine: Engine, entity: Entity): GetC4E<T> => <T>(
+    component: ComponentType<T>
+): T => engine.getComponentForEntity(entity, component);

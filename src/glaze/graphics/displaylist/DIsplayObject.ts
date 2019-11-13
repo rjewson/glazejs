@@ -1,7 +1,6 @@
 import { Vector2 } from "../../geom/Vector2";
 import { Create } from "../../geom/Matrix3";
 import { DisplayObjectContainer } from "./DisplayObjectContainer";
-import { AABB2 } from "../../geom/AABB2";
 
 export class DisplayObject {
     public id: string;
@@ -57,6 +56,7 @@ export class DisplayObject {
     public set visible(v: boolean) {
         this._visible = v;
     }
+
     public RoundFunction(v: number): number {
         return v;
         // return Math.round(v);

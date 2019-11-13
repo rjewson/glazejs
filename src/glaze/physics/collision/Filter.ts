@@ -7,7 +7,7 @@ export class Filter {
     //What category this filter is in (e.g. it could be a player, or enemy)
     //This is the membership
     public categoryBits: number = 0x0001;
-    
+
     //What other categories it can collide with
     public maskBits: number = 0xffffffff;
 
@@ -20,6 +20,12 @@ export class Filter {
     //
     //Here, players an enemies will collide
     //overever players wont collide with player or monsters with mosters
+
+    // Groups
+    // if either fixture has a groupIndex of zero, use the category/mask rules as above
+    // if both groupIndex values are non-zero but different, use the category/mask rules as above
+    // if both groupIndex values are the same and positive, collide
+    // if both groupIndex values are the same and negative, don't collide
 
     constructor(categoryBits: number = 0x1, maskBits: number = 0xffffffff, groupIndex: number = 0x0) {
         this.categoryBits = categoryBits;
