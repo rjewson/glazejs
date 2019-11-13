@@ -1,16 +1,25 @@
-import { Contact } from "./Contact";
+import { Contact } from "./contact/Contact";
 import { BFProxy } from "./BFProxy";
 import { Filter } from "./Filter";
 import { Vector2 } from "../../geom/Vector2";
 import { Body } from "../Body";
 import { Ray } from "./Ray";
 import { Segment } from "../../geom/Segment";
+import { PostContactManager } from "./contact/PostContactManager";
+import { SimpleContactManager } from "./contact/SimpleContactManager";
+import { ContactManager } from "./contact/types";
 
 const contact: Contact = new Contact();
 
 const epsilon: number = 1e-8;
 
-let collideCount: number = 0;
+var collideCount: number = 0;
+
+var contactManager: ContactManager = null;
+
+export function SetContactManager(v: ContactManager) {
+    contactManager = v;
+}
 
 export const Collide = function(proxyA: BFProxy, proxyB: BFProxy): boolean {
     collideCount++;
@@ -23,7 +32,7 @@ export const Collide = function(proxyA: BFProxy, proxyB: BFProxy): boolean {
     //Do filtering
     if (!Filter.CHECK(proxyA.filter, proxyB.filter)) return false;
 
-    let collided = false;
+    var collided = false;
 
     if (proxyA.isSensor || proxyB.isSensor) {
         //One is a sensor so just check for overlap
@@ -84,7 +93,8 @@ export const Collide = function(proxyA: BFProxy, proxyB: BFProxy): boolean {
     } else {
         //Were just left with static<>dynamic collisions
         //Order them
-        var staticProxy, dynamicProxy;
+        var staticProxy: BFProxy;
+        var dynamicProxy: BFProxy;
         if (proxyA.isStatic) {
             staticProxy = proxyA;
             dynamicProxy = proxyB;
@@ -113,8 +123,9 @@ export const Collide = function(proxyA: BFProxy, proxyB: BFProxy): boolean {
     }
 
     if (collided == true) {
-        proxyA.collide(proxyB, contact);
-        proxyB.collide(proxyA, contact);
+        contactManager.UpdateContacts(proxyA, proxyB, contact);
+        // proxyA.collide(proxyB, contact);
+        // proxyB.collide(proxyA, contact);
     }
 
     return collided;

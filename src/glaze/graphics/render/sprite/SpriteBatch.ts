@@ -41,7 +41,7 @@ export class WebGLBatch {
 
         this.indices = new Uint16Array(this.dynamicSize * 6);
 
-        for (let i = 0; i < this.dynamicSize; i++) {
+        for (var i = 0; i < this.dynamicSize; i++) {
             const index2 = i * 6;
             const index3 = i * 4;
             this.indices[index2 + 0] = index3 + 0;
@@ -106,9 +106,9 @@ export class WebGLBatch {
     public Render(shader: ShaderWrapper, stage: Stage, clip: AABB2) {
         // this.gl.useProgram(shader.program);
 
-        let node: DisplayObjectContainer;
-        let stack: Array<DisplayObjectContainer>;
-        let top: number;
+        var node: DisplayObjectContainer;
+        var stack: Array<DisplayObjectContainer>;
+        var top: number;
 
         node = stage;
         stack = new Array<DisplayObjectContainer>(1000); // Arbitary assignment of 1000 stack slots
@@ -116,8 +116,8 @@ export class WebGLBatch {
         stack[0] = node;
         top = 1;
 
-        let indexRun = 0;
-        let currentTexture = null;
+        var indexRun = 0;
+        var currentTexture = null;
 
         while (top > 0) {
             var thisNode = stack[--top];

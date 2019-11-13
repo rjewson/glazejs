@@ -4,17 +4,19 @@ export class Filter {
     //Two zero group indexs are passed through
     public groupIndex: number = 0;
 
-    //What category this filter is in
+    //What category this filter is in (e.g. it could be a player, or enemy)
+    //This is the membership
     public categoryBits: number = 0x0001;
+    
     //What other categories it can collide with
     public maskBits: number = 0xffffffff;
 
     //e.g.
-    //player.filter.categoryBits = 0x0002
-    //player.filter.maskBits     = 0x0004
+    //player.filter.categoryBits = 0x0002    b00000010
+    //player.filter.maskBits     = 0x0004    b00000100
     //
-    //enemy.filter.categoryBits  = 0x0004
-    //enemy.filter.maskBits      = 0x0002
+    //enemy.filter.categoryBits  = 0x0004    b00000100
+    //enemy.filter.maskBits      = 0x0002    b00000010
     //
     //Here, players an enemies will collide
     //overever players wont collide with player or monsters with mosters

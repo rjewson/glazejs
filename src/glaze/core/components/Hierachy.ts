@@ -13,7 +13,7 @@ export class Hierachy {
     }
 
     static addChild(engine: Engine, parent: Entity, child: Entity) {
-        let parentHierachy = engine.getComponentForEntity(parent, Hierachy);
+        var parentHierachy = engine.getComponentForEntity(parent, Hierachy);
         if (!parentHierachy) {
             parentHierachy = new Hierachy();
             engine.addComponentsToEntity(parent, [parentHierachy]);
@@ -21,7 +21,7 @@ export class Hierachy {
         if (parentHierachy.children.indexOf(child) != -1) {
             return;
         }
-        let childHierachy = engine.getComponentForEntity(child, Hierachy);
+        var childHierachy = engine.getComponentForEntity(child, Hierachy);
         if (childHierachy) {
             if (childHierachy.parent) {
                 Hierachy.removeChild(engine, childHierachy.parent, child);

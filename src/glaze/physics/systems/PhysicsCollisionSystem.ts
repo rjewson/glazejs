@@ -4,13 +4,19 @@ import { PhysicsBody } from "../components/PhysicsBody";
 import { Moveable } from "../../core/components/Moveable";
 import { Entity } from "../../ecs/Entity";
 import { System } from "../../ecs/System";
+import { ContactManager } from "../collision/contact/types";
+import { SetContactManager } from "../collision/Intersect";
+
 
 export class PhysicsCollisionSystem extends System {
     public broadphase: IBroadphase;
+    public contactMangager: ContactManager;
 
-    constructor(broadphase: IBroadphase) {
+    constructor(broadphase: IBroadphase, contactManager: ContactManager) {
         super([PhysicsCollision, PhysicsBody, Moveable]);
         this.broadphase = broadphase;
+        this.contactMangager = contactManager;
+        SetContactManager(this.contactMangager);
     }
 
     onEntityAdded(entity: Entity, physicsCollision: PhysicsCollision, physicsBody: PhysicsBody, moveable: Moveable) {
@@ -20,5 +26,6 @@ export class PhysicsCollisionSystem extends System {
 
     updateAllEntities() {
         this.broadphase.collide();
+        this.contactMangager.ProcessContacts();
     }
 }

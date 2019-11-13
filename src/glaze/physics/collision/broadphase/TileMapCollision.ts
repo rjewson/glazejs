@@ -1,7 +1,7 @@
 import { Bytes2D } from "../../../ds/Bytes2D";
 import { Vector2 } from "../../../geom/Vector2";
 import { Segment } from "../../../geom/Segment";
-import { Contact } from "../Contact";
+import { Contact } from "../contact/Contact";
 import { BFProxy } from "../BFProxy";
 import { Ray } from "../Ray";
 import {
@@ -82,8 +82,8 @@ export class TileMapCollision {
         if (body.isBullet) {
             this.plane.setFromSegment(body.predictedPosition, body.position);
             this.closestContact.time = MAXINT;
-            for (let y = startY; y < endY; y++) {
-                for (let x = startX; x < endX; x++) {
+            for (var y = startY; y < endY; y++) {
+                for (var x = startX; x < endX; x++) {
                     const cell = this.data.get(x, y, 0);
                     //Bullets dont collide with 1 ways at all
                     if ((cell & SOLID) == 1 && (cell & ONE_WAY) == 0) {
@@ -114,8 +114,8 @@ export class TileMapCollision {
             }
         } else {
             // plane.setFromSegment(body.predictedPosition,body.position);
-            for (let y = startY; y < endY; y++) {
-                for (let x = startX; x < endX; x++) {
+            for (var y = startY; y < endY; y++) {
+                for (var x = startX; x < endX; x++) {
                     const cell = this.data.get(x, y, 0);
                     if ((cell & AABBCOLLIDABLE) > 0) {
                         this.tilePosition.x = x * this.tileSize + this.tileHalfSize;
@@ -285,9 +285,9 @@ export class TileMapCollision {
         const cY = y * this.tileSize;
         const d = ray.direction;
         if (d.x == 0.0 && d.y == 0.0) return true;
-        let stepX: number = 0.0;
-        let tMaxX: number = 100000000.0;
-        let tDeltaX: number = 0.0;
+        var stepX: number = 0.0;
+        var tMaxX: number = 100000000.0;
+        var tDeltaX: number = 0.0;
         if (d.x < 0) {
             stepX = -1;
             tMaxX = (cX - ray.origin.x) / d.x;
@@ -298,9 +298,9 @@ export class TileMapCollision {
             tDeltaX = this.tileSize / d.x;
         }
 
-        let stepY: number = 0;
-        let tMaxY: number = 100000000;
-        let tDeltaY: number = 0;
+        var stepY: number = 0;
+        var tMaxY: number = 100000000;
+        var tDeltaY: number = 0;
         if (d.y < 0) {
             stepY = -1;
             tMaxY = (cY - ray.origin.y) / d.y;

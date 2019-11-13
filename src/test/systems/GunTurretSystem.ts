@@ -15,7 +15,7 @@ export class GunTurretSystem extends System {
 
     updateEntity(entity: Entity, turret: GunTurret, position: Position) {
         if (turret.intervalDelay.tick(this.dt)) {
-            var entities = CombatUtils.SearchSortAndFilter(position.coords, 200, entity, EntityFilterOptions.ENEMY)
+            var entities = CombatUtils.SearchSortAndFilter(position.coords, 300, entity, EntityFilterOptions.ENEMY)
                 .entities;
             if (entities.length > 0) {
                 this.fireBulletAtEntity(position, entities[0].entity);

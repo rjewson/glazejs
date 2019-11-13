@@ -95,7 +95,7 @@ export class Engine {
 
     public query(query: ComponentType<Component>[]): Entity[] {
         const result = [];
-        for (let i = 0; i < this.entityPool.capacity; i++) {
+        for (var i = 0; i < this.entityPool.capacity; i++) {
             if (query.every(component => this.components.get(component.name)[i] !== null)) {
                 result.push(i);
             }

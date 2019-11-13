@@ -61,9 +61,12 @@ export class System {
     }
 
     public updateAllEntities() {
-        for (const entity of this.members) {
-            entity[1].boundUpdate();
+        for (const entity of this.members.values()) {
+            entity.boundUpdate();
         }
+        // for (const entity of this.members) {
+        //     entity[1].boundUpdate();
+        // }
         // for (const entity of this.members.values()) {
         //     entity.boundUpdate();
         // }

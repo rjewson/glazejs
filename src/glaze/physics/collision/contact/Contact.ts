@@ -1,5 +1,5 @@
-import { Vector2 } from "../../geom/Vector2";
-import { BFProxy } from "./BFProxy";
+import { Vector2 } from "../../../geom/Vector2";
+import { BFProxy } from "../BFProxy";
 
 export interface ContactCallback {
     (proxyA: BFProxy, proxyB: BFProxy, contact: Contact): void;

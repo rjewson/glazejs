@@ -103,6 +103,7 @@ import { Hierachy } from "../glaze/core/components/Hierachy";
 import { Attachment } from "../glaze/core/components/Attachment";
 import { MetaData } from "../glaze/core/components/MetaData";
 import { GZE } from "../glaze/GZE";
+import { SimpleContactManager } from "../glaze/physics/collision/contact/SimpleContactManager";
 
 interface GlazeMapLayerConfig {}
 
@@ -187,7 +188,7 @@ export class GameTestA extends GlazeEngine {
 
         // Dynamic
         corePhase.addSystem(new PhysicsUpdateSystem());
-        corePhase.addSystem(new PhysicsCollisionSystem(broadphase));
+        corePhase.addSystem(new PhysicsCollisionSystem(broadphase, new SimpleContactManager()));
         corePhase.addSystem(new PhysicsPositionSystem());
         corePhase.addSystem(new AttachmentSystem());
         corePhase.addSystem(new HeldSystem());
@@ -441,7 +442,7 @@ export class GameTestA extends GlazeEngine {
         const turretFilter = new Filter();
         turretFilter.groupIndex = TestFilters.TURRET_GROUP;
         this.engine.addComponentsToEntity(turret, [
-            this.mapPosition(25, 1.5),
+            this.mapPosition(90, 46.5),
             new TileGraphics("turret"),
             new Extents(12, 12),
             new PhysicsCollision(false, turretFilter, []),

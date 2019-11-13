@@ -35,7 +35,7 @@ export class SimpleFSM {
     }
 
     public incrementState(engine: Engine, owner: Entity) {
-        let currentIndex = this.order.indexOf(this.currentState);
+        var currentIndex = this.order.indexOf(this.currentState);
         const nextState = ++currentIndex % this.order.length;
         this.changeState(engine, owner, this.order[nextState]);
     }

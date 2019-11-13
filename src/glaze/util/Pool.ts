@@ -19,6 +19,7 @@ export class Pool<T> {
     }
 
     public reserve(): T {
+        if (this.nextAvailableIndex == 0) this.addCapacity(this.totalAllocationCount);
         const item = this.pool[this.nextAvailableIndex];
         this.pool[this.nextAvailableIndex] = null;
         this.nextAvailableIndex--;

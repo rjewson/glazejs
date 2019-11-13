@@ -28,7 +28,7 @@ export class StateUpdateSystem extends System {
         var state: State = this.engine.getComponentForEntity(entity, State);
         var stateUpdater = this.engine.getComponentForEntity(entity, StateUpdater);
 
-        let currentIndex = stateUpdater.sequence.indexOf(state.currentState);
+        var currentIndex = stateUpdater.sequence.indexOf(state.currentState);
         const nextState = ++currentIndex % stateUpdater.sequence.length;
         state.setState(stateUpdater.sequence[nextState]);
     }

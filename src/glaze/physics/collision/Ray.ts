@@ -1,5 +1,5 @@
 import { Vector2 } from "../../geom/Vector2";
-import { Contact } from "./Contact";
+import { Contact } from "./contact/Contact";
 import { BFProxy } from "./BFProxy";
 import { AABB2 } from "../../geom/AABB2";
 

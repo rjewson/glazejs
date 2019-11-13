@@ -21,8 +21,8 @@ export class RegularGridSpaceManager implements ISpaceManager {
         this.grid = new Array2D(gridWidth, gridHeight, gridCellSize);
         this.currentCells = new Array<Cell>();
 
-        for (let y = 0; y < this.grid.gridWidth; y++) {
-            for (let x = 0; x < this.grid.gridHeight; x++) {
+        for (var y = 0; y < this.grid.gridWidth; y++) {
+            for (var x = 0; x < this.grid.gridHeight; x++) {
                 this.grid.set(
                     x,
                     y,
@@ -53,8 +53,8 @@ export class RegularGridSpaceManager implements ISpaceManager {
         const endY = this.grid.Index(proxy.aabb.position.y + proxy.aabb.extents.y) + 1;
 
         // We put the same proxy in all the cells it covers
-        for (let y = startY; y < endY; y++) {
-            for (let x = startX; x < endX; x++) {
+        for (var y = startY; y < endY; y++) {
+            for (var x = startX; x < endX; x++) {
                 var cell = this.grid.get(x, y);
                 cell.proxies.push(proxy);
             }
@@ -76,8 +76,8 @@ export class RegularGridSpaceManager implements ISpaceManager {
         
         if (__IN_DEBUG__) console.log(`search ${startX} ${startY} ${endX} ${endY}`);
 
-        for (let y = startY; y < endY; y++) {
-            for (let x = startX; x < endX; x++) {
+        for (var y = startY; y < endY; y++) {
+            for (var x = startX; x < endX; x++) {
                 const cell = this.grid.get(x, y);
                 if (!cell) continue; // if cell was out of bounds
                 if (cell.updateCount == 0) {

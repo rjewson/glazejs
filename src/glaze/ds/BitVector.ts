@@ -22,7 +22,7 @@ export class BitVector {
     }
 
     public maskAll(mask: BitVector) {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             const maskWord = mask[i];
             if ((maskWord & this.values[i]) !== maskWord) {
                 return false;
@@ -32,7 +32,7 @@ export class BitVector {
     }
 
     public maskNone(mask: BitVector) {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             const maskWord = mask[i];
             if (maskWord & this.values[i]) {
                 return false;
@@ -42,25 +42,25 @@ export class BitVector {
     }
 
     public not() {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             this.values[i] = ~this.values[i];
         }
     }
 
     public and(bv: BitVector) {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             this.values[i] = this.values[i] & bv.values[i];
         }
     }
 
     public or(bv: BitVector) {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             this.values[i] = this.values[i] | bv.values[i];
         }
     }
 
     public xor(bv: BitVector) {
-        for (let i = 0; i < this.size; i++) {
+        for (var i = 0; i < this.size; i++) {
             this.values[i] = this.values[i] ^ bv.values[i];
         }
     }
@@ -68,7 +68,7 @@ export class BitVector {
     public reset(size: number) {
         this.size = size;
         this.values = new Uint32Array(this.size);
-        for (let i = 0; i < Math.ceil(this.size / 32); i++) {
+        for (var i = 0; i < Math.ceil(this.size / 32); i++) {
             this.values[i] = 0;
         }
     }

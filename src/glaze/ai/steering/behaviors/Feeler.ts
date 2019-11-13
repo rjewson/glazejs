@@ -36,16 +36,13 @@ export class Feeler {
         this.tip.copy(unitDirection);
         this.base.copy(position);
         if (this.angle != 0) {
-            var a = Math.atan2(unitDirection.y, unitDirection.x);
-            a += this.angle;
+            const a = Math.atan2(unitDirection.y, unitDirection.x) + this.angle;
             this.tip.x = Math.cos(a);
             this.tip.y = Math.sin(a);
         }
         this.tip.multEquals(this.length);
         this.tip.plusEquals(this.base);
         GZE.debugRender.DrawLine(this.tip.x,this.tip.y,this.base.x,this.base.y);
-
-        //glaze.debug.DebugEngine.DrawParticle(tip.x,tip.y,4,255,0,0);
     }
 
     public TestSegment(a: Vector2, b: Vector2, normal: Vector2) {

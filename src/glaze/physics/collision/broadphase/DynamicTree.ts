@@ -477,7 +477,7 @@ export class DynamicTree {
     // 443 289 110
     static stack = new Array<TreeNode>(100);
     static queryHelper(body: BFProxy, bounds: AABB2, currentNode: TreeNode): boolean {
-        let sp = 1;
+        var sp = 1;
         DynamicTree.stack[0] = currentNode;
         while (sp>0) {
             const node = DynamicTree.stack[--sp];
@@ -555,7 +555,7 @@ export class DynamicTree {
     }
 
     static queryAreaHelper(currentNode: TreeNode, area: AABB2, callback: (other: BFProxy) => boolean): boolean {
-        let sp = 1;
+        var sp = 1;
         DynamicTree.stack[0] = currentNode;
         while (sp>0) {
             const node = DynamicTree.stack[--sp];

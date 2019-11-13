@@ -2,7 +2,7 @@ import { Vector2 } from "../../geom/Vector2";
 import { AABB2 } from "../../geom/AABB2";
 import { AABB } from "../../geom/AABB";
 import { Entity } from "../../ecs/Entity";
-import { Contact, ContactCallback } from "./Contact";
+import { Contact, ContactCallback } from "./contact/Contact";
 import { Filter } from "./Filter";
 import { Body } from "../Body";
 
@@ -44,17 +44,10 @@ export class BFProxy {
     }
 
     public collide(proxy: BFProxy, contact: Contact) {
-        this.contactCallbacks.forEach(callback => callback(this, proxy, contact));
+        for (const callback of this.contactCallbacks) {
+            callback(this, proxy, contact);
+        }
     }
-
-    // public static inline  CreateStaticFeature(x:Float,y:Float,hw:Float,hh:Float,filter:Filter):BFProxy {
-    //     var bfproxy = new BFProxy();
-    //     bfproxy.aabb.extents.setTo(hw,hh);
-    //     bfproxy.filter = filter;
-    //     bfproxy.aabb.position.setTo(x,y);
-    //     bfproxy.isStatic = true;
-    //     return bfproxy;
-    // }
 
     static HashBodyIDs(a: number, b: number): number {
         return a < b ? (a << 16) | b : (b << 16) | a;
