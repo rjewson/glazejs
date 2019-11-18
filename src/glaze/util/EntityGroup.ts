@@ -22,27 +22,26 @@ export class EntityGroup {
         this.onMemberMessage = this.onMemberMessage.bind(this);
     }
 
-    public addMember(entity:Entity, state:State) {
-    	if (!this.hasCapacity())
-    		return;
+    public addMember(entity: Entity, state: State) {
+        if (!this.hasCapacity()) return;
         this.members.add(entity);
         state.messages.add(this.onMemberMessage);
-    	// entity.messages.add(this.onMemberMessage);
-    	// this.messages.dispatch(GroupEvent.MemberAdded,entity);
+        // entity.messages.add(this.onMemberMessage);
+        // this.messages.dispatch(GroupEvent.MemberAdded,entity);
     }
 
-    public  removeMember(entity:Entity) {
+    public removeMember(entity: Entity) {
         this.members.delete(entity);
     }
 
-    public  onMemberMessage(entity:Entity, state:string) {
-    	switch (state) {
-    		case EntityState.Destroy:
-    			this.removeMember(entity);
-    	}
+    public onMemberMessage(entity: Entity, state: string) {
+        switch (state) {
+            case EntityState.Destroy:
+                this.removeMember(entity);
+        }
     }
 
-    public  hasCapacity():boolean {
-    	return this.members.size<this.maxMembers;
+    public hasCapacity(): boolean {
+        return this.members.size < this.maxMembers;
     }
 }

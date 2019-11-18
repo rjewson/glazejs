@@ -5,8 +5,6 @@ import { Vector2 } from "../../geom/Vector2";
 import { Body } from "../Body";
 import { Ray } from "./Ray";
 import { Segment } from "../../geom/Segment";
-import { PostContactManager } from "./contact/PostContactManager";
-import { SimpleContactManager } from "./contact/SimpleContactManager";
 import { ContactManager } from "./contact/types";
 
 const contact: Contact = new Contact();

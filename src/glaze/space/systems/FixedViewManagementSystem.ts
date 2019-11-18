@@ -1,6 +1,5 @@
 import { System } from "../../ecs/System";
 import { Camera } from "../../graphics/displaylist/Camera";
-import { ISpaceManager } from "../ISpaceManager";
 import { AABB } from "../../geom/AABB";
 import { Extents } from "../../core/components/Extents";
 import { Position } from "../../core/components/Position";
@@ -26,12 +25,12 @@ export class FixedViewManagementSystem extends System {
     }
 
     onEntityAdded(entity: Entity, position: Position, extents: Extents, fixed: Fixed) {
-        const name = this.engine.getComponentForEntity(entity,MetaData)?.name ?? "unknown";
-        this.spaceManager.addEntity(entity, position, extents, name);
+        const metadata = this.engine.getComponentForEntity(entity, MetaData);
+        this.spaceManager.addEntity(entity, position, extents, metadata ? metadata.name : "unknown");
     }
 
     updateAllEntities() {
-        this.activeSpaceAABB.extents.setTo(this.camera.viewportSize.x/2, this.camera.viewportSize.y/2); //800 / 2, 600 / 2);
+        this.activeSpaceAABB.extents.setTo(this.camera.viewportSize.x / 2, this.camera.viewportSize.y / 2); //800 / 2, 600 / 2);
         this.activeSpaceAABB.position.copy(this.camera.realPosition);
         this.spaceManager.search(this.activeSpaceAABB, this.setEntityStatus);
     }
@@ -42,5 +41,5 @@ export class FixedViewManagementSystem extends System {
         } else {
             this.engine.removeComponentsFromEntityByType(entity, [Viewable]);
         }
-    }
+    };
 }

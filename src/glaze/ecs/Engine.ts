@@ -15,7 +15,7 @@ export class Engine {
     public c4e: Map<Entity, GetC4E<Component>>;
     public entityPool: Pool<Entity>;
 
-    private nextId: number;
+    private nextTypeId: number;
 
     constructor() {
         this.components = new Map();
@@ -24,7 +24,7 @@ export class Engine {
         this.systems = new Array();
         this.c4e = new Map();
         this.entityPool = new Pool(i => i);
-        this.nextId = 0;
+        this.nextTypeId = 0;
     }
 
     public addCapacityToEngine(entityCount: number) {
@@ -50,7 +50,9 @@ export class Engine {
     public getComponentForEntity<T>(entity: Entity, componentType: ComponentType<T>): T {
         const name = componentType.name;
         // return this.components.get(name)[entity] as T;
-        if (this.components.has(name)) return this.components.get(name)[entity] as T;
+        if (this.components.has(name)) {
+            return this.components.get(name)[entity] as T;
+        }
         return null;
     }
 
@@ -67,7 +69,9 @@ export class Engine {
     public removeComponentsFromEntityByType(entity: Entity, componentTypesToRemove: ComponentType<Component>[]) {
         for (const componentType of componentTypesToRemove) {
             const name = componentType.name;
-            if (this.components.has(name)) this.components.get(name)[entity] = null;
+            if (this.components.has(name)) {
+                this.components.get(name)[entity] = null;
+            }
         }
         this.matchEntity(entity);
     }
@@ -113,7 +117,7 @@ export class Engine {
     private createComponentEntryFromType(componentType: ComponentType<Component>): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
-            const id = this.nextId++;
+            const id = this.nextTypeId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
             componentType.prototype[ComponentIDName] = id;
@@ -124,7 +128,7 @@ export class Engine {
     private createComponentEntryFromInstance(component: Component): string {
         const name = component.constructor.name;
         if (!this.components.has(name)) {
-            const id = this.nextId++;
+            const id = this.nextTypeId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
             component.constructor.prototype[ComponentIDName] = id;

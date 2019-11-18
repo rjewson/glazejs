@@ -1,5 +1,4 @@
-import { SimpleFSM, SimpleFSMStates } from "../../ai/fsm/SimpleFSM";
-import { Entity } from "../../ecs/Entity";
+import { SimpleFSMStates } from "../../ai/fsm/SimpleFSM";
 import { Signal } from "../../signals/Signal";
 
 export class State {

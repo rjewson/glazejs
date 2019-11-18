@@ -90,7 +90,6 @@ import { Vector2 } from "../glaze/geom/Vector2";
 
 interface GlazeMapLayerConfig {}
 
-
 const MAP_DATA: string = "data/16map.json";
 const TEXTURE_CONFIG: string = "data/sprites.json";
 const TEXTURE_DATA: string = "data/sprites.png";
@@ -162,6 +161,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new HeldSystem());
 
         corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine));
+
         corePhase.addSystem(new SteeringSystem(tileMapCollision));
 
         corePhase.addSystem(new ControllerSystem(this.input));

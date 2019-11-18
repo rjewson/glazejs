@@ -1,8 +1,8 @@
 export class Vector2 {
+    static ZERO_TOLERANCE = 1e-8;
+
     public x: number;
     public y: number;
-
-    static ZERO_TOLERANCE = 1e-8;
 
     constructor(x: number = 0.0, y: number = 0.0) {
         this.x = x;

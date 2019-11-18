@@ -31,6 +31,8 @@ export class BlockParticle2 {
 
     public alphaPerUpdate: number;
 
+    public first = true;
+
     constructor() {}
 
     public Initalize(
@@ -67,9 +69,14 @@ export class BlockParticle2 {
         this.red = data3;
         this.green = data4;
         this.blue = data5;
+        this.first = true;
     }
 
     public Update(deltaTime: number, invDeltaTime: number): boolean {
+        if (this.first) {
+            this.first = false;
+            return this.age > 0; 
+        }
         this.vX += this.fX + this.externalForce.x;
         this.vY += this.fY + this.externalForce.y;
         this.vX *= this.damping;

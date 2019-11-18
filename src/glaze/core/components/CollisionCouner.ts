@@ -1,6 +1,3 @@
-import { Entity } from "../../ecs/Entity";
-import { EntityCb } from "../../GlazeEngine";
-
 export class CollisionCounter {
     public count: number;
     public onCount: string;

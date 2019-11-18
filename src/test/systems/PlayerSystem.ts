@@ -26,85 +26,27 @@ import { Attachment } from "../../glaze/core/components/Attachment";
 import { Vector2 } from "../../glaze/geom/Vector2";
 import { Light } from "../../glaze/graphics/components/Light";
 import { Key } from "../../glaze/util/Keycodes";
-/*
-backspace   8
-tab 9
-enter   13
-shift   16
-ctrl    17
-alt 18
-pause/break 19
-caps lock   20
-escape  27
-page up 33
-page down   34
-end 35
-home    36
-left arrow  37
-up arrow    38
-right arrow 39
-down arrow  40
-insert  45
-delete  46
 
-0   48
-1   49
-2   50
-3   51
-4   52
-5   53
-6   54
-7   55
-8   56
-9   57
-
-a   65
-b   66
-c   67
-d   68
-e   Key.E
-f   70
-g   71
-h   Key.H
-i   73
-j   Jey.Jey
-k   75
-l   76
-m   77
-n   78
-o   79
-p   80
-q   81
-r   82
-s   83
-t   84
-u   85
-v   86
-w   87
-x   88
-y   89
-z   90
-*/
 export class PlayerSystem extends System {
-    public particleEngine: IParticleEngine;
-    public input: DigitalInput;
+    private particleEngine: IParticleEngine;
+    private input: DigitalInput;
 
-    player: Entity;
-    position: Position;
-    physicsBody: PhysicsBody;
+    private player: Entity;
+    private position: Position;
+    private physicsBody: PhysicsBody;
 
-    playerLight: Light;
-    playerHolder: Entity;
-    holder: Holder;
+    private playerLight: Light;
+    private playerHolder: Entity;
+    private holder: Holder;
     //  inventory:Inventory;
 
-    animation: GraphicsAnimation;
+    private animation: GraphicsAnimation;
 
-    characterController: CharacterController;
+    private characterController: CharacterController;
 
-    playerFilter: Filter;
+    private playerFilter: Filter;
 
-    currentWeapon: number = 0;
+    private currentWeapon: number = 0;
 
     constructor(input: DigitalInput, particleEngine: IParticleEngine) {
         super([Position, Player, PhysicsCollision, PhysicsBody, GraphicsAnimation, Extents]);
@@ -288,15 +230,16 @@ export class PlayerSystem extends System {
         }
 
         if (this.characterController.burn > 0) {
-            var ttl = 280;
-            var offsetx = position.coords.x - 8 * position.direction.x;
-            var velocity = 200 + RandomFloat(-150, 150); // + physicsBody.body.velocity.y;
+            const ttl = 280;
+            var offsetx = position.coords.x - 8 * position.direction.x;            
+            var velocity = 300 + RandomFloat(-150, 150) + physicsBody.body.velocity.y;
             var count = Math.floor((this.characterController.burn + 500) / 1000);
+            console.log(count);
             if (count > 0)
                 this.particleEngine.EmitParticle(
                     offsetx,
-                    position.coords.y + 6,
-                    RandomFloat(-10, 10),
+                    position.coords.y + 8,
+                    RandomFloat(-10, 10) + physicsBody.body.velocity.x,
                     velocity,
                     0,
                     0,
@@ -314,8 +257,8 @@ export class PlayerSystem extends System {
             for (var i = 0; i < count; i++) {
                 this.particleEngine.EmitParticle(
                     offsetx,
-                    position.coords.y + 6,
-                    RandomFloat(-50, 50),
+                    position.coords.y + 8,
+                    RandomFloat(-50, 50) + physicsBody.body.velocity.x,
                     velocity,
                     0,
                     0,
@@ -349,4 +292,6 @@ export class PlayerSystem extends System {
         inputAngle.normalize();
         this.playerLight.angle = inputAngle.heading();
     }
+
+    private fireWeapon() {}
 }

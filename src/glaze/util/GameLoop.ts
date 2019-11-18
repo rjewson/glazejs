@@ -5,9 +5,8 @@ export class GameLoop {
     public animationStartTimestamp: number;
     public prevAnimationTime: number;
     public delta: number;
-    private rafID: number;
-
     public updateFunc: (dt: number, timestamp: number) => void;
+    private rafID: number;
 
     constructor() {
         this.isRunning = false;

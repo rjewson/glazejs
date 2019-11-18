@@ -6,7 +6,6 @@ import { ChickenFactory } from "../../test/factories/character/ChickenFactory";
 import { PhysicsBody } from "../physics/components/PhysicsBody";
 import { Vector2 } from "../geom/Vector2";
 import { RandomInteger } from "../util/Random";
-import { GlazeEngine } from "../GlazeEngine";
 import { GZE } from "../GZE";
 
 export const listenDebugButtons = (engine: Engine) => {
@@ -26,9 +25,8 @@ export const listenDebugButtons = (engine: Engine) => {
             physics.body.addForce(new Vector2(RandomInteger(-100000, 100000), RandomInteger(-100000, -5000)));
         }
     });
-    document.getElementById("debugDraw").addEventListener("click", (event:any) => {
+    document.getElementById("debugDraw").addEventListener("click", (event: any) => {
         document.getElementById("viewDebug").style.display = event.target.checked ? "block" : "none";
         GZE.debug = event.target.checked;
     });
-
 };

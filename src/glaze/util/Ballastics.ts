@@ -4,7 +4,6 @@ import { Body } from "../physics/Body";
 export class Ballistics {
     static calcProjectileVelocity(body: Body, target: Vector2, velocity: number) {
         var vel = target.clone();
-
         vel.minusEquals(body.position);
         vel.normalize();
         vel.multEquals(velocity);

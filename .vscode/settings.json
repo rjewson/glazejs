@@ -10,5 +10,7 @@
             "language":"typescript",
             "autoFix":true
         }
-    ]
+    ],
+    "editor.fontSize": 12.5,
+    "editor.fontWeight": "400"
 }

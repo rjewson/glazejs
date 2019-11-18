@@ -12,11 +12,12 @@ export class EntityCollectionItem {
         this.entity = entity;
     }
 
-    public reset() {}
-
     static SortClosestFirst(a: EntityCollectionItem, b: EntityCollectionItem): number {
         return a.distance - b.distance;
     }
+
+    public reset() {}
+    
 }
 
 export type ECIComp = (a: EntityCollectionItem, b: EntityCollectionItem) => number;

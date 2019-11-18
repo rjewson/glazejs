@@ -13,9 +13,9 @@ export class ParticleSystem extends System {
     }
 
     updateEntity(entity: Entity, position: Position, active: Active, particleEmitter: ParticleEmitter) {
-        particleEmitter.emitters.forEach(emitter =>
-            emitter.update(this.timestamp, this.engine.c4e.get(entity), position.coords, this.blockParticleEngine),
-        );
+        for (const emitter of particleEmitter.emitters) {
+            emitter.update(this.timestamp, this.engine.c4e.get(entity), position.coords, this.blockParticleEngine);
+        }
     }
 
     public postUpdate() {

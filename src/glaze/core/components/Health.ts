@@ -1,6 +1,3 @@
-import { Entity } from "../../ecs/Entity";
-import { EntityCb } from "../../GlazeEngine";
-
 export class Health {
     public maxHealth: number;
     public currentHealth: number;

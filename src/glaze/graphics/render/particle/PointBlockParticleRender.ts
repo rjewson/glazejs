@@ -14,7 +14,6 @@ export class PointBlockParticleRender implements IRenderer {
     public pointSpriteShader: ShaderWrapper;
 
     public dataBuffer: WebGLBuffer;
-    private arrayBuffer: ArrayBuffer;
     public data: Float32Array;
     public data8: Uint8ClampedArray;
 
@@ -24,8 +23,9 @@ export class PointBlockParticleRender implements IRenderer {
 
     public indexRun: number;
 
-    public first: boolean = true;
     public maxSprites: number;
+
+    private arrayBuffer: ArrayBuffer;
 
     constructor(size: number) {
         this.maxSprites = size;
@@ -88,8 +88,6 @@ export class PointBlockParticleRender implements IRenderer {
 
     public Render(clip: AABB2) {
         if (this.indexRun == 0) return;
-        // this.gl.enable(WebGLRenderingContext.BLEND);
-        // this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
 
         this.gl.useProgram(this.pointSpriteShader.program);
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);

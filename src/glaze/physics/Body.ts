@@ -1,6 +1,6 @@
 import { Vector2 } from "../geom/Vector2";
 import { Material } from "./Material";
-import { Contact } from "./collision/Contact";
+import { Contact } from "./collision/contact/Contact";
 import { MAXINT } from "../util/Maths";
 
 const SLEEP_BIAS: number = 0.99332805041467;

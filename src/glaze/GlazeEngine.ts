@@ -3,7 +3,6 @@ import { Engine } from "./ecs/Engine";
 import { AssetLoader } from "./util/AssetLoader";
 import { GameLoop } from "./util/GameLoop";
 import { Vector2 } from "./geom/Vector2";
-import { Entity } from "./ecs/Entity";
 import { GZE } from "./GZE";
 
 export class GlazeEngine {
@@ -28,7 +27,7 @@ export class GlazeEngine {
                 if (!document.hasFocus()) {
                     window.focus();
                 }
-            }
+            };
         }
         GZE.engine = this.engine = new Engine();
     }
@@ -52,5 +51,3 @@ export class GlazeEngine {
 
     public postUpdate() {}
 }
-
-export type EntityCb = (engine: Engine, entity: Entity) => void;

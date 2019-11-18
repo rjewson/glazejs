@@ -1,4 +1,3 @@
-import { Entity } from "../../ecs/Entity";
 import { Vector2 } from "../../geom/Vector2";
 
 export class Attachment {

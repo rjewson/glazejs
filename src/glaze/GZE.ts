@@ -11,17 +11,15 @@ export class GZE {
     static bounds: Rectangle;
 
     // FIXME Hacky debug stuff
+    static nullDebuggingRender: DebugRenderer = new NullDebugRenderer();
+    static debuggingRender: DebugRenderer = new NullDebugRenderer();
+    static debugRender: DebugRenderer = GZE.nullDebuggingRender;
     private static _debug: boolean = false;
+    
     static get debug() { return GZE._debug; }
     static set debug(v: boolean) {
-        debugger;
         GZE._debug = v;
         GZE.debugRender.Clear();
         GZE.debugRender = GZE._debug ? GZE.debuggingRender : GZE.nullDebuggingRender;
     }
-
-    static nullDebuggingRender: DebugRenderer = new NullDebugRenderer();
-    static debuggingRender: DebugRenderer = new NullDebugRenderer();
-
-    static debugRender: DebugRenderer = GZE.nullDebuggingRender;
 }
