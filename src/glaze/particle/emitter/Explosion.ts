@@ -1,9 +1,8 @@
 import { IParticleEmitter } from "./IParticleEmitter";
 import { IParticleEngine } from "../engines/IParticleEngine";
-import { Entity } from "../../ecs/Entity";
 import { Vector2 } from "../../geom/Vector2";
 import { RandomFloat } from "../../util/Random";
-import { Engine, GetC4E } from "../../ecs/Engine";
+import { GetC4E } from "../../ecs/Engine";
 const g = new Vector2(0,9);
 export class Explosion implements IParticleEmitter {
     public mass: number;

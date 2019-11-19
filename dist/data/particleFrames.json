@@ -1,0 +1,62 @@
+{
+    "explosion1": {
+        "fps": 20,
+        "pattern": "explosion/1/frame{x}.png",
+        "start": 1,
+        "end": 9
+    },
+    "explosion2": {
+        "fps": 20,
+        "pattern": "explosion/2/frame{x}.png",
+        "start": 1,
+        "end": 14
+    },
+    "explosion3": {
+        "fps": 20,
+        "pattern": "explosion/3/frame{x}.png",
+        "start": 1,
+        "end": 14
+    },
+    "explosion4": {
+        "fps": 20,
+        "pattern": "explosion/4/frame{x}.png",
+        "start": 1,
+        "end": 9
+    },
+    "explosion5": {
+        "fps": 20,
+        "pattern": "explosion/5/frame{x}.png",
+        "start": 1,
+        "end": 9
+    },
+    "explosion6": {
+        "fps": 20,
+        "pattern": "explosion/6/frame{x}.png",
+        "start": 1,
+        "end": 5
+    },
+    "explosion7": {
+        "fps": 20,
+        "pattern": "explosion/7/frame{x}.png",
+        "start": 1,
+        "end": 5
+    },
+    "explosion8": {
+        "fps": 60,
+        "pattern": "explosion/8/frame{x}.png",
+        "start": 1,
+        "end": 16
+    },
+    "explosion9": {
+        "fps": 1,
+        "pattern": "explosion/9/frame{x}.png",
+        "start": 1,
+        "end": 4
+    },
+    "trail1": {
+        "fps": 1,
+        "pattern": "trails/1/frame{x}.png",
+        "start": 1,
+        "end": 4
+    }
+}

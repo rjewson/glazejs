@@ -234,7 +234,6 @@ export class PlayerSystem extends System {
             var offsetx = position.coords.x - 8 * position.direction.x;            
             var velocity = 300 + RandomFloat(-150, 150) + physicsBody.body.velocity.y;
             var count = Math.floor((this.characterController.burn + 500) / 1000);
-            console.log(count);
             if (count > 0)
                 this.particleEngine.EmitParticle(
                     offsetx,

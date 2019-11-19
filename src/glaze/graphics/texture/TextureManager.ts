@@ -33,7 +33,6 @@ export class TextureManager {
 
     public AddTexture(id: String, image: ImageData): BaseTexture {
         var baseTexture = BaseTexture.FromImage(this.gl, image);
-        // baseTexture.RegisterTexture();
         this.baseTextures.set(id, baseTexture);
         return baseTexture;
     }
@@ -47,12 +46,8 @@ export class TextureManager {
 
         var textureData = JSON.parse(textureConfig);
 
-        //var fields = Reflect.fields(textureData.frames);
         Object.keys(textureData.frames).forEach(prop => {
-            // for (let prop:any in textureData.frames) {
-
-            var frame = textureData.frames[prop]; // Reflect.field(textureData.frames, prop);
-
+            var frame = textureData.frames[prop];
             this.textures.set(
                 prop,
                 new Texture(

@@ -5,6 +5,8 @@ import { Stage } from "../../displaylist/Stage";
 import { Camera } from "../../displaylist/Camera";
 import { AABB2 } from "../../../geom/AABB2";
 import { CompileProgram } from "../util/WebGLShaderUtil";
+import vertexShader from "./shaders/BlockParticle.vert.glsl";
+import fragmentShader from "./shaders/BlockParticle.frag.glsl";
 
 export class PointBlockParticleRender implements IRenderer {
     public gl: WebGLRenderingContext;
@@ -35,14 +37,7 @@ export class PointBlockParticleRender implements IRenderer {
         this.gl = gl;
         this.camera = camera;
         this.projection = new Vector2();
-        this.pointSpriteShader = new ShaderWrapper(
-            gl,
-            CompileProgram(
-                gl,
-                PointBlockParticleRender.SPRITE_VERTEX_SHADER,
-                PointBlockParticleRender.SPRITE_FRAGMENT_SHADER,
-            ),
-        );
+        this.pointSpriteShader = new ShaderWrapper(gl, CompileProgram(gl, vertexShader, fragmentShader));
         this.dataBuffer = this.gl.createBuffer();
         this.arrayBuffer = new ArrayBuffer(20 * 4 * this.maxSprites);
         this.data = new Float32Array(this.arrayBuffer);
@@ -72,7 +67,7 @@ export class PointBlockParticleRender implements IRenderer {
         alpha: number,
         red: number,
         green: number,
-        blue: number,
+        blue: number
     ) {
         var index = this.indexRun * 4;
         this.data[index + 0] = x; //Math.floor(x);// + camera.position.x);
@@ -104,7 +99,7 @@ export class PointBlockParticleRender implements IRenderer {
             WebGLRenderingContext.FLOAT,
             false,
             16,
-            0,
+            0
         );
         this.gl.vertexAttribPointer(
             this.pointSpriteShader.attribute.size,
@@ -112,7 +107,7 @@ export class PointBlockParticleRender implements IRenderer {
             WebGLRenderingContext.FLOAT,
             false,
             16,
-            8,
+            8
         );
         this.gl.vertexAttribPointer(
             this.pointSpriteShader.attribute.colour,
@@ -120,12 +115,12 @@ export class PointBlockParticleRender implements IRenderer {
             WebGLRenderingContext.UNSIGNED_BYTE,
             true,
             16,
-            12,
+            12
         );
         this.gl.uniform2f(
             this.pointSpriteShader.uniform.cameraPosition,
             this.camera.position.x,
-            this.camera.position.y,
+            this.camera.position.y
         );
 
         this.gl.uniform2f(this.pointSpriteShader.uniform.projectionVector, this.projection.x, this.projection.y);
@@ -133,28 +128,28 @@ export class PointBlockParticleRender implements IRenderer {
         this.gl.drawArrays(WebGLRenderingContext.POINTS, 0, this.indexRun);
     }
 
-    static SPRITE_VERTEX_SHADER: string = `
-        precision mediump float;
-        uniform vec2 projectionVector;
-        uniform vec2 cameraPosition;
+    // static SPRITE_VERTEX_SHADER: string = `
+    //     precision mediump float;
+    //     uniform vec2 projectionVector;
+    //     uniform vec2 cameraPosition;
 
-        attribute vec2 position;
-        attribute float size;
-        attribute vec4 colour;
-        varying vec4 vColor;
-        void main() {
-            gl_PointSize = size;
-            vColor = colour;
-            gl_Position = vec4( (cameraPosition.x + position.x) / projectionVector.x -1.0, (cameraPosition.y + position.y) / -projectionVector.y + 1.0 , 0.0, 1.0);            
-        }
-    `;
+    //     attribute vec2 position;
+    //     attribute float size;
+    //     attribute vec4 colour;
+    //     varying vec4 vColor;
+    //     void main() {
+    //         gl_PointSize = size;
+    //         vColor = colour;
+    //         gl_Position = vec4( (cameraPosition.x + position.x) / projectionVector.x -1.0, (cameraPosition.y + position.y) / -projectionVector.y + 1.0 , 0.0, 1.0);
+    //     }
+    // `;
 
-    static SPRITE_FRAGMENT_SHADER: string = `
-        precision mediump float;
+    // static SPRITE_FRAGMENT_SHADER: string = `
+    //     precision mediump float;
 
-        varying vec4 vColor;
-        void main() {
-            gl_FragColor = vColor;
-        }
-    `;
+    //     varying vec4 vColor;
+    //     void main() {
+    //         gl_FragColor = vColor;
+    //     }
+    // `;
 }

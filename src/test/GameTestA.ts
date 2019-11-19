@@ -87,6 +87,10 @@ import { MetaData } from "../glaze/core/components/MetaData";
 import { GZE } from "../glaze/GZE";
 import { PostContactManager } from "../glaze/physics/collision/contact/PostContactManager";
 import { Vector2 } from "../glaze/geom/Vector2";
+import { SpriteParticleSystem } from "../glaze/particle/systems/SpriteParticleSystem";
+import { SpriteParticleEngine } from "../glaze/particle/engines/SpriteParticle/SpriteParticleEngine";
+import { SpriteParticleManager } from "../glaze/particle/engines/SpriteParticle/SpriteParticleManager";
+import { RandomSign, RandomInteger } from "../glaze/util/Random";
 
 interface GlazeMapLayerConfig {}
 
@@ -94,6 +98,10 @@ const MAP_DATA: string = "data/16map.json";
 const TEXTURE_CONFIG: string = "data/sprites.json";
 const TEXTURE_DATA: string = "data/sprites.png";
 const FRAMES_CONFIG: string = "data/frames.json";
+
+const PARTICLE_TEXTURE_DATA: string = "data/particles.png";
+const PARTICLE_TEXTURE_CONFIG: string = "data/particles.json";
+const PARTICLE_FRAMES_CONFIG: string = "data/particleFrames.json";
 
 const TILE_FRAMES_CONFIG: string = "data/tileFrames.json";
 
@@ -111,13 +119,23 @@ export class GameTestA extends GlazeEngine {
         const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
 
         super(canvas);
-        this.loadAssets([TEXTURE_CONFIG, TEXTURE_DATA, FRAMES_CONFIG, MAP_DATA, TILE_SPRITE_SHEET, TILE_FRAMES_CONFIG]);
+        this.loadAssets([
+            TEXTURE_CONFIG,
+            TEXTURE_DATA,
+            FRAMES_CONFIG,
+            MAP_DATA,
+            TILE_SPRITE_SHEET,
+            TILE_FRAMES_CONFIG,
+            PARTICLE_TEXTURE_DATA,
+            PARTICLE_FRAMES_CONFIG,
+            PARTICLE_TEXTURE_CONFIG
+        ]);
     }
 
     initalize() {
         this.engine.addCapacityToEngine(1000);
 
-        const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA));// as TMXMap;
+        const tmxMap: TMXMap = JSON.parse(this.assets.assets.get(MAP_DATA)); // as TMXMap;
         const cameraRange = new AABB2(0, GZE.tileSize * tmxMap.width, GZE.tileSize * tmxMap.height, 0);
         cameraRange.expand(-GZE.tileSize); // Remove outer tiles
 
@@ -133,9 +151,25 @@ export class GameTestA extends GlazeEngine {
             GZE.tileSize
         );
 
-        const tileMapCollision = new TileMapCollision(collisionData);
-        const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
+        this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, GZE.resolution);
+        this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
+        this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
+        this.renderSystem.textureManager.AddTexture(PARTICLE_TEXTURE_DATA, this.assets.assets.get(PARTICLE_TEXTURE_DATA));
 
+        this.renderSystem.textureManager.ParseTexturePackerJSON(this.assets.assets.get(TEXTURE_CONFIG), TEXTURE_DATA);
+        this.renderSystem.frameListManager.ParseFrameListJSON(this.assets.assets.get(FRAMES_CONFIG));
+
+        const tileMapCollision = new TileMapCollision(collisionData);
+        const spriteParticleManager = new SpriteParticleManager();
+        spriteParticleManager.ParseTexturePackerJSON(this.assets.assets.get(PARTICLE_TEXTURE_CONFIG));
+        spriteParticleManager.ParseSequenceJSON(this.assets.assets.get(PARTICLE_FRAMES_CONFIG));
+
+        const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
+        const spriteParticleEngine = new SpriteParticleEngine(4000, 1000 / 60, collisionData,spriteParticleManager );
+        spriteParticleEngine.renderer.SetSpriteSheet(this.renderSystem.textureManager.baseTextures.get(PARTICLE_TEXTURE_DATA).texture,16,16,16);
+        setInterval(()=>{
+            spriteParticleEngine.EmitParticle(RandomInteger(650,750),RandomInteger(50,150),0,0,0,0,1000,0.9,true,true,null,1,RandomInteger(16,32),RandomSign(0.5),RandomSign(0.5),0);
+        },16);
         // const broadphase = new BruteforceBroadphase(tileMapCollision);
         const broadphase = new DynamicTreeBroadphase(tileMapCollision);
 
@@ -167,6 +201,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new ControllerSystem(this.input));
 
         corePhase.addSystem(new ParticleSystem(blockParticleEngine));
+        corePhase.addSystem(new SpriteParticleSystem(spriteParticleEngine));
 
         // TODO Temp
         this.fixedViewManagementSystem = new FixedViewManagementSystem(camera);
@@ -202,13 +237,6 @@ export class GameTestA extends GlazeEngine {
 
         const renderPhase = new Phase();
         this.engine.addPhase(renderPhase);
-        this.renderSystem = new GraphicsRenderSystem(this.canvas, camera, GZE.resolution);
-        this.renderSystem.textureManager.AddTexture(TEXTURE_DATA, this.assets.assets.get(TEXTURE_DATA));
-        this.renderSystem.textureManager.AddTexture(TILE_SPRITE_SHEET, this.assets.assets.get(TILE_SPRITE_SHEET));
-
-        this.renderSystem.textureManager.ParseTexturePackerJSON(this.assets.assets.get(TEXTURE_CONFIG), TEXTURE_DATA);
-        this.renderSystem.frameListManager.ParseFrameListJSON(this.assets.assets.get(FRAMES_CONFIG));
-
         // TODO Move this up, later & dort out deps.
         renderPhase.addSystem(new AnimationSystem(this.renderSystem.frameListManager));
 
@@ -260,7 +288,7 @@ export class GameTestA extends GlazeEngine {
 
         this.renderSystem.itemContainer.addChild(tileMapRenderer.renderLayersMap.get("bg").sprite);
         this.renderSystem.camera.addChild(tileMapRenderer.renderLayersMap.get("fg").sprite);
-        
+
         this.renderSystem.camera.addChild(lightSystem.renderer.sprite);
 
         renderPhase.addSystem(this.renderSystem);
@@ -269,6 +297,7 @@ export class GameTestA extends GlazeEngine {
         renderPhase.addSystem(debugRenderSystem);
 
         this.renderSystem.renderer.AddRenderer(blockParticleEngine.renderer);
+        this.renderSystem.renderer.AddRenderer(spriteParticleEngine.renderer);
 
         // GPU calculated lights
         // const lightSystem = new PointLightingSystem(tileMapCollision);
@@ -374,28 +403,28 @@ export class GameTestA extends GlazeEngine {
             this.mapPosition(164, 182),
             new MetaData("torch1"),
             new Extents(160, 160),
-            new Graphics("torch"),        
-            new GraphicsAnimation("torch","burn"),
+            new Graphics("torch"),
+            new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
-            new Fixed(),
+            new Fixed()
         ]);
         this.engine.addComponentsToEntity(this.engine.createEntity(), [
             this.mapPosition(184, 187),
             new MetaData("torch2"),
             new Extents(160, 160),
-            new Graphics("torch"),        
-            new GraphicsAnimation("torch","burn"),
+            new Graphics("torch"),
+            new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
-            new Fixed(),
+            new Fixed()
         ]);
         this.engine.addComponentsToEntity(this.engine.createEntity(), [
             this.mapPosition(175, 68),
             new MetaData("torch3"),
             new Extents(160, 160),
-            new Graphics("torch"),        
-            new GraphicsAnimation("torch","burn"),
+            new Graphics("torch"),
+            new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
-            new Fixed(),
+            new Fixed()
         ]);
         // const birdNest = this.engine.createEntity();
         // this.engine.addComponentsToEntity(birdNest, [
