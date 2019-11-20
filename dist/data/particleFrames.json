@@ -1,42 +1,42 @@
 {
     "explosion1": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/1/frame{x}.png",
         "start": 1,
         "end": 9
     },
     "explosion2": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/2/frame{x}.png",
         "start": 1,
         "end": 14
     },
     "explosion3": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/3/frame{x}.png",
         "start": 1,
         "end": 14
     },
     "explosion4": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/4/frame{x}.png",
         "start": 1,
         "end": 9
     },
     "explosion5": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/5/frame{x}.png",
         "start": 1,
         "end": 9
     },
     "explosion6": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/6/frame{x}.png",
         "start": 1,
         "end": 5
     },
     "explosion7": {
-        "fps": 20,
+        "fps": 30,
         "pattern": "explosion/7/frame{x}.png",
         "start": 1,
         "end": 5

@@ -1,9 +1,9 @@
 import { IParticleEmitter } from "./IParticleEmitter";
-import { IParticleEngine } from "../engines/IParticleEngine";
 import { Vector2 } from "../../geom/Vector2";
 import { RandomFloat } from "../../util/Random";
 import { GetC4E } from "../../ecs/Engine";
 import { PhysicsBody } from "../../physics/components/PhysicsBody";
+import { IParticleEngine } from "../engines/types";
 
 export class FireBall implements IParticleEmitter {
     public rate: number;

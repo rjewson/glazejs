@@ -1,9 +1,9 @@
-import { IParticleEngine } from "../IParticleEngine";
 import { Vector2 } from "../../../geom/Vector2";
 import { Bytes2D } from "../../../ds/Bytes2D";
 import { SpriteParticle } from "./SpriteParticle";
 import { SpriteParticleRenderer } from "../../../graphics/render/particle/SpriteParticleRenderer";
 import { SpriteParticleManager } from "./SpriteParticleManager";
+import { IParticleEngine } from "../types";
 
 export class SpriteParticleEngine implements IParticleEngine {
     public particleCount: number;

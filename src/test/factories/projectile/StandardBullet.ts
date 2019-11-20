@@ -24,6 +24,8 @@ import { State } from "../../../glaze/core/components/State";
 import { CombatUtils } from "../../../glaze/util/CombatUtils";
 import { Light } from "../../../glaze/graphics/components/Light";
 import { Viewable } from "../../../glaze/core/components/Viewable";
+import { SpriteFireBall } from "../../../glaze/particle/emitter/SpriteFireBall";
+import { SpriteParticleEmitter } from "../../../glaze/particle/components/SpriteParticleEmitter";
 
 export class StandardBullet {
     static states: SimpleFSMStates = {
@@ -31,7 +33,7 @@ export class StandardBullet {
         destroy: function(engine: Engine, entity: Entity) {
             if (engine.getComponentForEntity(entity, Destroy)) return;
             engine.addComponentsToEntity(entity, [new Destroy(1)]);
-            engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(4, 80));
+            engine.getComponentForEntity(entity, SpriteParticleEmitter).emitters.push(new SpriteFireBall(4, 80));
             CombatUtils.explode(engine.getComponentForEntity(entity, Position).coords, 100, 10000, entity);
         },
     };
@@ -55,7 +57,7 @@ export class StandardBullet {
             new PhysicsBody(bulletBody, true),
             new Moveable(),
             new PhysicsCollision(false, filter, []),
-            new ParticleEmitter([]),
+            new SpriteParticleEmitter([]),
             new State(StandardBullet.states, null, false),
             new CollisionCounter(3, "destroy"),
             new Health(10, 10, 0, "destroy"),

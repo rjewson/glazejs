@@ -1,8 +1,8 @@
-import { IParticleEngine } from "./IParticleEngine";
-import { PointBlockParticleRender } from "../../graphics/render/particle/PointBlockParticleRender";
-import { Vector2 } from "../../geom/Vector2";
-import { Bytes2D } from "../../ds/Bytes2D";
+import { PointBlockParticleRender } from "../../../graphics/render/particle/PointBlockParticleRender";
+import { Vector2 } from "../../../geom/Vector2";
+import { Bytes2D } from "../../../ds/Bytes2D";
 import { BlockParticle2 } from "./BlockParticle2";
+import { IParticleEngine } from "../types";
 
 export class BlockParticleEngine2 implements IParticleEngine {
     public particleCount: number;

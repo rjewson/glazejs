@@ -1,4 +1,4 @@
-import { Vector2 } from "../../geom/Vector2";
+import { Vector2 } from "../../../geom/Vector2";
 
 const INV_ALPHA: number = 1 / 255;
 

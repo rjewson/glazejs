@@ -34,7 +34,7 @@ import { ControllerSystem } from "../glaze/core/systems/ControllerSystem";
 import { TileGraphicsRenderSystem } from "../glaze/graphics/systems/TileGraphicsRenderSystem";
 import { TileGraphics } from "../glaze/graphics/components/TileGraphics";
 import { Fixed } from "../glaze/core/components/Fixed";
-import { BlockParticleEngine2 } from "../glaze/particle/engines/BlockParticleEngine2";
+import { BlockParticleEngine2 } from "../glaze/particle/engines/BlockParticle/BlockParticleEngine2";
 import { ParticleSystem } from "../glaze/particle/systems/ParticleSystem";
 import { FixedViewManagementSystem } from "../glaze/space/systems/FixedViewManagementSystem";
 import { AgeSystem } from "../glaze/core/systems/AgeSystem";
@@ -168,7 +168,7 @@ export class GameTestA extends GlazeEngine {
         const spriteParticleEngine = new SpriteParticleEngine(4000, 1000 / 60, collisionData,spriteParticleManager );
         spriteParticleEngine.renderer.SetSpriteSheet(this.renderSystem.textureManager.baseTextures.get(PARTICLE_TEXTURE_DATA).texture,16,16,16);
         setInterval(()=>{
-            spriteParticleEngine.EmitParticle(RandomInteger(650,750),RandomInteger(50,150),0,0,0,0,1000,0.9,true,true,null,1,RandomInteger(16,32),RandomSign(0.5),RandomSign(0.5),0);
+            spriteParticleEngine.EmitParticle(RandomInteger(650,750),RandomInteger(50,150),0,0,0,0,1000,0.9,true,true,null,RandomInteger(0,3),RandomInteger(16,32),RandomSign(0.5),RandomSign(0.5),0);
         },16);
         // const broadphase = new BruteforceBroadphase(tileMapCollision);
         const broadphase = new DynamicTreeBroadphase(tileMapCollision);

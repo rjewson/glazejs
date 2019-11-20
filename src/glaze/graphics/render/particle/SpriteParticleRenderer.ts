@@ -4,7 +4,6 @@ import { Camera } from "../../displaylist/Camera";
 import { Vector2 } from "../../../geom/Vector2";
 import { ShaderWrapper } from "../util/ShaderWrapper";
 import { Stage } from "../../displaylist/Stage";
-import { Texture } from "../../texture/Texture";
 import { AABB2 } from "../../../geom/AABB2";
 import { IRenderer } from "../RenderEngine";
 import { CompileProgram } from "../util/WebGLShaderUtil";
