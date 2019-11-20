@@ -1,6 +1,4 @@
 export class BaseTexture {
-    private gl: WebGLRenderingContext;
-
     public width: number;
     public height: number;
     public source: ImageData;
@@ -10,6 +8,8 @@ export class BaseTexture {
 
     public framebuffer: WebGLFramebuffer;
     public renderbuffer: WebGLRenderbuffer;
+
+    private gl: WebGLRenderingContext;
 
     constructor(gl: WebGLRenderingContext, width: number, height: number, floatingPonumber: boolean = false) {
         this.gl = gl;
@@ -27,34 +27,34 @@ export class BaseTexture {
         this.gl.texParameteri(
             WebGLRenderingContext.TEXTURE_2D,
             WebGLRenderingContext.TEXTURE_MAG_FILTER,
-            WebGLRenderingContext.NEAREST,
+            WebGLRenderingContext.NEAREST
         );
         this.gl.texParameteri(
             WebGLRenderingContext.TEXTURE_2D,
             WebGLRenderingContext.TEXTURE_MIN_FILTER,
-            WebGLRenderingContext.NEAREST,
+            WebGLRenderingContext.NEAREST
         );
         if (this.powerOfTwo) {
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_WRAP_S,
-                WebGLRenderingContext.REPEAT,
+                WebGLRenderingContext.REPEAT
             );
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_WRAP_T,
-                WebGLRenderingContext.REPEAT,
+                WebGLRenderingContext.REPEAT
             );
         } else {
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_WRAP_S,
-                WebGLRenderingContext.CLAMP_TO_EDGE,
+                WebGLRenderingContext.CLAMP_TO_EDGE
             );
             this.gl.texParameteri(
                 WebGLRenderingContext.TEXTURE_2D,
                 WebGLRenderingContext.TEXTURE_WRAP_T,
-                WebGLRenderingContext.CLAMP_TO_EDGE,
+                WebGLRenderingContext.CLAMP_TO_EDGE
             );
         }
         // this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D,null);
@@ -68,7 +68,7 @@ export class BaseTexture {
             0,
             WebGLRenderingContext.RGBA,
             fp ? WebGLRenderingContext.FLOAT : WebGLRenderingContext.UNSIGNED_BYTE,
-            null,
+            null
         );
     }
 
@@ -80,7 +80,7 @@ export class BaseTexture {
             WebGLRenderingContext.RGBA,
             WebGLRenderingContext.RGBA,
             WebGLRenderingContext.UNSIGNED_BYTE,
-            image,
+            image
         );
         return texture;
     }
@@ -108,20 +108,20 @@ export class BaseTexture {
                 WebGLRenderingContext.RENDERBUFFER,
                 WebGLRenderingContext.DEPTH_COMPONENT16,
                 this.width,
-                this.height,
+                this.height
             );
             this.gl.framebufferTexture2D(
                 WebGLRenderingContext.FRAMEBUFFER,
                 WebGLRenderingContext.COLOR_ATTACHMENT0,
                 WebGLRenderingContext.TEXTURE_2D,
                 this.texture,
-                0,
+                0
             );
             this.gl.framebufferRenderbuffer(
                 WebGLRenderingContext.FRAMEBUFFER,
                 WebGLRenderingContext.DEPTH_ATTACHMENT,
                 WebGLRenderingContext.RENDERBUFFER,
-                this.renderbuffer,
+                this.renderbuffer
             );
         }
 
@@ -132,7 +132,6 @@ export class BaseTexture {
         // this.gl.viewport(v[0], v[1], v[2], v[3]);
         // this.gl.viewport(0, 0, 800, 640);
         this.gl.viewport(0, 0, 1280, 720);
-
     }
 
     public UnregisterTexture(gl: WebGLRenderingContext) {

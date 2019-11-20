@@ -3,22 +3,23 @@ import { Sprite } from "../../displaylist/Sprite";
 import { Stage } from "../../displaylist/Stage";
 import { AABB2 } from "../../../geom/AABB2";
 import { DisplayObjectContainer } from "../../displaylist/DisplayObjectContainer";
-import { DisplayObject } from "../../displaylist/DIsplayObject";
 import { ShaderWrapper } from "../util/ShaderWrapper";
+import { createQuadIndiciesBuffer } from "../RenderUtils";
+
+const BYTES_PER_QUAD = 5 * 4;
 
 export class WebGLBatch {
     public gl: WebGLRenderingContext;
+    public blendMode: number;
 
     public size: number;
     public dynamicSize: number;
 
-    public indexBuffer: WebGLBuffer;
-    public indices: Uint16Array;
+    private indexBuffer: WebGLBuffer;
+    private indices: Uint16Array;
 
-    public dataBuffer: WebGLBuffer;
-    public data: Float32Array;
-
-    public blendMode: number;
+    private dataBuffer: WebGLBuffer;
+    private data: Float32Array;
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
@@ -35,32 +36,18 @@ export class WebGLBatch {
         this.size = size;
         this.dynamicSize = size;
 
-        this.data = new Float32Array(this.dynamicSize * 20);
+        this.data = new Float32Array(this.dynamicSize * BYTES_PER_QUAD);
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, this.data, WebGLRenderingContext.DYNAMIC_DRAW);
 
-        this.indices = new Uint16Array(this.dynamicSize * 6);
-
-        for (var i = 0; i < this.dynamicSize; i++) {
-            const index2 = i * 6;
-            const index3 = i * 4;
-            this.indices[index2 + 0] = index3 + 0;
-            this.indices[index2 + 1] = index3 + 1;
-            this.indices[index2 + 2] = index3 + 2;
-            this.indices[index2 + 3] = index3 + 0;
-            this.indices[index2 + 4] = index3 + 2;
-            this.indices[index2 + 5] = index3 + 3;
-        }
+        this.indices = createQuadIndiciesBuffer(this.dynamicSize);
 
         this.gl.bindBuffer(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         this.gl.bufferData(WebGLRenderingContext.ELEMENT_ARRAY_BUFFER, this.indices, WebGLRenderingContext.STATIC_DRAW);
     }
 
     public AddSpriteToBatch(sprite: Sprite, indexRun: number) {
-        const index = indexRun * 20;
-        const frame = sprite.texture.frame;
-        const tw = sprite.texture.baseTexture.width;
-        const th = sprite.texture.baseTexture.height;
+        const index = indexRun * BYTES_PER_QUAD;
         const uvs = sprite.texture.uvs;
         //0
         //Verts
@@ -136,8 +123,8 @@ export class WebGLBatch {
                     currentTexture = sprite.texture.baseTexture.texture;
                 }
                 //if (clip == null || sprite.aabb.intersect(clip)) {
-                    this.AddSpriteToBatch(sprite, indexRun);
-                    indexRun++;
+                this.AddSpriteToBatch(sprite, indexRun);
+                indexRun++;
                 // }
             }
         }
@@ -149,12 +136,25 @@ export class WebGLBatch {
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         // this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,data,WebGLRenderingContext.STATIC_DRAW);
         this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
-        this.gl.vertexAttribPointer(shader.attribute.aVertexPosition, 2, WebGLRenderingContext.FLOAT, false, 20, 0);
-        this.gl.vertexAttribPointer(shader.attribute.aTextureCoord, 2, WebGLRenderingContext.FLOAT, false, 20, 8);
-        this.gl.vertexAttribPointer(shader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, 20, 16);
+        this.gl.vertexAttribPointer(
+            shader.attribute.aVertexPosition,
+            2,
+            WebGLRenderingContext.FLOAT,
+            false,
+            BYTES_PER_QUAD,
+            0
+        );
+        this.gl.vertexAttribPointer(
+            shader.attribute.aTextureCoord,
+            2,
+            WebGLRenderingContext.FLOAT,
+            false,
+            BYTES_PER_QUAD,
+            8
+        );
+        this.gl.vertexAttribPointer(shader.attribute.aColor, 1, WebGLRenderingContext.FLOAT, false, BYTES_PER_QUAD, 16);
         this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
         this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
         this.gl.drawElements(WebGLRenderingContext.TRIANGLES, size * 6, WebGLRenderingContext.UNSIGNED_SHORT, 0);
     }
-
 }

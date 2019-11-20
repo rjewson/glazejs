@@ -27,7 +27,6 @@ export class BirdNestSystem extends System {
             new Fixed(),
             new Active(),
         ]);
-        // entity.addChildEntity(nest.trigger);
     }
 
     updateEntity(entity: Entity, position: Position, birdNest: BirdNest, viewable: Viewable, active: Active) {

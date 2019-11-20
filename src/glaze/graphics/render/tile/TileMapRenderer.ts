@@ -1,6 +1,5 @@
 import { IRenderer } from "../RenderEngine";
 import { Vector2 } from "../../../geom/Vector2";
-import { Texture } from "../../texture/Texture";
 import { TileLayer } from "./TileLayer";
 import { TileLayerRenderProxy } from "./TileLayerRenderProxy";
 import { ShaderWrapper } from "../util/ShaderWrapper";
@@ -9,6 +8,9 @@ import { TypedArray2D } from "../../../ds/TypedArray2D";
 import * as WebGLShaderUtils from "../util/WebGLShaderUtil";
 import { BaseTexture } from "../../texture/BaseTexture";
 import { AABB2 } from "../../../geom/AABB2";
+
+import vertexShader from "./shaders/tileMap.vert.glsl";
+import fragmentShader from "./shaders/tileMap.frag.glsl";
 
 export class TileMapRenderer implements IRenderer {
     public gl: WebGLRenderingContext;
@@ -117,7 +119,7 @@ export class TileMapRenderer implements IRenderer {
         gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, quadVerts, WebGLRenderingContext.STATIC_DRAW);
         this.tilemapShader = new ShaderWrapper(
             gl,
-            WebGLShaderUtils.CompileProgram(gl, TileMapRenderer.TILEMAP_VERTEX_SHADER, TileMapRenderer.TILEMAP_FRAGMENT_SHADER),
+            WebGLShaderUtils.CompileProgram(gl, vertexShader, fragmentShader),
         );
 
         this.flip = false;
@@ -232,8 +234,6 @@ export class TileMapRenderer implements IRenderer {
         this.writebuffer2.w = width;
 
         for (var ypos = 0; ypos < height; ypos++) {
-            // for (ypos in 0...height) {
-            // for (xpos in 0...width) {
             for (var xpos = 0; xpos < width; xpos++) {
                 var _x = startX + xpos;
                 var _y = startY + ypos;
@@ -329,55 +329,4 @@ p.y = index % 8;
 p.x = Math.floor(index / 8);
 
     */
-
-    static TILEMAP_VERTEX_SHADER: string = `
-        precision mediump float;
-        attribute vec2 position;
-        attribute vec2 texture;
-
-        varying vec2 pixelCoord;
-        varying vec2 texCoord;
-
-        uniform vec2 viewOffset;
-        uniform vec2 viewportSize;
-        uniform vec2 inverseTileTextureSize;
-        uniform float inverseTileSize;
-
-        void main(void) {
-           pixelCoord = (texture * viewportSize) + viewOffset;
-           texCoord = pixelCoord * inverseTileTextureSize * inverseTileSize;
-           gl_Position = vec4(position, 0.0, 1.0);
-        }`;
-
-    static TILEMAP_FRAGMENT_SHADER: string = `
-        precision mediump float;
-
-        varying vec2 pixelCoord;
-        varying vec2 texCoord;
-
-        uniform sampler2D tiles;
-        uniform sampler2D sprites;
-
-        uniform vec2 inverseTileTextureSize;
-        uniform vec2 inverseSpriteTextureSize;
-        uniform float tileSize;
-
-        void main(void) {
-           vec4 tile = texture2D(tiles, texCoord);
-            // if(tile.x == 1.0 && tile.y == 1.0) { discard; }
-            if (tile.x == 1.0 && tile.y == 1.0) { 
-                discard;
-                // gl_FragColor = vec4(0.0,0.0,0.0,0.0);
-            } else {
-                vec2 superSpriteOffset = floor(tile.zw * 256.0) * 256.0;
-                vec2 spriteOffset = floor(tile.xy * 256.0) * tileSize;
-                vec2 spriteCoord = mod(pixelCoord, tileSize);
-
-                //Works
-                //    spriteCoord.x = (-1.0+(2.0* 0.0)) * (( 0.0*tileSize) - spriteCoord.x); //normal  0
-                //    spriteCoord.x = (-1.0+(2.0* 1.0)) * (( 1.0*tileSize) - spriteCoord.x); //flip   1
-
-                gl_FragColor = texture2D(sprites, (superSpriteOffset + spriteOffset + spriteCoord) * inverseSpriteTextureSize);
-            }
-        }`;
 }

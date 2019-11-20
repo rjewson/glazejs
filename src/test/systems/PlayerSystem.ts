@@ -26,6 +26,7 @@ import { Attachment } from "../../glaze/core/components/Attachment";
 import { Vector2 } from "../../glaze/geom/Vector2";
 import { Light } from "../../glaze/graphics/components/Light";
 import { Key } from "../../glaze/util/Keycodes";
+import { Stack } from "../../glaze/ds/Stack";
 
 export class PlayerSystem extends System {
     private particleEngine: IParticleEngine;
@@ -48,10 +49,13 @@ export class PlayerSystem extends System {
 
     private currentWeapon: number = 0;
 
+    private teleporterLocations: Stack<Vector2>;
+
     constructor(input: DigitalInput, particleEngine: IParticleEngine) {
         super([Position, Player, PhysicsCollision, PhysicsBody, GraphicsAnimation, Extents]);
         this.input = input;
         this.particleEngine = particleEngine;
+        this.teleporterLocations = new Stack(5);
     }
 
     onEntityAdded(
@@ -63,6 +67,9 @@ export class PlayerSystem extends System {
         graphicsAnimation: GraphicsAnimation,
         extents: Extents,
     ) {
+        if (this.members.size>1) {
+            throw new Error("Only one player allowed");
+        }
         // physicsBody.body.setMass(880);
         physicsBody.body.usesStairs = true;
         // physicsBody.body.isBullet = true;
@@ -290,6 +297,16 @@ export class PlayerSystem extends System {
         inputAngle.minusEquals(position.coords);
         inputAngle.normalize();
         this.playerLight.angle = inputAngle.heading();
+
+        if (this.input.JustPressed(Key.R)) {
+            this.teleporterLocations.push(position.coords.clone());
+        }
+        if (this.input.JustPressed(Key.T)) {
+            const p = this.teleporterLocations.pop();
+            if (p) {
+                physicsBody.body.position.copy(p);
+            }
+        }
     }
 
     private fireWeapon() {}

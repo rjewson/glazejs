@@ -17,10 +17,11 @@ export class RendererEngine {
 
     public gl: WebGLRenderingContext;
     public contextAttributes: WebGLContextAttributes;
+    
+    public renderers: Array<IRenderer>;
 
     private contextLost: boolean;
 
-    public renderers: Array<IRenderer>;
 
     constructor(
         stage: Stage,

@@ -60,13 +60,10 @@ export class TileLayerRenderProxy implements IRenderer {
     }
 
     public Render(clip: AABB2) {
-        // if (calcSnap(tileMap.camera.position)) {
         this.calcSnap(this.tileMap.camera.position);
         this.sprite.position.copy(this.size);
         this.sprite.position.plusEquals(this.thisSnap);
-        // sprite.position.setTo(416+thisSnap.x,336+thisSnap.y);
         this.surface.drawTo(this.renderSurface);
-        // }
     }
 
     public renderSurface() {
