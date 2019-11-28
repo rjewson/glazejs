@@ -11,7 +11,9 @@ export class AgeSystem extends System {
 
     updateEntity(entity: Entity, age: Age, state:State, active: Active) {
         if (age.growOlder(this.dt)) {
-            if (age.onExpire != null) state.setState(age.onExpire);// age.onExpire(this.engine,entity);
+            if (age.onExpire != null) {
+                state.setState(age.onExpire);
+            }
         }
     }
 }

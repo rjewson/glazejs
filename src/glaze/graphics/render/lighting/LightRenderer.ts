@@ -19,7 +19,7 @@ const BYTES_PER_QUAD = 8 * 4;
 
 const fragmentShaderFactory = (count, ratio) => {
     return fragmentShader.replace("${count}", count).replace("${ratio}", ratio);
-}
+};
 
 export class LightRenderer implements IRenderer {
     public gl: WebGLRenderingContext;
@@ -250,7 +250,6 @@ export class LightRenderer implements IRenderer {
         // Temp background calc
         const percentDepth = this.camera.position.y / this.camera.worldExtentsAABB.height;
         this.Background(Math.abs(percentDepth));
-        // console.log(percentDepth);
         // End
         this.sprite.position.copy(this.camera.halfViewportSize);
         this.sprite.position.minusEquals(this.snapPosition);
@@ -267,7 +266,8 @@ export class LightRenderer implements IRenderer {
         // Source = from shader
         // Dest = target framebuffer
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,this.data,WebGLRenderingContext.DYNAMIC_DRAW);
+        // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
 
         this.gl.activeTexture(WebGLRenderingContext.TEXTURE0);
         this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.layer.tileDataTexture);

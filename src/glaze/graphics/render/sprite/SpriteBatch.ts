@@ -134,8 +134,8 @@ export class WebGLBatch {
 
     private Flush(shader: ShaderWrapper, texture: Texture, size: number) {
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        // this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,data,WebGLRenderingContext.STATIC_DRAW);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,this.data,WebGLRenderingContext.DYNAMIC_DRAW);
+        // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
         this.gl.vertexAttribPointer(
             shader.attribute.aVertexPosition,
             2,

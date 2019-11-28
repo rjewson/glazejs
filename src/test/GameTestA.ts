@@ -91,6 +91,7 @@ import { SpriteParticleSystem } from "../glaze/particle/systems/SpriteParticleSy
 import { SpriteParticleEngine } from "../glaze/particle/engines/SpriteParticle/SpriteParticleEngine";
 import { SpriteParticleManager } from "../glaze/particle/engines/SpriteParticle/SpriteParticleManager";
 import { RandomSign, RandomInteger } from "../glaze/util/Random";
+import { BirdNest } from "./components/BirdNest";
 
 interface GlazeMapLayerConfig {}
 
@@ -426,14 +427,23 @@ export class GameTestA extends GlazeEngine {
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed()
         ]);
-        // const birdNest = this.engine.createEntity();
-        // this.engine.addComponentsToEntity(birdNest, [
-        //     this.mapPosition(34, 30),
-        //     new Extents(7, 7),
-        //     new Fixed(),
-        //     new BirdNest(5),
-        //     new Active()
-        // ]);
+        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+            this.mapPosition(134, 164),
+            new MetaData("torch4"),
+            new Extents(160, 160),
+            new Graphics("torch"),
+            new GraphicsAnimation("torch", "burn"),
+            new Light(160, 1, 1, 1, 255, 255, 255, 0),
+            new Fixed()
+        ]);
+        const birdNest = this.engine.createEntity();
+        this.engine.addComponentsToEntity(birdNest, [
+            this.mapPosition(34, 30),
+            new Extents(7, 7),
+            new Fixed(),
+            new BirdNest(1),
+            new Active()
+        ]);
 
         const turret = this.engine.createEntity();
         const turretFilter = new Filter();

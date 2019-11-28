@@ -111,7 +111,8 @@ export class SpriteParticleRenderer implements IRenderer {
         this.gl.useProgram(this.pointSpriteShader.program);
 
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
-        this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
+        this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,this.data,WebGLRenderingContext.DYNAMIC_DRAW);
+        // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
 
         this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.position);
         this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.size);

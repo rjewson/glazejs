@@ -1,6 +1,5 @@
 import { DisplayObject } from "./DIsplayObject";
 import { AABB2 } from "../../geom/AABB2";
-import { Stage } from "./Stage";
 
 export class DisplayObjectContainer extends DisplayObject {
     public head: DisplayObject;
@@ -34,12 +33,12 @@ export class DisplayObjectContainer extends DisplayObject {
         this.childAdded(child);
     }
 
-    private childAdded(child: DisplayObject) {
+    public childAdded(child: DisplayObject) {
         this.childCount++;
         child.parent = this;
     }
 
-    private findChildByIndex(index: number): DisplayObject {
+    public findChildByIndex(index: number): DisplayObject {
         var child = this.head;
         var count = 0;
         while (child != null) {
@@ -62,7 +61,7 @@ export class DisplayObjectContainer extends DisplayObject {
         return child;
     }
 
-    private childRemoved(child: DisplayObject) {
+    public childRemoved(child: DisplayObject) {
         this.childCount--;
         child.parent = null;
     }

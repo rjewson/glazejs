@@ -1,5 +1,4 @@
 import { DisplayObjectContainer } from "./DisplayObjectContainer";
-import { Sprite } from "./Sprite";
 
 export class Stage extends DisplayObjectContainer {
     constructor() {
