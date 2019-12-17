@@ -4,10 +4,12 @@ import { Pool } from "../util/Pool";
 import { System } from "./System";
 import { Phase } from "./Phase";
 import { BitVector } from "../ds/BitVector";
+import { MetaData } from "../core/components/MetaData";
 
 export class Engine {
     // Map constructor.name -> array of instances of that type
     public components: Map<string, Component[]>;
+    // Map constructor.name -> id (for later)
     public componentTypes: Map<string, number>;
 
     public phases: Phase[];
@@ -16,6 +18,7 @@ export class Engine {
     public entityPool: Pool<Entity>;
 
     private nextTypeId: number;
+    private metaDataName: string;
 
     constructor() {
         this.components = new Map();
@@ -25,6 +28,8 @@ export class Engine {
         this.c4e = new Map();
         this.entityPool = new Pool(i => i);
         this.nextTypeId = 0;
+
+        this.metaDataName = this.createComponentEntryFromType(MetaData);
     }
 
     public addCapacityToEngine(entityCount: number) {
@@ -34,9 +39,10 @@ export class Engine {
         );
     }
 
-    public createEntity(): Entity {
+    public createEntity(name = ""): Entity {
         const entity = this.entityPool.reserve();
         this.c4e.set(entity, createGetComponentForEntity(this, entity));
+        this.components.get(this.metaDataName)[entity] = new MetaData(name, new BitVector(4));
         return entity;
     }
 
@@ -59,21 +65,27 @@ export class Engine {
     public addComponentsToEntity(entity: Entity, componentsToAdd: Component[]) {
         // This code is required to add component types
         // that might not have been seen by already registered systems
+        const metadata = this.components.get(this.metaDataName)[entity] as MetaData;
         for (const component of componentsToAdd) {
             const name = this.createComponentEntryFromInstance(component);
             this.components.get(name)[entity] = component;
+            metadata.matchMask.set(this.componentTypes.get(name), true);
         }
-        this.matchEntity(entity);
+        // this.matchEntity(entity);
+        this.matchEntityBitMask(entity, metadata.matchMask);
     }
 
     public removeComponentsFromEntityByType(entity: Entity, componentTypesToRemove: ComponentType<Component>[]) {
+        const metadata = this.components.get(this.metaDataName)[entity] as MetaData;
         for (const componentType of componentTypesToRemove) {
             const name = componentType.name;
             if (this.components.has(name)) {
                 this.components.get(name)[entity] = null;
             }
+            metadata.matchMask.set(this.componentTypes.get(name), false);
         }
-        this.matchEntity(entity);
+        // this.matchEntity(entity);
+        this.matchEntityBitMask(entity, metadata.matchMask);
     }
 
     public addPhase(phase: Phase) {
@@ -145,6 +157,17 @@ export class Engine {
                 }
             }
             if (count === 0) {
+                system.addEntity(entity, this.entityComponentsForSystem(entity, system));
+            } else {
+                system.removeEntity(entity);
+            }
+        }
+    }
+
+    private matchEntityBitMask(entity: Entity, matchMask: BitVector) {
+        for (const system of this.systems) {
+            if (matchMask.maskAll(system.matchMask)) {
+            //if (system.matchMask.maskAll(matchMask)) {
                 system.addEntity(entity, this.entityComponentsForSystem(entity, system));
             } else {
                 system.removeEntity(entity);

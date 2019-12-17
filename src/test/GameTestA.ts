@@ -83,7 +83,6 @@ import { TeleporterFactory } from "./factories/item/TeleporterFactory";
 import { TeleporterSystem } from "./systems/TeleporterSystem";
 import { WaterHolder } from "../glaze/core/components/WaterHolder";
 import { AttachmentSystem } from "../glaze/core/systems/AttachmentSystem";
-import { MetaData } from "../glaze/core/components/MetaData";
 import { GZE } from "../glaze/GZE";
 import { PostContactManager } from "../glaze/physics/collision/contact/PostContactManager";
 import { Vector2 } from "../glaze/geom/Vector2";
@@ -92,6 +91,8 @@ import { SpriteParticleEngine } from "../glaze/particle/engines/SpriteParticle/S
 import { SpriteParticleManager } from "../glaze/particle/engines/SpriteParticle/SpriteParticleManager";
 import { RandomSign, RandomInteger } from "../glaze/util/Random";
 import { BirdNest } from "./components/BirdNest";
+import { DigitalInput } from "../glaze/util/DigitalInput";
+import { RenderCanvas } from "../glaze/types";
 
 interface GlazeMapLayerConfig {}
 
@@ -114,12 +115,12 @@ const TILE_FRAMES_CONFIG: string = "data/tileFrames.json";
 const TILE_SPRITE_SHEET: string = "data/superSet.png";
 
 export class GameTestA extends GlazeEngine {
+
     private renderSystem: GraphicsRenderSystem;
     private fixedViewManagementSystem: FixedViewManagementSystem;
-    constructor() {
-        const canvas: HTMLCanvasElement = document.getElementById("view") as HTMLCanvasElement;
-
-        super(canvas);
+    
+    constructor(canvas: RenderCanvas, input: DigitalInput) {
+        super(canvas, input);
         this.loadAssets([
             TEXTURE_CONFIG,
             TEXTURE_DATA,
@@ -388,9 +389,8 @@ export class GameTestA extends GlazeEngine {
             new TileGraphics("switchOff")
         ]);
 
-        const beeHive = this.engine.createEntity();
+        const beeHive = this.engine.createEntity("BeeHive");
         this.engine.addComponentsToEntity(beeHive, [
-            new MetaData("BeeHive"),
             this.mapPosition(20.5, 17),
             new Extents(16, 16),
             new Graphics("insects", "hive"),
@@ -400,36 +400,32 @@ export class GameTestA extends GlazeEngine {
             new BeeHive(5)
         ]);
 
-        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+        this.engine.addComponentsToEntity(this.engine.createEntity("torch1"), [
             this.mapPosition(164, 182),
-            new MetaData("torch1"),
             new Extents(160, 160),
             new Graphics("torch"),
             new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed()
         ]);
-        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+        this.engine.addComponentsToEntity(this.engine.createEntity("torch2"), [
             this.mapPosition(184, 187),
-            new MetaData("torch2"),
             new Extents(160, 160),
             new Graphics("torch"),
             new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed()
         ]);
-        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+        this.engine.addComponentsToEntity(this.engine.createEntity("torch3"), [
             this.mapPosition(175, 68),
-            new MetaData("torch3"),
             new Extents(160, 160),
             new Graphics("torch"),
             new GraphicsAnimation("torch", "burn"),
             new Light(160, 1, 1, 1, 255, 255, 255, 0),
             new Fixed()
         ]);
-        this.engine.addComponentsToEntity(this.engine.createEntity(), [
+        this.engine.addComponentsToEntity(this.engine.createEntity("torch4"), [
             this.mapPosition(134, 164),
-            new MetaData("torch4"),
             new Extents(160, 160),
             new Graphics("torch"),
             new GraphicsAnimation("torch", "burn"),

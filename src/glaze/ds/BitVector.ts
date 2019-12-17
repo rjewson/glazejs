@@ -23,7 +23,7 @@ export class BitVector {
 
     public maskAll(mask: BitVector) {
         for (var i = 0; i < this.size; i++) {
-            const maskWord = mask[i];
+            const maskWord = mask.values[i];
             if ((maskWord & this.values[i]) !== maskWord) {
                 return false;
             }
@@ -33,7 +33,7 @@ export class BitVector {
 
     public maskNone(mask: BitVector) {
         for (var i = 0; i < this.size; i++) {
-            const maskWord = mask[i];
+            const maskWord = mask.values[i];
             if (maskWord & this.values[i]) {
                 return false;
             }

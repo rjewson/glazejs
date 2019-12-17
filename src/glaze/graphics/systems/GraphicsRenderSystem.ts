@@ -11,18 +11,20 @@ import { DisplayObjectContainer } from "../displaylist/DisplayObjectContainer";
 import { Vector2 } from "../../geom/Vector2";
 import { FrameListManager } from "../frame/FrameListManager";
 import { Sprite } from "../displaylist/Sprite";
+import { RenderCanvas } from "../../types";
 
 export class GraphicsRenderSystem extends System {
-    private canvas: HTMLCanvasElement;
     public stage: Stage;
     public renderer: RendererEngine;
     public camera: Camera;
     public textureManager: TextureManager;
     public itemContainer: DisplayObjectContainer;
     public frameListManager: FrameListManager;
+
+    private canvas: RenderCanvas;
     private _cameraTarget: Vector2;
 
-    constructor(canvas: HTMLCanvasElement, camera:Camera, screenDimension:Vector2) {
+    constructor(canvas: RenderCanvas, camera:Camera, screenDimension:Vector2) {
         super([Position, Graphics]);
         this.canvas = canvas;
         this.stage = new Stage();

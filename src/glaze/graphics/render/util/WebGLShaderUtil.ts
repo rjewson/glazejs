@@ -11,7 +11,7 @@ export function CompileShader(gl: WebGLRenderingContext, shaderSrc: string, shad
     gl.shaderSource(shader, shaderSrc);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS)) {
-        window.alert(gl.getShaderInfoLog(shader));
+        console.error(gl.getShaderInfoLog(shader));
         return null;
     }
     return shader;
@@ -27,7 +27,7 @@ export function CompileProgram(gl: WebGLRenderingContext, vertexSrc: string, fra
     gl.linkProgram(shaderProgram);
 
     if (!gl.getProgramParameter(shaderProgram, WebGLRenderingContext.LINK_STATUS)) {
-        window.alert("Could not initialize program");
+        console.error("Could not initialize program");
     }
     return shaderProgram;
 }

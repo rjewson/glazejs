@@ -13,7 +13,7 @@ export class FollowPath extends Behavior
 	public  loop:boolean;
 	public  seekDist : number;
 	
-	 currentIndex:number;
+	public currentIndex:number;
 	
 	constructor(path : Array<Node>, loop:boolean=false, seekDist : number = 32) {
 		super(SteeringSettings.followPathWeight, SteeringSettings.followPathPriority);

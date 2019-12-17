@@ -9,7 +9,6 @@ import { CharacterController } from "../../glaze/util/CharacterController";
 import { Filter } from "../../glaze/physics/collision/Filter";
 import { Player } from "../components/Player";
 import { PhysicsCollision } from "../../glaze/physics/components/PhysicsCollision";
-import { Explosion } from "../../glaze/particle/emitter/Explosion";
 import { Extents } from "../../glaze/core/components/Extents";
 import { RandomFloat } from "../../glaze/util/Random";
 import { StandardBullet } from "../factories/projectile/StandardBullet";
@@ -18,7 +17,6 @@ import { Holder } from "../../glaze/core/components/Holder";
 import { TestFilters } from "../config/Filters";
 import { Moveable } from "../../glaze/core/components/Moveable";
 import { Active } from "../../glaze/core/components/Active";
-import { Held } from "../../glaze/core/components/Held";
 import { Ballistics } from "../../glaze/util/Ballastics";
 import { PlasmaBall } from "../factories/projectile/PlasmaBall";
 import { Hierachy } from "../../glaze/core/components/Hierachy";
@@ -32,30 +30,26 @@ export class PlayerSystem extends System {
     private particleEngine: IParticleEngine;
     private input: DigitalInput;
 
-    private player: Entity;
-    private position: Position;
-    private physicsBody: PhysicsBody;
 
     private playerLight: Light;
     private playerHolder: Entity;
     private holder: Holder;
-    //  inventory:Inventory;
-
-    private animation: GraphicsAnimation;
 
     private characterController: CharacterController;
 
-    private playerFilter: Filter;
 
     private currentWeapon: number = 0;
 
     private teleporterLocations: Stack<Vector2>;
+
+    private mousePosition: Vector2;
 
     constructor(input: DigitalInput, particleEngine: IParticleEngine) {
         super([Position, Player, PhysicsCollision, PhysicsBody, GraphicsAnimation, Extents]);
         this.input = input;
         this.particleEngine = particleEngine;
         this.teleporterLocations = new Stack(5);
+        this.mousePosition = new Vector2();
     }
 
     onEntityAdded(
@@ -135,10 +129,8 @@ export class PlayerSystem extends System {
 
         physicsBody.body.collideOneWay = !(this.characterController.down > 0);
 
+        this.input.ViewCorrectedMousePosition(this.mousePosition);
         const fire = this.input.JustPressed(Key.Space);
-        const search = this.input.JustPressed(71);
-        const hold = this.input.Pressed(Key.J);
-        const ray = this.input.Pressed(Key.R);
 
         // TODO
         // if (this.input.JustPressed(84)) {
@@ -167,7 +159,7 @@ export class PlayerSystem extends System {
             if (item != null) {
                 Ballistics.calcProjectileVelocity(
                     this.engine.getComponentForEntity(item, PhysicsBody).body,
-                    this.input.ViewCorrectedMousePosition(),
+                    this.mousePosition.clone(),
                     700,
                 );
             }
@@ -199,7 +191,7 @@ export class PlayerSystem extends System {
                     this.engine,
                     position.clone(),
                     physicsCollision.proxy.filter.clone(),
-                    this.input.ViewCorrectedMousePosition(),
+                    this.mousePosition.clone(),
                 );
             }
             if (this.currentWeapon == 1)
@@ -207,12 +199,12 @@ export class PlayerSystem extends System {
                     this.engine,
                     position.clone(),
                     physicsCollision.proxy.filter.clone(),
-                    this.input.ViewCorrectedMousePosition(),
+                    this.mousePosition.clone(),
                 );
         }
         //'e' aim
         if (this.input.Pressed(Key.E)) {
-            var vel = this.input.ViewCorrectedMousePosition().clone();
+            var vel = this.mousePosition.clone();
             vel.minusEquals(position.coords);
             vel.normalize();
             vel.multEquals(2000);
@@ -293,7 +285,7 @@ export class PlayerSystem extends System {
             }
         }
 
-        const inputAngle = this.input.ViewCorrectedMousePosition().clone();
+        const inputAngle = this.mousePosition.clone();
         inputAngle.minusEquals(position.coords);
         inputAngle.normalize();
         this.playerLight.angle = inputAngle.heading();
@@ -309,5 +301,4 @@ export class PlayerSystem extends System {
         }
     }
 
-    private fireWeapon() {}
 }

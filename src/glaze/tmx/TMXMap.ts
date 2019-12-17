@@ -92,12 +92,12 @@ export interface TMXObject {
 }
 
 const decodeBase64 = function(input) {
-    return window.atob(input.replace(/[^A-Za-z0-9\+\/\=]/g, ""));
+    return atob(input.replace(/[^A-Za-z0-9\+\/\=]/g, ""));
 };
 
 const encode = function(input) {
     // make sure our input string has the right format
-    return window.btoa(input.replace(/\r\n/g, "\n"));
+    return btoa(input.replace(/\r\n/g, "\n"));
 };
 
 const decodeBase64AsArray = function(input, bytes = 4) {

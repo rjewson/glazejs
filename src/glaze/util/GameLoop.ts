@@ -19,19 +19,19 @@ export class GameLoop {
         if (this.updateFunc != null) {
             this.updateFunc(MIN_DELTA, Math.floor(timestamp));
         }
-        this.rafID = window.requestAnimationFrame(this.update);
+        this.rafID = requestAnimationFrame(this.update);
     }
 
     public start() {
         if (this.isRunning == true) return;
         this.isRunning = true;
         this.prevAnimationTime = 0;
-        this.rafID = window.requestAnimationFrame(this.update);
+        this.rafID = requestAnimationFrame(this.update);
     }
 
     public stop() {
         if (this.isRunning == false) return;
         this.isRunning = false;
-        window.cancelAnimationFrame(this.rafID);
+        cancelAnimationFrame(this.rafID);
     }
 }

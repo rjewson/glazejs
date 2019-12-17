@@ -1,5 +1,4 @@
 import { Vector2 } from "../../geom/Vector2";
-import { AABB2 } from "../../geom/AABB2";
 import { AABB } from "../../geom/AABB";
 import { Entity } from "../../ecs/Entity";
 import { Contact, ContactCallback } from "./contact/Contact";
@@ -7,8 +6,9 @@ import { Filter } from "./Filter";
 import { Body } from "../Body";
 
 export class BFProxy {
-    public id: number;
     static nextID: number = 0;
+
+    public id: number;
 
     public aabb: AABB;
 
@@ -37,6 +37,10 @@ export class BFProxy {
         this.id = BFProxy.nextID++;
     }
 
+    static HashBodyIDs(a: number, b: number): number {
+        return a < b ? (a << 16) | b : (b << 16) | a;
+    }
+
     public setBody(body: Body) {
         this.body = body;
         this.aabb.position = body.position;
@@ -47,9 +51,5 @@ export class BFProxy {
         for (const callback of this.contactCallbacks) {
             callback(this, proxy, contact);
         }
-    }
-
-    static HashBodyIDs(a: number, b: number): number {
-        return a < b ? (a << 16) | b : (b << 16) | a;
     }
 }

@@ -45,7 +45,7 @@ export class ChickenSystem extends System {
                     255,
                     255,
                     255,
-                    255,
+                    255
                 );
             }
         } else {
@@ -69,17 +69,16 @@ export class ChickenSystem extends System {
                     255,
                     255,
                     255,
-                    255,
+                    255
                 );
             }
         }
     }
 
-    public scaredOf(entity:Entity) {
-        const position = this.engine.getComponentForEntity(entity,Position);
+    public scaredOf(entity: Entity) {
+        const position = this.engine.getComponentForEntity(entity, Position);
         if (position) {
             this.scaredOfPosition = position;
         }
     }
-
 }

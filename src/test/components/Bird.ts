@@ -6,8 +6,6 @@ export class Bird {
     public nest: Entity;
 
     public  ai:LightStackStateMachine<Entity>;
-    // public  ai2:Behavior;
-    // public  ctx:BehaviorContext;
 
     public delay: IntervalDelay;
     public chaseCheck: IntervalDelay;

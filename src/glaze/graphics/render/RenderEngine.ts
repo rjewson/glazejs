@@ -1,6 +1,7 @@
 import { Stage } from "../displaylist/Stage";
 import { Camera } from "../displaylist/Camera";
 import { AABB2 } from "../../geom/AABB2";
+import { RenderCanvas } from "../../types";
 
 export interface IRenderer {
     Init(gl: WebGLRenderingContext, camera: Camera): void;
@@ -11,7 +12,7 @@ export interface IRenderer {
 export class RendererEngine {
     public stage: Stage;
     public camera: Camera;
-    public view: HTMLCanvasElement;
+    public view: RenderCanvas;
     public width: number;
     public height: number;
 
@@ -22,11 +23,10 @@ export class RendererEngine {
 
     private contextLost: boolean;
 
-
     constructor(
         stage: Stage,
         camera: Camera,
-        view: HTMLCanvasElement,
+        view: RenderCanvas,
         width: number = 800,
         height: number = 600,
         transparent: boolean = false,

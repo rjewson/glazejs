@@ -26,8 +26,8 @@ export class Arrival extends Behavior {
         params: SteeringAgentParameters,
         result: Vector2,
         target: Vector2,
-        arrivalZone: number = 0,
-        seekDist: number = 0,
+        arrivalZone: number,
+        seekDist: number,
     ): boolean {
         var dX: number = target.x - agent.position.x + 0.000001;
         var dY: number = target.y - agent.position.y + 0.000001;

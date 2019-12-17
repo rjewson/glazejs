@@ -2,8 +2,8 @@ import { DigitalInput } from "./util/DigitalInput";
 import { Engine } from "./ecs/Engine";
 import { AssetLoader } from "./util/AssetLoader";
 import { GameLoop } from "./util/GameLoop";
-import { Vector2 } from "./geom/Vector2";
 import { GZE } from "./GZE";
+import { RenderCanvas } from "./types";
 
 export class GlazeEngine {
     public assets: AssetLoader;
@@ -11,24 +11,13 @@ export class GlazeEngine {
     public input: DigitalInput;
     public engine: Engine;
 
-    public canvas: HTMLCanvasElement;
+    public canvas: RenderCanvas;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: RenderCanvas, input: DigitalInput) {
         this.canvas = canvas;
+        this.input = input;
         this.loop = new GameLoop();
         this.loop.updateFunc = this.update.bind(this);
-
-        this.input = new DigitalInput();
-        var rect = canvas.getBoundingClientRect();
-        this.input.InputTarget(document, new Vector2(rect.left, rect.top));
-        // Hackish: if were in an iframe refocus each time we click
-        if ( window.location !== window.parent.location ) {
-            window.onclick = () => {
-                if (!document.hasFocus()) {
-                    window.focus();
-                }
-            };
-        }
         GZE.engine = this.engine = new Engine();
     }
 

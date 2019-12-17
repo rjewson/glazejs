@@ -7,6 +7,7 @@ export class GZE {
     static engine: Engine = null;
 
     static tileSize: number = 16;
+    static maxComponentTypes: number = 128;
     static resolution: Vector2 = new Vector2(1280, 720);
     static bounds: Rectangle;
 

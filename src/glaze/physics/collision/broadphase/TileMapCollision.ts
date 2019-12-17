@@ -38,7 +38,6 @@ export class TileMapCollision {
     public halftilePosition: Vector2 = new Vector2();
     public halftileExtents: Vector2 = new Vector2();
 
-    private workingAABB: AABB = new AABB();
 
     public bias: Vector2 = new Vector2(1, 1);
     public step: Vector2 = new Vector2(0, -1);
@@ -48,6 +47,9 @@ export class TileMapCollision {
 
     public contact: Contact;
     public closestContact: Contact;
+
+
+    private workingAABB: AABB = new AABB();
 
     constructor(data: Bytes2D) {
         this.data = data;

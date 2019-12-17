@@ -3,7 +3,6 @@ import { Position } from "../../core/components/Position";
 import { Entity } from "../../ecs/Entity";
 import { DebugGraphics } from "../components/DebugGraphics";
 import { Extents } from "../../core/components/Extents";
-import { GlazeEngine } from "../../GlazeEngine";
 import { GZE } from "../../GZE";
 
 export class DebugRenderSystem extends System {
