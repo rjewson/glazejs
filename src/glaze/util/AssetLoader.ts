@@ -37,13 +37,6 @@ export class AssetLoader {
         this.loaders.push(loader);
     }
 
-    private LoaderFactory(url: string): ILoader {
-        var extention = url.substring(url.length - 3, url.length);
-        if (extention == "png") return new ImageAsset(this);
-        if (extention == "tmx" || extention == "xml" || extention == "son") return new BlobAsset(this);
-        return null;
-    }
-
     public Load() {
         if (this.running == true || this.loaders.length == 0) return;
         this.completeCount = this.loaders.length;
@@ -58,6 +51,18 @@ export class AssetLoader {
             this.loaded.dispatch();
             this.running = false;
         }
+    }
+
+    private LoaderFactory(url: string): ILoader {
+        var extention = url.substring(url.length - 3, url.length);
+        if (extention == "png") {
+            if (__IN_WORKER__) {
+                return new BlobImage(this);
+            }
+            return new ImageAsset(this);
+        }
+        if (extention == "tmx" || extention == "xml" || extention == "son") return new BlobAsset(this);
+        return null;
     }
 }
 
@@ -94,6 +99,33 @@ class ImageAsset implements ILoader {
         return this.url;
     }
 
+    public getValue(): any {
+        return this.image;
+    }
+}
+
+class BlobImage implements ILoader {
+
+    public image: ImageBitmap;
+    public url: string;
+    public mgr: AssetLoader;
+
+    constructor(mgr: AssetLoader) {
+        this.mgr = mgr;
+    }
+
+    public async Init(url: string) {
+        this.url = url;
+        const response = await fetch(url);
+        const blob = await response.blob();
+        this.image = await createImageBitmap(blob);
+        this.mgr.onLoad(this);
+    }
+    public Load(): void {
+    }
+    public getKey(): string {
+        return this.url;
+    }
     public getValue(): any {
         return this.image;
     }

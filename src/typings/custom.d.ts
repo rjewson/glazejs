@@ -13,3 +13,4 @@ declare module "*.glsl" {
 }
 
 declare const __IN_DEBUG__: boolean;
+declare const __IN_WORKER__: boolean;

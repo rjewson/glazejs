@@ -130,10 +130,10 @@ export class TileMapCollision {
                             //-4,+4
                             //+4,-4
                             //step 8
-                            const stairstep = 2;
+                            const stairstep = 4;
                             // var stairSize = 4;
                             // var startStair = -6;
-                            for (var stair = 0; stair < 8; stair++) {
+                            for (var stair = 0; stair <= 8; stair++) {
                                 const p = 8 - stair * stairstep;
                                 this.halftilePosition.copy(this.tilePosition);
                                 this.halftilePosition.x += p * -1;

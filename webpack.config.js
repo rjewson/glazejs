@@ -17,6 +17,10 @@ module.exports = {
                 test: /\.(glsl|vs|fs)$/,
                 loader: 'ts-shader-loader'
             },
+            {
+                test: /\.worker\.js$/,
+                use: { loader: 'worker-loader' }
+            }
         ],
     },
     resolve: {

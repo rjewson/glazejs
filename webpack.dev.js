@@ -14,6 +14,7 @@ module.exports = merge(common, {
     plugins: [ 
         new webpack.DefinePlugin({
             __IN_DEBUG__: JSON.stringify(true),
+            __IN_WORKER__: JSON.stringify(false),
         }),
     ],
 });

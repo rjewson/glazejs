@@ -20,9 +20,15 @@ export class DigitalInput {
 
     private frameRef: number;
     private target: EventTarget;
+    private proxyMode: boolean = false;
 
     constructor(array: Uint32Array = null) {
-        this.sharedArray = array || new Uint32Array(new ArrayBuffer(BufferSize));
+        if (array) {
+            this.proxyMode = true;
+            this.sharedArray = array;
+        } else {
+            this.sharedArray = new Uint32Array(new ArrayBuffer(BufferSize));
+        }
         
         for (var i = 0; i < MapSize; i++) {
             this.sharedArray[i] = 0;
@@ -30,7 +36,8 @@ export class DigitalInput {
         this.mousePosition = new Vector2();
         this.mousePreviousPosition = new Vector2();
         this.mouseOffset = new Vector2();
-        this.frameRef = 2;
+        this.sharedArray[FrameRef] = 2;
+        // this.frameRef = 2;
     }
 
     public InputTarget(target: EventTarget, inputCorrection: Vector2): void {
@@ -55,8 +62,8 @@ export class DigitalInput {
     public Update(x: number, y: number): void {
         this.mouseOffset.x = x;
         this.mouseOffset.y = y;
-        this.frameRef++;
-        this.sharedArray[FrameRef] = this.frameRef;
+        //this.frameRef++;
+        this.sharedArray[FrameRef]++;// = this.frameRef;
         // mousePreviousPosition.x = mousePosition.x;
         // mousePreviousPosition.y = mousePosition.y;
         // mousePosition.x = target.mouseX + screenOffset.x;
@@ -65,7 +72,7 @@ export class DigitalInput {
 
     public KeyDown(event: KeyboardEvent): void {
         if (this.sharedArray[event.keyCode] == 0) {
-            this.sharedArray[event.keyCode] = this.frameRef;
+            this.sharedArray[event.keyCode] = this.sharedArray[FrameRef];
         }
         event.preventDefault();
     }
@@ -76,7 +83,7 @@ export class DigitalInput {
     }
 
     public MouseDown(event: KeyboardEvent): void {
-        this.sharedArray[PlayerInputA] = this.frameRef;
+        this.sharedArray[PlayerInputA] = this.sharedArray[FrameRef];
         event.preventDefault();
     }
 
@@ -106,12 +113,12 @@ export class DigitalInput {
     }
 
     public JustPressed(keyCode: number): boolean {
-        return this.sharedArray[keyCode] == this.frameRef - 1;
+        return this.sharedArray[keyCode] == this.sharedArray[FrameRef] - 1;
     }
 
     public PressedDuration(keyCode: number): number {
         var duration = this.sharedArray[keyCode];
-        return duration > 0 ? this.frameRef - duration : -1;
+        return duration > 0 ? this.sharedArray[FrameRef] - duration : -1;
     }
 
     public Released(keyCode: number): boolean {

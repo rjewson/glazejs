@@ -144,8 +144,8 @@ export class GameTestA extends GlazeEngine {
         const camera = new Camera();
         camera.worldExtentsAABB = cameraRange;
 
-        const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
-        GZE.debuggingRender = new CanvasDebugRenderer(debugCanvas, camera, GZE.resolution);
+        // const debugCanvas: HTMLCanvasElement = document.getElementById("viewDebug") as HTMLCanvasElement;
+        // GZE.debuggingRender = new CanvasDebugRenderer(debugCanvas, camera, GZE.resolution);
 
         const collisionData = LayerToCollisionData(
             TMXdecodeLayer(GetLayer(tmxMap, "Collision")),
@@ -179,7 +179,8 @@ export class GameTestA extends GlazeEngine {
 
         const messageBus = new MessageBus();
         // Just a hack for dev
-        (window as any).mb = messageBus;
+        // TODO
+        // (window as any).mb = messageBus;
 
         const corePhase = new Phase();
         this.engine.addPhase(corePhase);

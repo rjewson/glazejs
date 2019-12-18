@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "buildApp": "webpack --config webpack.app.js",
     "watch": "webpack --watch",
     "dev": "webpack-serve --hmr false ./webpack.dev.js",
     "validate-typescript": "tsc --noEmit",
