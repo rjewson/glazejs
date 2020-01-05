@@ -16,6 +16,7 @@ import vertexShader from "./shaders/lighting.vert.glsl";
 import fragmentShader from "./shaders/lighting.frag.glsl";
 
 const BYTES_PER_QUAD = 8 * 4;
+const LIGHTS_PER_SIZE = 50;
 
 const fragmentShaderFactory = (count, ratio) => {
     return fragmentShader.replace("${count}", count).replace("${ratio}", ratio);
@@ -76,12 +77,12 @@ export class LightRenderer implements IRenderer {
         this.resolution = new Vector2();
         this.sprite = new Sprite();
         this.sprite.id = "lightTexture";
-        this.ResizeBatch(this.ranges.length * 20);
+        this.ResizeBatch(this.ranges.length * LIGHTS_PER_SIZE);
         this.lightGroups = this.ranges.map(
             range =>
                 new LightGroup(
                     range,
-                    20,
+                    LIGHTS_PER_SIZE,
                     new ShaderWrapper(
                         gl,
                         WebGLShaderUtils.CompileProgram(

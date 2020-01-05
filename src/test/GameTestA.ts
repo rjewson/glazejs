@@ -93,6 +93,7 @@ import { RandomSign, RandomInteger } from "../glaze/util/Random";
 import { BirdNest } from "./components/BirdNest";
 import { DigitalInput } from "../glaze/util/DigitalInput";
 import { RenderCanvas } from "../glaze/types";
+import { DamageSytem } from "../glaze/core/systems/DamageSystem";
 
 interface GlazeMapLayerConfig {}
 
@@ -211,6 +212,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(this.fixedViewManagementSystem);
 
         corePhase.addSystem(new AgeSystem());
+        corePhase.addSystem(new DamageSytem());
         corePhase.addSystem(new HealthSystem());
         corePhase.addSystem(new CollsionCountSystem());
         corePhase.addSystem(new EnvironmentForceSystem());
@@ -219,8 +221,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new BirdNestSystem());
         corePhase.addSystem(new BirdSystem(CombatUtils.bfAreaQuery));
 
-        const chickenSystem = new ChickenSystem(blockParticleEngine);
-        corePhase.addSystem(chickenSystem);
+        const chickenSystem = corePhase.addSystem(new ChickenSystem(blockParticleEngine));
         corePhase.addSystem(new GunTurretSystem());
 
         corePhase.addSystem(new WaterSystem(blockParticleEngine));

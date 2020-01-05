@@ -23,6 +23,8 @@ import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { State } from "../../../glaze/core/components/State";
 import { CombatUtils } from "../../../glaze/util/CombatUtils";
 import { FireBall } from "../../../glaze/particle/emitter/FireBall";
+import { Light } from "../../../glaze/graphics/components/Light";
+import { Viewable } from "../../../glaze/core/components/Viewable";
 
 export class PlasmaBall {
     static states: SimpleFSMStates = {
@@ -58,7 +60,9 @@ export class PlasmaBall {
             new State(PlasmaBall.states, null, false),
             new CollisionCounter(1, "destroy"),
             new Health(10, 10, 0, "destroy"),
-            new Age(1000, "destroy"),
+            new Age(2000, "destroy"),
+            new Light(160, 1, 1, 1, 255, 255, 255, 0),
+            new Viewable(),
             new Active(),
         ]);
         Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 600);

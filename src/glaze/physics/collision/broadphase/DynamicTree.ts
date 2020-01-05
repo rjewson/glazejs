@@ -49,7 +49,6 @@ export class DynamicTree {
         this.tempBounds = new AABB2();
         this.nodePool = new Pool(() => new TreeNode());
         this.nodePool.addCapacity(10000);
-        const a = '';
     }
 
     private insertNode(leaf: TreeNode): void {

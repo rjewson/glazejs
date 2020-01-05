@@ -9,9 +9,10 @@ export class Phase {
         this.systems = [];
     }
 
-    public addSystem(system: System) {
+    public addSystem(system: System): System {
         this.engine.addPhaseSystemToEngine(system);
         this.systems.push(system);
+        return system;
     }
 
     public updatePhase(dt: number, timestamp: number) {

@@ -25,7 +25,7 @@ const ONE_WAY_TOLLERANCE: number = -4.0;
 const CORRECTION: number = 0.0;
 const ROUNDDOWN: number = 0.01;
 const ROUNDUP: number = 0.5;
-
+const STAIR_OFFSETS = [new Vector2(-4,4), new Vector2(4,-4)];
 export class TileMapCollision {
     public tileSize: number;
     public tileHalfSize: number;
@@ -37,6 +37,7 @@ export class TileMapCollision {
 
     public halftilePosition: Vector2 = new Vector2();
     public halftileExtents: Vector2 = new Vector2();
+    public halftileStairExtents: Vector2 = new Vector2();
 
 
     public bias: Vector2 = new Vector2(1, 1);
@@ -57,6 +58,8 @@ export class TileMapCollision {
         this.tileHalfSize = this.tileSize / 2;
         this.tileExtents.setTo(this.tileHalfSize, this.tileHalfSize);
         this.halftileExtents.setTo(this.tileHalfSize / 4, this.tileHalfSize / 4);
+        this.halftileStairExtents.setTo(this.tileHalfSize / 8, this.tileHalfSize / 8);
+
         this.contact = new Contact();
         this.closestContact = new Contact();
     }
@@ -133,16 +136,18 @@ export class TileMapCollision {
                             const stairstep = 4;
                             // var stairSize = 4;
                             // var startStair = -6;
-                            for (var stair = 0; stair <= 8; stair++) {
-                                const p = 8 - stair * stairstep;
+                            for (var stair = 0; stair <2 ; stair++) {
+                                const stairOffset = STAIR_OFFSETS[stair];
+                                // const p = 8 - stair * stairstep;
                                 this.halftilePosition.copy(this.tilePosition);
-                                this.halftilePosition.x += p * -1;
-                                this.halftilePosition.y += p;
+                                this.halftilePosition.plusEquals(stairOffset);
+                                // this.halftilePosition.x += p * -1;
+                                // this.halftilePosition.y += p;
                                 if (
                                     IsSegVsAABB(
                                         this.segment,
                                         this.halftilePosition,
-                                        this.halftileExtents,
+                                        this.halftileStairExtents,
                                         proxy.aabb.extents.x,
                                         proxy.aabb.extents.y
                                     )
@@ -151,7 +156,7 @@ export class TileMapCollision {
                                         body.position,
                                         proxy.aabb.extents,
                                         this.halftilePosition,
-                                        this.halftileExtents,
+                                        this.halftileStairExtents,
                                         this.step,
                                         this.contact
                                     );

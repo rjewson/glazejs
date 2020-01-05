@@ -1,8 +1,7 @@
 import { IParticleEmitter } from "./IParticleEmitter";
 import { Vector2 } from "../../geom/Vector2";
-import { RandomFloat, RandomInteger, RandomSign } from "../../util/Random";
+import { RandomInteger, RandomSign } from "../../util/Random";
 import { GetC4E } from "../../ecs/Engine";
-import { PhysicsBody } from "../../physics/components/PhysicsBody";
 import { IParticleEngine } from "../engines/types";
 
 export class SpriteFireBall implements IParticleEmitter {
@@ -15,9 +14,11 @@ export class SpriteFireBall implements IParticleEmitter {
     }
 
     update(time: number, c4e: GetC4E, position: Vector2, particleEngine: IParticleEngine) {
-        const velocity = c4e(PhysicsBody).body.velocity;
         particleEngine.EmitParticle(
-            position.x,position.y,velocity.x,velocity.y,
+            position.x,
+            position.y,
+            0,
+            0,
             0,
             0,
             1000,

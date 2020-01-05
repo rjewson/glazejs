@@ -32,9 +32,10 @@ export class StandardBullet {
         alive: function(engine: Engine, entity: Entity) {},
         destroy: function(engine: Engine, entity: Entity) {
             if (engine.getComponentForEntity(entity, Destroy)) return;
-            engine.addComponentsToEntity(entity, [new Destroy(1)]);
+            engine.addComponentsToEntity(entity, [new Destroy(3), new Light(64, 1, 1, 1, 255, 255, 255)]);
+            engine.removeComponentsFromEntityByType(entity, [PhysicsBody]);
             engine.getComponentForEntity(entity, SpriteParticleEmitter).emitters.push(new SpriteFireBall(4, 80));
-            CombatUtils.explode(engine.getComponentForEntity(entity, Position).coords, 100, 10000, entity);
+            CombatUtils.explode(engine.getComponentForEntity(entity, Position).coords, 100, 4000, entity);
         },
     };
     static create(engine: Engine, position: Position, filter: Filter, targetPosition: Vector2): Entity {
