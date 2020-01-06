@@ -76,6 +76,9 @@ export class LightRenderer implements IRenderer {
         this.dataBuffer = gl.createBuffer();
         this.resolution = new Vector2();
         this.sprite = new Sprite();
+        this.sprite.blendEquation = WebGLRenderingContext.FUNC_ADD;
+        this.sprite.blendFuncS = WebGLRenderingContext.ONE; //DST_COLOR;
+        this.sprite.blendFuncD = WebGLRenderingContext.ONE_MINUS_SRC_ALPHA; //ZERO;
         this.sprite.id = "lightTexture";
         this.ResizeBatch(this.ranges.length * LIGHTS_PER_SIZE);
         this.lightGroups = this.ranges.map(

@@ -121,6 +121,8 @@ export class WebGLBatch {
                     this.Flush(shader, currentTexture, indexRun);
                     indexRun = 0;
                     currentTexture = sprite.texture.baseTexture.texture;
+                    this.gl.blendEquation(sprite.blendEquation);
+                    this.gl.blendFunc(sprite.blendFuncS, sprite.blendFuncD);
                 }
                 //if (clip == null || sprite.aabb.intersect(clip)) {
                 this.AddSpriteToBatch(sprite, indexRun);

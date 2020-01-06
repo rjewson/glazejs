@@ -6,8 +6,8 @@ export class Sprite extends DisplayObjectContainer {
     public anchor: Vector2;
     public texture: Texture;
     public blendEquation: number;
-    public blendFuncRGB: number;
-    public blendFuncA: number;
+    public blendFuncS: number;
+    public blendFuncD: number;
 
     public transformedVerts: Float32Array;
 
@@ -17,8 +17,8 @@ export class Sprite extends DisplayObjectContainer {
         this.anchor = new Vector2();
         this.transformedVerts = new Float32Array(8);
         this.blendEquation = WebGLRenderingContext.FUNC_ADD;
-        this.blendFuncRGB = WebGLRenderingContext.ONE;
-        this.blendFuncA = WebGLRenderingContext.ZERO;
+        this.blendFuncS = WebGLRenderingContext.SRC_ALPHA;
+        this.blendFuncD = WebGLRenderingContext.ONE_MINUS_SRC_ALPHA;
     }
 
     public calcExtents() {

@@ -22,6 +22,7 @@ button {
     position: relative;
     min-width: 1280px;
     min-height: 800px;
+    contain: content;
 }
 
 #view {
