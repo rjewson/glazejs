@@ -40,9 +40,9 @@ export class LightGroup {
         nextLight.x = x;
         nextLight.y = y;
         nextLight.intensity = intensity;
-        nextLight.red = red;
-        nextLight.green = green;
-        nextLight.blue = blue;
+        nextLight.red = red * 255;
+        nextLight.green = green * 255;
+        nextLight.blue = blue * 255;
         nextLight.arc = arc;
         nextLight.angle = angle;
     }

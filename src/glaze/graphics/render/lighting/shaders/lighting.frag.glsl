@@ -58,8 +58,10 @@ void main(void) {
         //     // col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
         // }
     }
-
-    gl_FragColor.a = clamp(obs,0.,1.);
+    float addition = clamp(obs,0.,1.);
+    gl_FragColor = vec4(1.,1.,1.,1.) * addition;
+    // gl_FragColor.rgb = vec3(colour*0.8,0.,0.);//colour*0.8,colour*0.8);
+    // gl_FragColor.a = clamp(obs,0.,1.);
     // gl_FragColor.rgb = vec3(1.,0.,0.); // vColor.rgb
     // gl_FragColor = vec4(1.,1.,1.,1.0-d);
 

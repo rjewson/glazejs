@@ -77,8 +77,8 @@ export class LightRenderer implements IRenderer {
         this.resolution = new Vector2();
         this.sprite = new Sprite();
         this.sprite.blendEquation = WebGLRenderingContext.FUNC_ADD;
-        this.sprite.blendFuncS = WebGLRenderingContext.ONE; //DST_COLOR;
-        this.sprite.blendFuncD = WebGLRenderingContext.ONE_MINUS_SRC_ALPHA; //ZERO;
+        this.sprite.blendFuncS = WebGLRenderingContext.DST_COLOR;
+        this.sprite.blendFuncD = WebGLRenderingContext.ZERO;
         this.sprite.id = "lightTexture";
         this.ResizeBatch(this.ranges.length * LIGHTS_PER_SIZE);
         this.lightGroups = this.ranges.map(
@@ -171,7 +171,7 @@ export class LightRenderer implements IRenderer {
                 x += this.tileSize * 2;
                 y += this.tileSize * 2;
 
-                const colour = (light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
+                const colour = 0x10000000; //(light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
                 const angleX = Math.cos(light.angle);
                 const angleY = Math.sin(light.angle);
                 const arc = light.arc; // 1; // 1;
@@ -261,12 +261,14 @@ export class LightRenderer implements IRenderer {
     }
 
     private renderSurface() {
-        this.gl.clearColor(0.0, 0.0, 0.0, this.backgroundLight);
-        this.gl.colorMask(true, true, true, true);
+        // this.gl.clearColor(0.0, 0.0, 0.0, this.backgroundLight);
+        this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 0.0);
+
+        this.gl.colorMask(true, true, true, false);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
-        this.gl.blendFunc(WebGLRenderingContext.ZERO, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+        this.gl.blendFunc(WebGLRenderingContext.ONE_MINUS_DST_COLOR, WebGLRenderingContext.ONE);
         // Source = from shader
         // Dest = target framebuffer
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);

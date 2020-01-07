@@ -85,8 +85,13 @@ export class PointBlockParticleRender implements IRenderer {
         if (this.indexRun == 0) return;
 
         this.gl.useProgram(this.pointSpriteShader.program);
+        
+        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
+        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, this.data,WebGLRenderingContext.DYNAMIC_DRAW);
+        
         // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);
 
         this.gl.enableVertexAttribArray(this.pointSpriteShader.attribute.position);
