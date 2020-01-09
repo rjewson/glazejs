@@ -35,7 +35,9 @@ export class LightRenderer implements IRenderer {
     public indices: Uint16Array;
 
     public dataBuffer: WebGLBuffer;
+    public arrayBuffer: ArrayBuffer
     public data: Float32Array;
+    public data8: Uint8ClampedArray;
 
     public quadVerts = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
 
@@ -105,7 +107,10 @@ export class LightRenderer implements IRenderer {
     public ResizeBatch(size: number) {
         this.size = size;
 
-        this.data = new Float32Array(this.size * BYTES_PER_QUAD);
+        this.arrayBuffer = new ArrayBuffer(this.size * BYTES_PER_QUAD);
+        this.data = new Float32Array(this.arrayBuffer);
+        this.data8 = new Uint8ClampedArray(this.arrayBuffer);
+
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, this.data, WebGLRenderingContext.DYNAMIC_DRAW);
 
@@ -160,7 +165,7 @@ export class LightRenderer implements IRenderer {
             for (let lightIndex = 0; lightIndex < lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
                 const index = lightCount * BYTES_PER_QUAD;
-
+                let index8 = index * 4;
                 const intensity = light.intensity + this.halfTileSize;
                 const size = light.intensity / this.tileSize;
 
@@ -171,7 +176,10 @@ export class LightRenderer implements IRenderer {
                 x += this.tileSize * 2;
                 y += this.tileSize * 2;
 
-                const colour = 0x10000000; //(light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
+                // const colour = 0x10000000; //(light.red << 24) | (light.green << 16) | (light.blue << 8) | 0;
+                // light.red = 255;
+                // light.green = 0;
+                // light.blue = 0;
                 const angleX = Math.cos(light.angle);
                 const angleY = Math.sin(light.angle);
                 const arc = light.arc; // 1; // 1;
@@ -184,7 +192,11 @@ export class LightRenderer implements IRenderer {
                 this.data[index + 2] = this.quadVerts[0] * size;
                 this.data[index + 3] = this.quadVerts[1] * size;
                 //Colour
-                this.data[index + 4] = colour;
+                //this.data[index + 4] = colour;
+                this.data8[index8 + 16] = light.red;
+                this.data8[index8 + 17] = light.green;
+                this.data8[index8 + 18] = light.blue;
+                this.data8[index8 + 19] = 1;
                 //Cone
                 this.data[index + 5] = angleX;
                 this.data[index + 6] = angleY;
@@ -198,7 +210,11 @@ export class LightRenderer implements IRenderer {
                 this.data[index + 10] = this.quadVerts[2] * size;
                 this.data[index + 11] = this.quadVerts[3] * size;
                 //Colour
-                this.data[index + 12] = colour;
+                //this.data[index + 12] = colour;
+                this.data8[index8 + 48] = light.red;
+                this.data8[index8 + 49] = light.green;
+                this.data8[index8 + 50] = light.blue;
+                this.data8[index8 + 51] = 1;
                 //Cone
                 this.data[index + 13] = angleX;
                 this.data[index + 14] = angleY;
@@ -212,7 +228,11 @@ export class LightRenderer implements IRenderer {
                 this.data[index + 18] = this.quadVerts[4] * size;
                 this.data[index + 19] = this.quadVerts[5] * size;
                 //Colour
-                this.data[index + 20] = colour;
+                //this.data[index + 20] = colour;
+                this.data8[index8 + 80] = light.red;
+                this.data8[index8 + 81] = light.green;
+                this.data8[index8 + 82] = light.blue;
+                this.data8[index8 + 83] = 1;
                 //Cone
                 this.data[index + 21] = angleX;
                 this.data[index + 22] = angleY;
@@ -226,7 +246,11 @@ export class LightRenderer implements IRenderer {
                 this.data[index + 26] = this.quadVerts[6] * size;
                 this.data[index + 27] = this.quadVerts[7] * size;
                 //Colour
-                this.data[index + 28] = colour;
+                //this.data[index + 28] = colour;
+                this.data8[index8 + 112] = light.red;
+                this.data8[index8 + 113] = light.green;
+                this.data8[index8 + 114] = light.blue;
+                this.data8[index8 + 115] = 1;
                 //Cone
                 this.data[index + 29] = angleX;
                 this.data[index + 30] = angleY;
@@ -261,14 +285,14 @@ export class LightRenderer implements IRenderer {
     }
 
     private renderSurface() {
-        // this.gl.clearColor(0.0, 0.0, 0.0, this.backgroundLight);
+        // this.gl.clearColor(1.0, 1.0, 1.0, 1-this.backgroundLight);
         this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 0.0);
 
         this.gl.colorMask(true, true, true, false);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
-        this.gl.blendFunc(WebGLRenderingContext.ONE_MINUS_DST_COLOR, WebGLRenderingContext.ONE);
+        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
         // Source = from shader
         // Dest = target framebuffer
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);

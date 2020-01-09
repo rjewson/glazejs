@@ -50,19 +50,7 @@ void main(void) {
         vec4 tile = texture2D(uSampler, floor(mix(centerPos, currentPos, stepPos)) * scaledTilesSize);
         float obsMult = float(all(lessThan(tile.xy, EMPTY_TILE)));
         obs -= m * obsMult;
-        // stepPos -= INV_PATH_TRACKING_SAMPLES * 0.9 * obsMult;
-        
-        // if (all(lessThan(tile.xy, EMPTY_TILE))) {
-        //     obs -= m;
-        //     // obs *= m;
-        //     // col *= saturate(1 - (1 - obstacle)*obstacle.a*m);
-        // }
     }
     float addition = clamp(obs,0.,1.);
-    gl_FragColor = vec4(1.,1.,1.,1.) * addition;
-    // gl_FragColor.rgb = vec3(colour*0.8,0.,0.);//colour*0.8,colour*0.8);
-    // gl_FragColor.a = clamp(obs,0.,1.);
-    // gl_FragColor.rgb = vec3(1.,0.,0.); // vColor.rgb
-    // gl_FragColor = vec4(1.,1.,1.,1.0-d);
-
+    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,addition); // vec4(1.,1.,1.,addition);// * addition;
 }
