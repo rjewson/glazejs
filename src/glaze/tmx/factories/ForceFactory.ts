@@ -14,13 +14,14 @@ export class ForceFactory {
     static mapping: string = "Force";
 
     static createTMXEntity(engine:Engine, object: TMXObject): Entity {
-        const entity = engine.createEntity();
+        // debugger;
+        const entity = engine.createEntity(object.name);
         var components = [];
         components.push(TMXObjectPosition(object));
         components.push(TMXObjectExtents(object));
         components.push(new PhysicsCollision(true, null, []));
         components.push(new Fixed());
-        components.push(new Active());
+        components.push(new Active(true));
 
         var forceDataArray: Array<ForceData> = [];
         object.properties.forEach((prop) => {

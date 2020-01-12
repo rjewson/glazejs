@@ -53,8 +53,8 @@ export class WindSystem extends System {
                 1,
                 RandomInteger(200, 400),
                 1,
-                true,
-                true,
+                false,
+                false,
                 null,
                 4,
                 255,
@@ -62,7 +62,6 @@ export class WindSystem extends System {
                 255,
                 255,
             );
-
             //particleEngine.EmitParticle(RandomFloat(proxy.aabb.l,proxy.aabb.r),RandomFloat(proxy.aabb.t,proxy.aabb.b),RandomFloat(-20,20),RandomFloat(-20,20),0,1,1000,1,true,true,null,4,255,255,255,255);
             wind.particleCount--;
         }

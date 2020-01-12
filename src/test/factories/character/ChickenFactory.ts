@@ -12,10 +12,10 @@ import { PhysicsCollision } from "../../../glaze/physics/components/PhysicsColli
 import { PhysicsBody } from "../../../glaze/physics/components/PhysicsBody";
 import { Moveable } from "../../../glaze/core/components/Moveable";
 import { Active } from "../../../glaze/core/components/Active";
-import { Light } from "../../../glaze/graphics/components/Light";
 import { Viewable } from "../../../glaze/core/components/Viewable";
 import { Filter } from "../../../glaze/physics/collision/Filter";
 import { Chicken } from "../../components/Chicken";
+import { TestFilters } from "../../config/Filters";
 
 export class ChickenFactory {
     static states: SimpleFSMStates = {
@@ -39,14 +39,11 @@ export class ChickenFactory {
             new Extents(12, 12),
             new Graphics("chicken"),
             new GraphicsAnimation("chicken", "walk"),
-            new PhysicsCollision(false, new Filter(0x1, 0xffffffff, 0x1), []),
+            new PhysicsCollision(false, new Filter(0x1, 0xffffffff, TestFilters.CHICKEN_GROUP), []),
             new PhysicsBody(chickenBody, true),
             new Moveable(),
             new Active(),
-            // new Light(64, 1, 1, 1, 255, 255, 255),
             new Viewable(),
-            // new Controllable(150),
-            // new ParticleEmitter([new Explosion(4,100)])
         ]);
         return chicken;
     }

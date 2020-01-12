@@ -16,6 +16,9 @@ export class TestFilters {
     static ENEMY_GROUP: number = -2;
     static TURRET_GROUP: number = -3;
     static BIRD_GROUP: number = -3;
+    static CHICKEN_GROUP: number = -4;
+    static BEE_GROUP: number = -5;
+
 
     static SOLID_OBJECT_GROUP: number = 1; //e.g. Doors
 }

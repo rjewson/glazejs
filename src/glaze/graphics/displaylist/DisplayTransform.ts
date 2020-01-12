@@ -1,6 +1,7 @@
 import { Vector2 } from "../../geom/Vector2";
 import { Create } from "../../geom/Matrix3";
 import { AABB2 } from "../../geom/AABB2";
+import { Texture } from "../texture/Texture";
 
 export class DisplayTransform {
     public id: string;

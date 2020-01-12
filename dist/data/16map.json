@@ -60,7 +60,7 @@
          "name":"Collision",
          "opacity":0.47,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":200,
          "x":0,
          "y":0
@@ -84,7 +84,7 @@
                 {
                  "height":120,
                  "id":5,
-                 "name":"Force",
+                 "name":"Wind Up",
                  "properties":[
                         {
                          "name":"config0",
@@ -101,7 +101,7 @@
                 {
                  "height":120,
                  "id":8,
-                 "name":"Force",
+                 "name":"Wind Tunnel Down",
                  "properties":[
                         {
                          "name":"config0",
@@ -118,7 +118,7 @@
                 {
                  "height":40,
                  "id":12,
-                 "name":"Force",
+                 "name":"Wind Tunnel Right",
                  "properties":[
                         {
                          "name":"config0",
@@ -135,7 +135,7 @@
                 {
                  "height":160,
                  "id":13,
-                 "name":"Force",
+                 "name":"Wind Tunnel Up",
                  "properties":[
                         {
                          "name":"config0",
@@ -206,7 +206,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 

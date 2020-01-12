@@ -7,23 +7,25 @@ export class BitVector {
     }
 
     public get(index: number) {
-        const i = Math.floor(index / 32);
-        return !!(this.values[i] & (1 << (index - i * 32)));
+        const r = index % 32;
+        const pos = (index - r) / 32;
+        return !!(this.values[pos] & (1 << r));
     }
 
     public set(index: number, value: boolean) {
-        const i = Math.floor(index / 32);
-        // Since "undefined | 1 << index" is equivalent to "0 | 1 << index" we do not need to initialise the array explicitly here.
+        const r = index % 32;
+        const pos = (index - r) / 32;
         if (value) {
-            this.values[i] |= 1 << (index - i * 32);
+            this.values[pos] |= (1 << r);
         } else {
-            this.values[i] &= ~(1 << (index - i * 32));
+            this.values[pos] &= ~(1 << r);
         }
     }
 
     public maskAll(mask: BitVector) {
         for (var i = 0; i < this.size; i++) {
             const maskWord = mask.values[i];
+            // FIXME Bug with 32'nd position
             if ((maskWord & this.values[i]) !== maskWord) {
                 return false;
             }

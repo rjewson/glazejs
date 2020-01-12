@@ -12,16 +12,15 @@ uniform float tileSize;
 
 void main(void) {
     vec4 tile = texture2D(tiles, texCoord);
-    // if(tile.x == 1.0 && tile.y == 1.0) { discard; }
     if (tile.x == 1.0 && tile.y == 1.0) { 
         discard;
-        // gl_FragColor = vec4(0.0,0.0,0.0,0.0);
     } else {
         vec2 superSpriteOffset = floor(tile.zw * 256.0) * 256.0;
         vec2 spriteOffset = floor(tile.xy * 256.0) * tileSize;
         vec2 spriteCoord = mod(pixelCoord, tileSize);
 
-        //Works
+        // TODO?
+        // Way to flip the tile. Works.
         //    spriteCoord.x = (-1.0+(2.0* 0.0)) * (( 0.0*tileSize) - spriteCoord.x); //normal  0
         //    spriteCoord.x = (-1.0+(2.0* 1.0)) * (( 1.0*tileSize) - spriteCoord.x); //flip   1
 

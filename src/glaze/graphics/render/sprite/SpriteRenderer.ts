@@ -20,8 +20,6 @@ export class SpriteRenderer implements IRenderer {
 
     public spriteBatch: WebGLBatch;
 
-    public first: boolean = true;
-
     constructor() {}
 
     public Init(gl: WebGLRenderingContext, camera: Camera) {

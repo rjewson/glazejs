@@ -3,7 +3,7 @@ precision mediump float;
 const int PATH_TRACKING_SAMPLES = ${count};
 const float INV_PATH_TRACKING_SAMPLES = 1.0 / float(PATH_TRACKING_SAMPLES);
 const vec2 EMPTY_TILE = vec2(1.0, 1.0);
-const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio}); // 0.5;
+const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio});
 
 uniform sampler2D uSampler;
 uniform vec2 viewOffset;
@@ -33,7 +33,7 @@ void main(void) {
     // Torch
     float cone = 1.;
     if (bool(vArc.z)) {
-        vec2 dir = vArc.xy; // vec2(1.,0.);
+        vec2 dir = vArc.xy;
         float projection = dot(dir, normalize(fragToCenterPos));
         cone *= smoothstep(0.5 ,0.7, projection);
         // cone *= float( projection < 0.8 );
@@ -52,5 +52,5 @@ void main(void) {
         obs -= m * obsMult;
     }
     float addition = clamp(obs,0.,1.);
-    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,addition); // vec4(1.,1.,1.,addition);// * addition;
+    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,addition);
 }

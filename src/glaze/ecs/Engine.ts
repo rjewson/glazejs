@@ -129,10 +129,15 @@ export class Engine {
     private createComponentEntryFromType(componentType: ComponentType<Component>): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
-            const id = this.nextTypeId++;
+            let id = this.nextTypeId++;
+            // We cannot use the top bit in JS?
+            if (id%32==0) {
+                id = this.nextTypeId++;
+            }
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
             componentType.prototype[ComponentIDName] = id;
+            console.log(name + "=" + id);
         }
         return name;
     }
@@ -166,6 +171,10 @@ export class Engine {
 
     private matchEntityBitMask(entity: Entity, matchMask: BitVector) {
         for (const system of this.systems) {
+            // if (system.db && this.getComponentForEntity(entity, Wind)) {
+            //     console.log(this.getComponentForEntity(entity, MetaData));
+            //     //debugger;
+            // }
             if (matchMask.maskAll(system.matchMask)) {
             //if (system.matchMask.maskAll(matchMask)) {
                 system.addEntity(entity, this.entityComponentsForSystem(entity, system));
