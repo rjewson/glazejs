@@ -94,6 +94,7 @@ import { BirdNest } from "./components/BirdNest";
 import { DigitalInput } from "../glaze/util/DigitalInput";
 import { RenderCanvas } from "../glaze/types";
 import { DamageSytem } from "../glaze/core/systems/DamageSystem";
+import { ChickenFactory } from "./factories/character/ChickenFactory";
 
 interface GlazeMapLayerConfig {}
 
@@ -384,6 +385,23 @@ export class GameTestA extends GlazeEngine {
                 // ()=>{debugger;},
                 throttle(() => {
                     messageBus.trigger("doorA", {});
+                }, 1000)
+            ]),
+            new Fixed(),
+            new Active(),
+            new TileGraphics("switchOff")
+        ]);
+
+        const chickenSwitch = this.engine.createEntity();
+        this.engine.addComponentsToEntity(chickenSwitch, [
+            this.mapPosition(29.5, 51.5),
+            new Extents(8, 8),
+            new PhysicsCollision(false, new Filter(), [
+                // ()=>{debugger;},
+                throttle(() => {
+                    const chicken = ChickenFactory.create(this.engine, new Position(50 * GZE.tileSize, 53.5 * GZE.tileSize));
+                    const physics = this.engine.getComponentForEntity(chicken, PhysicsBody);
+                    physics.body.addForce(new Vector2(0, RandomInteger(-60000, -30000)));
                 }, 1000)
             ]),
             new Fixed(),

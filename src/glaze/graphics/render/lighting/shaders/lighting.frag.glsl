@@ -25,8 +25,8 @@ void main(void) {
 
     float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
 
-    float light = 1. - d; // Linear
-    
+    // Light power model.
+    float light = 1. - d; // Linear drop off
     // float light = pow(1. - d, 5.); // Ease in
     // float light = 1. - pow(1. - (1. - d), 3.); // Ease out
 

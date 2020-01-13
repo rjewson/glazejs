@@ -285,14 +285,17 @@ export class LightRenderer implements IRenderer {
     }
 
     private renderSurface() {
-        // this.gl.clearColor(1.0, 1.0, 1.0, 1-this.backgroundLight);
+        // this.gl.clearColor(0,0,0,0);
         this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 0.0);
 
         this.gl.colorMask(true, true, true, false);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
-        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+        // https://stackoverflow.com/questions/393785/how-to-setup-blending-for-additive-color-overlays
+        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA); // SRC_ALPHA ONE?
+        // this.gl.blendFuncSeparate(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA,WebGLRenderingContext.ONE, WebGLRenderingContext.ONE);
+
         // Source = from shader
         // Dest = target framebuffer
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);

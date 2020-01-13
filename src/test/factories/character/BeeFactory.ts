@@ -20,13 +20,16 @@ import { Destroy } from "../../../glaze/core/components/Destroy";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { State } from "../../../glaze/core/components/State";
 import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidance";
+import { ParticleEmitter } from "../../../glaze/particle/components/ParticleEmitter";
+import { Explosion } from "../../../glaze/particle/emitter/Explosion";
 
 export class BeeFactory {
     static states: SimpleFSMStates = {
         destroy: function(engine: Engine, entity: Entity) {
             if (engine.getComponentForEntity(entity, Destroy)) return;
             engine.addComponentsToEntity(entity, [new Destroy(1)]);
-        }
+            engine.addComponentsToEntity(entity, [new ParticleEmitter([new Explosion(4, 80)])]);
+        },
     };
 
     static create(engine: Engine, position: Position): Entity {
@@ -46,7 +49,7 @@ export class BeeFactory {
             new Moveable(),
             new PhysicsCollision(false, null, []),
             new Steering(
-                [new Wander(80, 40, 143.5), new Seek(position.coords.clone(), 32), new WallAvoidance(40)],
+                [new Wander(80, 40, 143.5), new Seek(position.coords.clone(), 132), new WallAvoidance(40)],
                 HEAVY_STEERING_PARAMS
             ),
             new State(BeeFactory.states, null, false),

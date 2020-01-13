@@ -71,11 +71,11 @@ export class StandardBullet {
 
         return bullet;
     }
-    static onDestroy(engine: Engine, entity: Entity) {
-        if (engine.getComponentForEntity(entity, Destroy)) return;
-        engine.addComponentsToEntity(entity, [new Destroy(1)]);
-        engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
-        // entity.getComponent(glaze.engine.components.ParticleEmitters).emitters.push(new glaze.particle.emitter.Explosion(10,50));
-        // glaze.util.CombatUtils.explode(entity.getComponent(Position).coords,64,10000,entity);
-    }
+    // static onDestroy(engine: Engine, entity: Entity) {
+    //     if (engine.getComponentForEntity(entity, Destroy)) return;
+    //     engine.addComponentsToEntity(entity, [new Destroy(1)]);
+    //     engine.getComponentForEntity(entity, ParticleEmitter).emitters.push(new Explosion(10, 50));
+    //     // entity.getComponent(glaze.engine.components.ParticleEmitters).emitters.push(new glaze.particle.emitter.Explosion(10,50));
+    //     // glaze.util.CombatUtils.explode(entity.getComponent(Position).coords,64,10000,entity);
+    // }
 }

@@ -18,5 +18,7 @@ void main(void) {
     vec2 fragToCenterPos = vTextureCoord.xy;
     float d = length(fragToCenterPos) / float(PATH_TRACKING_SAMPLES);
     float light = 1. - d;
-    gl_FragColor.a = clamp(light,0.,1.);
+    float addition = clamp(obs,0.,1.);
+    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,addition);
+
 }
