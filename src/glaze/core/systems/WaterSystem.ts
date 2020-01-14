@@ -27,6 +27,7 @@ export class WaterSystem extends System {
     onEntityAdded(entity: Entity, physicsCollision: PhysicsCollision, extents: Extents, water: Water) {
         // var cb2 = new Signal();
         // cb2.add(this.callback);
+        debugger;
         this.engine.getComponentForEntity(entity, PhysicsCollision).proxy.contactCallbacks.push(this.callback);
     }
 

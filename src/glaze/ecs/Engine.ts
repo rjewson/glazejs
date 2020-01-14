@@ -42,7 +42,7 @@ export class Engine {
     public createEntity(name = ""): Entity {
         const entity = this.entityPool.reserve();
         this.c4e.set(entity, createGetComponentForEntity(this, entity));
-        this.components.get(this.metaDataName)[entity] = new MetaData(name, new BitVector(4));
+        this.components.get(this.metaDataName)[entity] = new MetaData(name, new BitVector(62));
         return entity;
     }
 
@@ -95,7 +95,7 @@ export class Engine {
 
     public addPhaseSystemToEngine(system: System) {
         this.systems.push(system);
-        const systemMask = new BitVector(4);
+        const systemMask = new BitVector(62);
         system.componentTypes.forEach((component: ComponentType<Component>) => {
             const name = this.createComponentEntryFromType(component);
             systemMask.set(this.componentTypes.get(name), true);
@@ -129,11 +129,7 @@ export class Engine {
     private createComponentEntryFromType(componentType: ComponentType<Component>): string {
         const name = componentType.name;
         if (!this.components.has(name)) {
-            let id = this.nextTypeId++;
-            // We cannot use the top bit in JS?
-            if (id%32==0) {
-                id = this.nextTypeId++;
-            }
+            const id = this.nextTypeId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
             componentType.prototype[ComponentIDName] = id;

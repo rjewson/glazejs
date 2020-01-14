@@ -385,6 +385,8 @@ export class GameTestA extends GlazeEngine {
                 // ()=>{debugger;},
                 throttle(() => {
                     messageBus.trigger("doorA", {});
+                    const tileGraphics = this.engine.getComponentForEntity(doorSwitch, TileGraphics);
+                    tileGraphics.setTileFrameId(tileGraphics.tileFrameId === "switchOff" ? "switchOn" : "switchOff");
                 }, 1000)
             ]),
             new Fixed(),
@@ -402,6 +404,8 @@ export class GameTestA extends GlazeEngine {
                     const chicken = ChickenFactory.create(this.engine, new Position(50 * GZE.tileSize, 53.5 * GZE.tileSize));
                     const physics = this.engine.getComponentForEntity(chicken, PhysicsBody);
                     physics.body.addForce(new Vector2(0, RandomInteger(-60000, -30000)));
+                    const tileGraphics = this.engine.getComponentForEntity(chickenSwitch, TileGraphics);
+                    tileGraphics.setTileFrameId(tileGraphics.tileFrameId === "switchOff" ? "switchOn" : "switchOff");
                 }, 1000)
             ]),
             new Fixed(),

@@ -60,7 +60,7 @@
          "name":"Collision",
          "opacity":0.47,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":200,
          "x":0,
          "y":0
@@ -164,6 +164,12 @@
                  "height":8,
                  "id":16,
                  "name":"TopRoomSwitch",
+                 "properties":[
+                        {
+                         "name":"action",
+                         "type":"string",
+                         "value":""
+                        }],
                  "rotation":0,
                  "type":"switch",
                  "visible":true,

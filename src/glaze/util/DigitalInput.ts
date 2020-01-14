@@ -2,6 +2,7 @@ import { Vector2 } from "../geom/Vector2";
 
 export const MapSize = 256;
 export const BufferSize = Int32Array.BYTES_PER_ELEMENT * MapSize;
+
 const FrameRef = 0;
 const PlayerInputA = 200;
 const MousePositionX = 210;
