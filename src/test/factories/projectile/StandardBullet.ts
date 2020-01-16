@@ -11,7 +11,6 @@ import { Graphics } from "../../../glaze/graphics/components/Graphics";
 import { PhysicsBody } from "../../../glaze/physics/components/PhysicsBody";
 import { Moveable } from "../../../glaze/core/components/Moveable";
 import { PhysicsCollision } from "../../../glaze/physics/components/PhysicsCollision";
-import { ParticleEmitter } from "../../../glaze/particle/components/ParticleEmitter";
 import { CollisionCounter } from "../../../glaze/core/components/CollisionCouner";
 import { Health } from "../../../glaze/core/components/Health";
 import { Age } from "../../../glaze/core/components/Age";
@@ -26,6 +25,7 @@ import { Light } from "../../../glaze/graphics/components/Light";
 import { Viewable } from "../../../glaze/core/components/Viewable";
 import { SpriteFireBall } from "../../../glaze/particle/emitter/SpriteFireBall";
 import { SpriteParticleEmitter } from "../../../glaze/particle/components/SpriteParticleEmitter";
+import { onHealth } from "../../../glaze/core/logic/Logic";
 
 export class StandardBullet {
     static states: SimpleFSMStates = {
@@ -61,7 +61,7 @@ export class StandardBullet {
             new SpriteParticleEmitter([]),
             new State(StandardBullet.states, null, false),
             new CollisionCounter(3, "destroy"),
-            new Health(10, 10, 0, "destroy"),
+            new Health(10, 10, 0, "destroy", onHealth),
             new Age(1000, "destroy"),
             new Active(),
             // new Light(64, 1, 1, 1, 255, 255, 255),

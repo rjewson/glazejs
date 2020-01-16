@@ -1,26 +1,23 @@
-export class Health {
-    public maxHealth: number;
-    public currentHealth: number;
-    public recoveryPerSecond: number;
-    public recoveryPerMs: number;
+import { HealthChangeCb } from "../logic/types";
 
-    public onNoHealth: string;
+export class Health {
+
+    public accumulatedDamage: number;
+    public readonly recoveryPerMs: number;
 
     constructor(
-        maxHealth: number,
-        currentHealth: number,
-        recoveryPerSecond: number,
-        onNoHealth: string,
+        public maxHealth: number,
+        public currentHealth: number,
+        public recoveryPerSecond: number,
+        public onNoHealth: string,
+        public onHealthChange: HealthChangeCb,
     ) {
-        this.maxHealth = maxHealth;
-        this.currentHealth = currentHealth;
-        this.recoveryPerSecond = recoveryPerSecond;
+        this.accumulatedDamage = 0;
         this.recoveryPerMs = recoveryPerSecond / 1000;
-        this.onNoHealth = onNoHealth;
     }
 
     public applyDamage(damageAmount: number) {
-        this.currentHealth -= damageAmount;
+        this.accumulatedDamage += damageAmount;
     }
 
     public isDead(): boolean {

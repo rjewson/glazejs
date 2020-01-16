@@ -64,12 +64,10 @@ import { DoorFactory } from "./factories/item/DoorFactory";
 import { StateSystem } from "../glaze/core/systems/StateSystem";
 import { MessageBus } from "../glaze/util/MessageBus";
 import { StateUpdateSystem } from "../glaze/core/systems/StateUpdateSystem";
-import { listenDebugButtons } from "../glaze/tools/HTMLDevTools";
 import { DynamicTreeBroadphase } from "../glaze/physics/collision/broadphase/DynamicTreeBroadphase";
 import { ChickenSystem } from "./systems/ChickenSystem";
 import { DebugRenderSystem } from "../glaze/graphics/systems/DebugRendererSystem";
 import { DebugGraphics } from "../glaze/graphics/components/DebugGraphics";
-import { CanvasDebugRenderer } from "../glaze/graphics/render/debug/DebugRenderer";
 import { GunTurret } from "./components/GunTurret";
 import { GunTurretSystem } from "./systems/GunTurretSystem";
 import { throttle } from "../glaze/util/FnUtils";
@@ -95,6 +93,10 @@ import { DigitalInput } from "../glaze/util/DigitalInput";
 import { RenderCanvas } from "../glaze/types";
 import { DamageSytem } from "../glaze/core/systems/DamageSystem";
 import { ChickenFactory } from "./factories/character/ChickenFactory";
+import { WaterHolderSystem } from "../glaze/core/systems/WaterHolderSystem";
+import { Health } from "../glaze/core/components/Health";
+import { Entity } from "../glaze/ecs/Entity";
+import { emitRectangle } from "../glaze/util/ParticleUtils";
 
 interface GlazeMapLayerConfig {}
 
@@ -235,6 +237,8 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new HoldableSystem(TestFilters.HOLDABLE_CAT));
 
         corePhase.addSystem(new TeleporterSystem());
+
+        corePhase.addSystem(new WaterHolderSystem());
 
         corePhase.addSystem(new DestroySystem());
         // corePhase.addSystem(new WorkerSystem());
@@ -474,7 +478,7 @@ export class GameTestA extends GlazeEngine {
             new Extents(12, 12),
             new PhysicsCollision(false, turretFilter, []),
             new Fixed(),
-            new GunTurret(1000),
+            new GunTurret(500),
             new Active()
         ]);
 
@@ -503,7 +507,7 @@ export class GameTestA extends GlazeEngine {
 
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [
-            this.mapPosition(23, 46),
+            this.mapPosition(22, 39),
             new Extents(6, 14),
             new Graphics("items", "water_container"),
             new PhysicsCollision(false, new Filter(), []),
@@ -511,11 +515,22 @@ export class GameTestA extends GlazeEngine {
             new PhysicsBody(new Body(Material.NORMAL), true),
             new Holdable(),
             new WaterHolder(10),
+            new Health(1000000,1000000,100000,"",(entity:Entity, health: Health) => {
+                // FIXME manage states like this?
+                const waterHolder = this.engine.getComponentForEntity(entity, WaterHolder);
+                if (waterHolder.full) {
+                    const graphics = this.engine.getComponentForEntity(entity, Graphics);
+                    graphics.setFrameId(graphics.initialFrameId);
+                    const position = this.engine.getComponentForEntity(entity, Position);
+                    const extents = this.engine.getComponentForEntity(entity, Extents);
+                    emitRectangle(blockParticleEngine,position.coords,extents.halfWidths,4);
+                    waterHolder.full = false;
+                }
+            }),
             new Active()
         ]);
 
         this.loop.start();
-        listenDebugButtons(this.engine);
     }
 
     mapPosition(xTiles: number, yTiles: number): Position {

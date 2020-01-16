@@ -22,6 +22,7 @@ import { State } from "../../../glaze/core/components/State";
 import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidance";
 import { ParticleEmitter } from "../../../glaze/particle/components/ParticleEmitter";
 import { Explosion } from "../../../glaze/particle/emitter/Explosion";
+import { onHealth } from "../../../glaze/core/logic/Logic";
 
 export class BeeFactory {
     static states: SimpleFSMStates = {
@@ -54,7 +55,7 @@ export class BeeFactory {
             ),
             new State(BeeFactory.states, null, false),
             new Age(10000, "destroy"),
-            new Health(10, 10, 0, "destroy"),
+            new Health(10, 10, 0, "destroy", onHealth),
             new Active()
         ]);
 

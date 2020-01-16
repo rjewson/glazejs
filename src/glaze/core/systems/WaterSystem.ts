@@ -1,15 +1,14 @@
 import { System } from "../../ecs/System";
-import { IParticleEngine } from "../../particle/engines/IParticleEngine";
 import { PhysicsCollision } from "../../physics/components/PhysicsCollision";
 import { Extents } from "../components/Extents";
 import { Water } from "../components/Water";
 import { Entity } from "../../ecs/Entity";
-import { Signal } from "../../signals/Signal";
 import { BFProxy } from "../../physics/collision/BFProxy";
-import { Contact } from "../../physics/collision/Contact";
 import { Vector2 } from "../../geom/Vector2";
 import { RandomFloat, RandomBoolean } from "../../util/Random";
 import { Viewable } from "../components/Viewable";
+import { IParticleEngine } from "../../particle/engines/types";
+import { Contact } from "../../physics/collision/contact/Contact";
 
 export class WaterSystem extends System {
     public particleEngine: IParticleEngine;
@@ -26,8 +25,6 @@ export class WaterSystem extends System {
 
     onEntityAdded(entity: Entity, physicsCollision: PhysicsCollision, extents: Extents, water: Water) {
         // var cb2 = new Signal();
-        // cb2.add(this.callback);
-        debugger;
         this.engine.getComponentForEntity(entity, PhysicsCollision).proxy.contactCallbacks.push(this.callback);
     }
 

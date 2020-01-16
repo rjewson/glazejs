@@ -28,6 +28,7 @@ import { WallAvoidance } from "../../../glaze/ai/steering/behaviors/WallAvoidanc
 import { State } from "../../../glaze/core/components/State";
 import { SimpleFSMStates } from "../../../glaze/ai/fsm/SimpleFSM";
 import { TileMapCollision } from "../../../glaze/physics/collision/broadphase/TileMapCollision";
+import { onHealth } from "../../../glaze/core/logic/Logic";
 
 export class BirdFactory {
 
@@ -66,7 +67,7 @@ export class BirdFactory {
             ]),
             new State(BirdFactory.states, null, false),
             new Age(15000, "destroy"),
-            new Health(10, 10, 0, "destroy"),
+            new Health(10, 10, 0, "destroy", onHealth),
             new Active(),
         ]);
 

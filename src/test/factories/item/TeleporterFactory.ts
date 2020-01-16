@@ -26,7 +26,6 @@ export class TeleporterFactory {
         on: function(engine: Engine, entity: Entity) {
             var pc = engine.getComponentForEntity(entity, PhysicsCollision);
             pc.proxy.isActive = true;
-            debugger;
             engine.addComponentsToEntity(entity, []);
         },
         off: function(engine: Engine, entity: Entity) {

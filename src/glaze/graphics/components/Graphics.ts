@@ -22,6 +22,7 @@ export class Graphics {
     }
 
     public setFrameId(id: string) {
-        this.frame = this.frameList.getFrame(id);
+        // this.frame = this.frameList.getFrame(id);
+        this.setFrame(this.frameList.getFrame(id));
     }
 }

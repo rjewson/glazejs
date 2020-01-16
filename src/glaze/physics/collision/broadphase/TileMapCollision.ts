@@ -200,6 +200,7 @@ export class TileMapCollision {
                                 const nextCell = this.data.get(nextX, nextY, 0);
                                 if ((nextCell & AABBCOLLIDABLE) == 0) {
                                     body.respondStaticCollision(this.contact);
+                                    // FIXME Why was this here?
                                     proxy.collide(null, this.contact);
                                 }
                             }

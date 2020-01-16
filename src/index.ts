@@ -1,6 +1,7 @@
 import { GameTestA } from "./test/GameTestA";
 import { DigitalInput } from "./glaze/util/DigitalInput";
 import { Vector2 } from "./glaze/geom/Vector2";
+import { listenDebugButtons } from "./glaze/tools/HTMLDevTools";
 
 // const useWorker = false;
 
@@ -22,3 +23,5 @@ if (window.location !== window.parent.location) {
 }
 
 const game = new GameTestA(canvas, input);
+listenDebugButtons(game.engine);
+

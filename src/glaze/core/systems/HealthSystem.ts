@@ -2,21 +2,20 @@ import { System } from "../../ecs/System";
 import { Health } from "../components/Health";
 import { Active } from "../components/Active";
 import { Entity } from "../../ecs/Entity";
-import { State } from "../components/State";
 
 export class HealthSystem extends System {
     constructor() {
-        super([Health, State, Active]);
+        super([Health, Active]);
     }
 
-    updateEntity(entity: Entity, health: Health, state:State, active: Active) {
-        if (health.currentHealth <= 0) {
-            if (health.onNoHealth != null) {
-                state.setState(health.onNoHealth);
-                // health.onNoHealth(this.engine, entity);
-            }
-        } else {
+    updateEntity(entity: Entity, health: Health, active: Active) {
+        health.currentHealth -= health.accumulatedDamage;
+        if (health.currentHealth>0) {
             health.currentHealth = Math.min(health.maxHealth, health.currentHealth + health.recoveryPerMs * this.dt);
         }
+        if (health.accumulatedDamage) {
+            health.onHealthChange(entity, health);
+        }
+        health.accumulatedDamage = 0;
     }
 }

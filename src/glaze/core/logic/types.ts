@@ -1,0 +1,1 @@
+export type HealthChangeCb = (Entity, Health) => void;
