@@ -21,7 +21,7 @@ button {
 #viewContainer {
     position: relative;
     min-width: 1280px;
-    min-height: 800px;
+    min-height: 720px;
     contain: content;
 }
 

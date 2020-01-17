@@ -10,8 +10,7 @@ const MousePositionY = 211;
 const PreviousMousePositionX = 212;
 const PreviousMousePositionY = 213;
 
-
-export class DigitalInput {
+ export class DigitalInput {
     public mousePosition: Vector2;
     public mousePreviousPosition: Vector2;
     public mouseOffset: Vector2;
