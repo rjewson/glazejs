@@ -182,7 +182,7 @@ export class PlayerSystem extends System {
                     Ballistics.calcProjectileVelocity(
                         this.engine.getComponentForEntity(item, PhysicsBody).body,
                         this.mousePosition.clone(),
-                        this.throwPower * 5 //700,
+                        this.throwPower * 6 //700,
                     );
                 }
                 this.throwPower = 0;

@@ -14,5 +14,6 @@ export class AttachmentSystem extends System {
        const parentPosition: Position = this.engine.getComponentForEntity(hierachy.parent, Position);
        position.coords.x = parentPosition.coords.x + attachment.point.x * parentPosition.direction.x;
        position.coords.y = parentPosition.coords.y + attachment.point.y * parentPosition.direction.y;
+       position.direction.copy(parentPosition.direction);
     }
 }
