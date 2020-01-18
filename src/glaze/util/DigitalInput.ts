@@ -5,6 +5,7 @@ export const BufferSize = Int32Array.BYTES_PER_ELEMENT * MapSize;
 
 const FrameRef = 0;
 const PlayerInputA = 200;
+const PlayerInputClick = 201;
 const MousePositionX = 210;
 const MousePositionY = 211;
 const PreviousMousePositionX = 212;
@@ -44,10 +45,15 @@ const PreviousMousePositionY = 213;
         this.target = target;
         target.addEventListener("keydown", this.KeyDown.bind(this));
         target.addEventListener("keyup", this.KeyUp.bind(this));
+
+        target.addEventListener("click", this.MouseClick.bind(this));
+
         target.addEventListener("mousedown", this.MouseDown.bind(this));
-        //target.addEventListener("touchstart",MouseDow);
+        target.addEventListener("touchstart",this.MouseDown.bind(this));
 
         target.addEventListener("mouseup", this.MouseUp.bind(this));
+        target.addEventListener("touchend", this.MouseUp.bind(this));
+
         target.addEventListener("mousemove", this.MouseMove.bind(this));
         // target.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, RightMouseDown, false, 0, true);
         // target.addEventListener(MouseEvent.RIGHT_MOUSE_UP, RightMouseUp, false, 0, true);
@@ -82,6 +88,11 @@ const PreviousMousePositionY = 213;
         event.preventDefault();
     }
 
+    public MouseClick(event: KeyboardEvent): void {
+        this.sharedArray[PlayerInputClick] = this.sharedArray[FrameRef];
+        event.preventDefault();
+    }
+
     public MouseDown(event: KeyboardEvent): void {
         this.sharedArray[PlayerInputA] = this.sharedArray[FrameRef];
         event.preventDefault();
@@ -107,6 +118,10 @@ const PreviousMousePositionY = 213;
     // public  RightMouseUp(event : MouseEvent) : Void {
     //     keyMap[201] = 0;
     // }
+
+    public Clicked(keyCode: number): boolean {
+        return this.sharedArray[PlayerInputClick] == this.sharedArray[FrameRef] - 1;
+    }
 
     public Pressed(keyCode: number): boolean {
         return this.sharedArray[keyCode] > 0;

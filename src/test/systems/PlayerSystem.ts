@@ -189,7 +189,7 @@ export class PlayerSystem extends System {
             }
         } else {
             // this.throwPower = 0;
-            if (this.input.JustPressed(200)) {
+            if (this.input.Clicked(201)) {
                 if (this.currentWeapon == 0) {
                     StandardBullet.create(
                         this.engine,

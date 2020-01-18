@@ -407,7 +407,7 @@ export class GameTestA extends GlazeEngine {
                 throttle(() => {
                     const chicken = ChickenFactory.create(this.engine, new Position(50 * GZE.tileSize, 53.5 * GZE.tileSize));
                     const physics = this.engine.getComponentForEntity(chicken, PhysicsBody);
-                    physics.body.addForce(new Vector2(0, RandomInteger(-60000, -30000)));
+                    physics.body.addForce(new Vector2(0, RandomInteger(-6000, -3000)));
                     const tileGraphics = this.engine.getComponentForEntity(chickenSwitch, TileGraphics);
                     tileGraphics.setTileFrameId(tileGraphics.tileFrameId === "switchOff" ? "switchOn" : "switchOff");
                 }, 1000)

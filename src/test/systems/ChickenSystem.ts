@@ -28,7 +28,7 @@ export class ChickenSystem extends System {
         }
         if (dist < 64 * 64) {
             if (RandomBoolean(0.1)) {
-                body.addForce(new Vector2(dir * 5000, -8000));
+                body.addForce(new Vector2(dir * 500, -800));
                 this.particleEngine.EmitParticle(
                     body.position.x,
                     body.position.y,

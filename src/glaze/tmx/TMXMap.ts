@@ -178,11 +178,11 @@ export function LayerToCollisionData(layer: Bytes2D, guidOffset: number, tileSiz
             }
         }
     }
-    for (var y = 0; y < 30; y++) {
-        let row = "";
-        for (var x = 0; x < 30; x++) {
-            row += collisionData.get(x, y, 0) ? "X" : "0";
-        }
-    }
+    // for (var y = 0; y < 30; y++) {
+    //     let row = "";
+    //     for (var x = 0; x < 30; x++) {
+    //         row += collisionData.get(x, y, 0) ? "X" : "0";
+    //     }
+    // }
     return collisionData;
 }

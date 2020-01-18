@@ -16,6 +16,7 @@ import { Viewable } from "../../../glaze/core/components/Viewable";
 import { Filter } from "../../../glaze/physics/collision/Filter";
 import { Chicken } from "../../components/Chicken";
 import { TestFilters } from "../../config/Filters";
+import { Holdable } from "../../../glaze/core/components/Holdable";
 
 export class ChickenFactory {
     static states: SimpleFSMStates = {
@@ -29,7 +30,7 @@ export class ChickenFactory {
         const chicken = engine.createEntity();
 
         var chickenBody = new Body(Material.RUBBER);
-        chickenBody.setMass(0.1);
+        chickenBody.setMass(20);
         chickenBody.setBounces(7);
         chickenBody.maxScalarVelocity = 1000;
 
@@ -40,8 +41,9 @@ export class ChickenFactory {
             new Graphics("chicken"),
             new GraphicsAnimation("chicken", "walk"),
             new PhysicsCollision(false, new Filter(0x1, 0xffffffff, TestFilters.CHICKEN_GROUP), []),
-            new PhysicsBody(chickenBody, true),
+            new PhysicsBody(chickenBody, false),
             new Moveable(),
+            new Holdable(),
             new Active(),
             new Viewable(),
         ]);
