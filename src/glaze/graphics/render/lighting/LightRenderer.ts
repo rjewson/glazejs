@@ -323,6 +323,10 @@ export class LightRenderer implements IRenderer {
                 lightGroup.lightingShader.uniform.inverseTileTextureSize,
                 this.layer.inverseTileDataTextureSize
             );
+            this.gl.uniform4f(
+                lightGroup.lightingShader.uniform.ambientLight,
+                1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 1
+            );
 
             this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aVertexPosition);
             this.gl.enableVertexAttribArray(lightGroup.lightingShader.attribute.aTextureCoord);

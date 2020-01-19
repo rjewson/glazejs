@@ -78,6 +78,7 @@ export class HeldSystem extends System {
         body.setStaticPosition(holderPos.coords.x + holderPos.direction.x * 4, holderPos.coords.y); //position.copy(holderPos);
         //entity.getComponent(PhysicsBody).body.position.copy(entity.getComponent(PhysicsBody).body.position);
         position.update(body.position);
+        position.direction.copy(holderPos.direction);
     }
 
     public drop(heldItem: Entity) {

@@ -97,6 +97,8 @@ import { WaterHolderSystem } from "../glaze/core/systems/WaterHolderSystem";
 import { Health } from "../glaze/core/components/Health";
 import { Entity } from "../glaze/ecs/Entity";
 import { emitRectangle } from "../glaze/util/ParticleUtils";
+import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
+import { FireEmitter } from "../glaze/particle/emitter/FireEmitter";
 
 interface GlazeMapLayerConfig {}
 
@@ -466,6 +468,17 @@ export class GameTestA extends GlazeEngine {
             new Extents(7, 7),
             new Fixed(),
             new BirdNest(1),
+            new Active()
+        ]);
+
+        const fire = this.engine.createEntity();
+        this.engine.addComponentsToEntity(fire, [
+            this.mapPosition(36.5, 106),
+            new Extents(40, 16),
+            new ParticleEmitter([
+                new FireEmitter(100)
+            ]),
+            new Fixed(),
             new Active()
         ]);
 

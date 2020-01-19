@@ -9,6 +9,7 @@ uniform sampler2D uSampler;
 uniform vec2 viewOffset;
 uniform vec2 resolution;
 uniform vec2 inverseTileTextureSize;
+uniform vec4 ambientLight;
 
 varying vec2 vTextureCoord;
 varying vec4 vColor;
