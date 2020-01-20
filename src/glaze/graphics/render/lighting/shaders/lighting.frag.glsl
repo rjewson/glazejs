@@ -4,6 +4,7 @@ const int PATH_TRACKING_SAMPLES = ${count};
 const float INV_PATH_TRACKING_SAMPLES = 1.0 / float(PATH_TRACKING_SAMPLES);
 const vec2 EMPTY_TILE = vec2(1.0, 1.0);
 const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio});
+const float BLOCK_LIGHT_TRANSMISSION = 0.5;
 
 uniform sampler2D uSampler;
 uniform vec2 viewOffset;
@@ -24,7 +25,7 @@ void main(void) {
     vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.0); // * inverseTileTextureSize;
     vec2 centerPos = currentPos - fragToCenterPos; // * inverseTileTextureSize;
 
-    float m = INV_PATH_TRACKING_SAMPLES * d; // * 0.5;
+    float m = (INV_PATH_TRACKING_SAMPLES * d) / BLOCK_LIGHT_TRANSMISSION;
 
     // Light power model.
     float light = 1. - d; // Linear drop off

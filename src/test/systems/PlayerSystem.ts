@@ -80,7 +80,7 @@ export class PlayerSystem extends System {
         //     new Active()
         //     ],"player light");
         // TODO
-        (this.playerLight = new Light(256, 1, 1, 0, 255, 255, 0, 1)),
+        (this.playerLight = new Light(256, 1, 1, 0, 255, 255, 255, 1)),
             // this.engine.addComponentsToEntity(entity, [this.playerLight]);
             (this.holder = new Holder(entity));
         // TODO

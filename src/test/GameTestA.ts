@@ -175,10 +175,7 @@ export class GameTestA extends GlazeEngine {
         const blockParticleEngine = new BlockParticleEngine2(4000, 1000 / 60, collisionData);
         const spriteParticleEngine = new SpriteParticleEngine(4000, 1000 / 60, collisionData,spriteParticleManager );
         spriteParticleEngine.renderer.SetSpriteSheet(this.renderSystem.textureManager.baseTextures.get(PARTICLE_TEXTURE_DATA).texture,16,16,16);
-        setInterval(()=>{
-            spriteParticleEngine.EmitParticle(RandomInteger(650,750),RandomInteger(50,150),0,0,0,0,1000,0.9,true,true,null,RandomInteger(0,3),RandomInteger(16,32),RandomSign(0.5),RandomSign(0.5),0);
-        },16);
-        // const broadphase = new BruteforceBroadphase(tileMapCollision);
+
         const broadphase = new DynamicTreeBroadphase(tileMapCollision);
 
         CombatUtils.setup(this.engine, broadphase);
@@ -479,7 +476,8 @@ export class GameTestA extends GlazeEngine {
                 new FireEmitter(100)
             ]),
             new Fixed(),
-            new Active()
+            new Active(),
+            new Light(160, 1, 1, 1, 255, 255, 204, 0),
         ]);
 
         const turret = this.engine.createEntity();
@@ -566,5 +564,19 @@ export class GameTestA extends GlazeEngine {
             // if (this.dynamicTree) this.dynamicTree.debugDraw(GZE.debugRender);
             this.fixedViewManagementSystem.spaceManager.debugDraw();
         }
+        // for (var i = 0; i< 10000; i++) {
+        //     const a = this.test();
+        //     r[i] = a[0]+a[1]+a[2];
+        // }
     }
+
+    // test() {
+    //     vr[0] = Math.random();
+    //     vr[1] = Math.random();
+    //     vr[2] = Math.random();
+
+    //     return vr;
+    // }
 }
+// const vr = [];
+// const r = [];

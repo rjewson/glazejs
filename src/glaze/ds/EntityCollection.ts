@@ -1,5 +1,9 @@
 import { EntityCollectionItem, ECIFilter } from "./EntityCollectionItem";
 import { Entity } from "../ecs/Entity";
+import { Pool } from "../util/Pool";
+
+const entityCollectionItemPool = new Pool<EntityCollectionItem>(()=>new EntityCollectionItem(0));
+entityCollectionItemPool.addCapacity(200);
 
 export class EntityCollection {
     public entities: Array<EntityCollectionItem>;
@@ -9,7 +13,8 @@ export class EntityCollection {
     }
 
     public addItem(entity: Entity): EntityCollectionItem {
-        const eci = new EntityCollectionItem(entity);
+        const eci = entityCollectionItemPool.reserve();
+        eci.reset(entity);
         this.entities.push(eci);
         return eci;
     }
@@ -27,6 +32,9 @@ export class EntityCollection {
     }
 
     public clear() {
+        for (var entity of this.entities) {
+            entityCollectionItemPool.free(entity);
+        }
         this.entities.length = 0;
     }
 }
