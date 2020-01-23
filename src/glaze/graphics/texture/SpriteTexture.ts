@@ -2,7 +2,7 @@ import { Rectangle } from "../../geom/Rectangle";
 import { Vector2 } from "../../geom/Vector2";
 import { BaseTexture } from "./BaseTexture";
 
-export class Texture {
+export class SpriteTexture {
     public baseTexture: BaseTexture;
     public frame: Rectangle;
     public trim: Vector2;

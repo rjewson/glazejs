@@ -1,13 +1,13 @@
-import { Texture } from "../texture/Texture";
+import { SpriteTexture } from "../texture/Texture";
 import { Vector2 } from "../../geom/Vector2";
 import { Sprite } from "../displaylist/Sprite";
 
 export class Frame {
     public name: string;
-    public texture: Texture;
+    public texture: SpriteTexture;
     public scale: Vector2;
 
-    constructor(name: string, texture: Texture, scale: Vector2) {
+    constructor(name: string, texture: SpriteTexture, scale: Vector2) {
         this.name = name;
         this.texture = texture;
         this.scale = scale;

@@ -1,6 +1,6 @@
 import { IRenderer } from "../RenderEngine";
 import { BaseTexture } from "../../texture/BaseTexture";
-import { Texture } from "../../texture/Texture";
+import { SpriteTexture } from "../../texture/SpriteTexture";
 import { Sprite } from "../../displaylist/Sprite";
 import { Vector2 } from "../../../geom/Vector2";
 import { Camera } from "../../displaylist/Camera";
@@ -16,7 +16,7 @@ export class TileLayerRenderProxy implements IRenderer {
     public layers: Array<string>;
 
     public surface: BaseTexture;
-    public texture: Texture;
+    public texture: SpriteTexture;
     public sprite: Sprite;
 
     public lastSnap: Vector2;
@@ -45,7 +45,7 @@ export class TileLayerRenderProxy implements IRenderer {
     public Resize(width: number, height: number) {
         this.size.setTo(width, height);
         this.surface = new BaseTexture(this.tileMap.gl, width, height);
-        this.texture = new Texture(this.surface, new Rectangle(0, 0, width, height), new Vector2(0, 0));
+        this.texture = new SpriteTexture(this.surface, new Rectangle(0, 0, width, height), new Vector2(0, 0));
         this.sprite.texture = this.texture;
         this.sprite.scale.setTo(2, -2);
         this.sprite.pivot.setTo(width / 2, height / 2);

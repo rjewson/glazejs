@@ -6,7 +6,7 @@ import { AABB2 } from "../../../geom/AABB2";
 import * as WebGLShaderUtils from "../util/WebGLShaderUtil";
 import { ShaderWrapper } from "../util/ShaderWrapper";
 import { BaseTexture } from "../../texture/BaseTexture";
-import { Texture } from "../../texture/Texture";
+import { SpriteTexture } from "../../texture/SpriteTexture";
 import { Sprite } from "../../displaylist/Sprite";
 import { Rectangle } from "../../../geom/Rectangle";
 import { TileLayer } from "../tile/TileLayer";
@@ -44,7 +44,7 @@ export class LightRenderer implements IRenderer {
     public resolution: Vector2;
 
     public surface: BaseTexture;
-    public texture: Texture;
+    public texture: SpriteTexture;
     public sprite: Sprite;
 
     public snapPosition: Vector2;
@@ -65,7 +65,7 @@ export class LightRenderer implements IRenderer {
         this.renderSurface = this.renderSurface.bind(this);
         this.snapPosition = new Vector2(-1000, -1000);
         this.layer = layer;
-        this.tileSize = 8;
+        this.tileSize = 4;
         this.halfTileSize = this.tileSize / 2;
         this.backgroundLight = 0.0;
     }
@@ -93,7 +93,7 @@ export class LightRenderer implements IRenderer {
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             vertexShader,
-                            fragmentShaderFactory(range / this.tileSize, 0.5)
+                            fragmentShaderFactory(range / this.tileSize, 0.25)
                         )
                     )
                 )
@@ -138,7 +138,7 @@ export class LightRenderer implements IRenderer {
         this.projection.y = (expandedHeight * this.tileSize) / 2;
 
         this.surface = new BaseTexture(this.gl, expandedWidth, expandedHeight);
-        this.texture = new Texture(this.surface, new Rectangle(0, 0, expandedWidth, expandedHeight), new Vector2(0, 0));
+        this.texture = new SpriteTexture(this.surface, new Rectangle(0, 0, expandedWidth, expandedHeight), new Vector2(0, 0));
         this.sprite.texture = this.texture;
         this.sprite.scale.setTo(this.tileSize, -this.tileSize);
         this.sprite.pivot.setTo(expandedWidth / 2, expandedHeight / 2);

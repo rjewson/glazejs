@@ -25,9 +25,12 @@ import { Vector2 } from "../../glaze/geom/Vector2";
 import { Light } from "../../glaze/graphics/components/Light";
 import { Key } from "../../glaze/util/Keycodes";
 import { Stack } from "../../glaze/ds/Stack";
+import { textureAsParticles } from "../../glaze/util/ParticleUtils";
+import { TextureManager } from "../../glaze/graphics/texture/TextureManager";
 
 export class PlayerSystem extends System {
     private particleEngine: IParticleEngine;
+    private textureManager: TextureManager;
     private input: DigitalInput;
 
     private playerLight: Light;
@@ -43,10 +46,11 @@ export class PlayerSystem extends System {
     private mousePosition: Vector2;
     private throwPower: number;
 
-    constructor(input: DigitalInput, particleEngine: IParticleEngine) {
+    constructor(input: DigitalInput, particleEngine: IParticleEngine, textureManager: TextureManager) {
         super([Position, Player, PhysicsCollision, PhysicsBody, GraphicsAnimation, Extents]);
         this.input = input;
         this.particleEngine = particleEngine;
+        this.textureManager = textureManager;
         this.teleporterLocations = new Stack(5);
         this.mousePosition = new Vector2();
         this.throwPower = 0;
@@ -144,6 +148,9 @@ export class PlayerSystem extends System {
         // TODO
         if (this.input.Pressed(Key.U)) {
             BeeFactory.create(this.engine, position.clone());
+        }
+        if (this.input.JustPressed(Key.P)) {
+            this.snapshot(position);
         }
         // TODO
         this.holder.activate = this.input.JustPressed(Key.H);
@@ -320,5 +327,9 @@ export class PlayerSystem extends System {
                 physicsBody.body.position.copy(p);
             }
         }
+    }
+    private snapshot(position:Position) {
+        const t = this.textureManager.textures.get("player3/frame10.png");
+        textureAsParticles(this.particleEngine, position.coords, position.direction, t);
     }
 }

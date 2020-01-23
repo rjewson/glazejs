@@ -1,10 +1,10 @@
 import { DisplayObjectContainer } from "./DisplayObjectContainer";
 import { Vector2 } from "../../geom/Vector2";
-import { Texture } from "../texture/Texture";
+import { SpriteTexture } from "../texture/Texture";
 
 export class Sprite extends DisplayObjectContainer {
     public anchor: Vector2;
-    public texture: Texture;
+    public texture: SpriteTexture;
     public blendEquation: number;
     public blendFuncS: number;
     public blendFuncD: number;

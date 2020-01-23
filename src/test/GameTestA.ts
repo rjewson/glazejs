@@ -96,7 +96,7 @@ import { ChickenFactory } from "./factories/character/ChickenFactory";
 import { WaterHolderSystem } from "../glaze/core/systems/WaterHolderSystem";
 import { Health } from "../glaze/core/components/Health";
 import { Entity } from "../glaze/ecs/Entity";
-import { emitRectangle } from "../glaze/util/ParticleUtils";
+import { emitRectangle, textureAsParticles } from "../glaze/util/ParticleUtils";
 import { ParticleEmitter } from "../glaze/particle/components/ParticleEmitter";
 import { FireEmitter } from "../glaze/particle/emitter/FireEmitter";
 
@@ -200,7 +200,7 @@ export class GameTestA extends GlazeEngine {
         corePhase.addSystem(new AttachmentSystem());
         corePhase.addSystem(new HeldSystem());
 
-        corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine));
+        corePhase.addSystem(new PlayerSystem(this.input, blockParticleEngine, this.renderSystem.textureManager));
 
         corePhase.addSystem(new SteeringSystem(tileMapCollision));
 
@@ -515,6 +515,11 @@ export class GameTestA extends GlazeEngine {
         // ]);
 
         // Hierachy.addChild(this.engine, playerEntity, playerRock);
+
+        // emitRectangle(blockParticleEngine,new Vector2(300,300),new Vector2(100,100),2,100000,200,0,0);
+        // const t = this.renderSystem.textureManager.textures.get("chicken/frame-001.png");
+        // const t = this.renderSystem.textureManager.textures.get("player3/frame10.png");
+        // textureAsParticles(blockParticleEngine,new Vector2(300,300),new Vector2(1,0),t);
 
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [

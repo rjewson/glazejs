@@ -1,4 +1,4 @@
-import { Texture } from "../../texture/Texture";
+import { SpriteTexture } from "../../texture/Texture";
 import { Sprite } from "../../displaylist/Sprite";
 import { Stage } from "../../displaylist/Stage";
 import { AABB2 } from "../../../geom/AABB2";
@@ -134,7 +134,7 @@ export class WebGLBatch {
         if (indexRun > 0) this.Flush(shader, currentTexture, indexRun);
     }
 
-    private Flush(shader: ShaderWrapper, texture: Texture, size: number) {
+    private Flush(shader: ShaderWrapper, texture: SpriteTexture, size: number) {
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,this.data,WebGLRenderingContext.DYNAMIC_DRAW);
         // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);

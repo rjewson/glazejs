@@ -1,5 +1,5 @@
 import { BaseTexture } from "./BaseTexture";
-import { Texture } from "./Texture";
+import { SpriteTexture } from "./SpriteTexture";
 import { Rectangle } from "../../geom/Rectangle";
 import { Vector2 } from "../../geom/Vector2";
 
@@ -21,7 +21,7 @@ export interface TexturePackerItem {
 
 export class TextureManager {
     public baseTextures: Map<String, BaseTexture>;
-    public textures: Map<String, Texture>;
+    public textures: Map<String, SpriteTexture>;
     public total: number;
     public gl: WebGLRenderingContext;
 
@@ -50,11 +50,11 @@ export class TextureManager {
             var frame = textureData.frames[prop];
             this.textures.set(
                 prop,
-                new Texture(
+                new SpriteTexture(
                     baseTexture,
                     new Rectangle(frame.frame.x, frame.frame.y, frame.frame.w, frame.frame.h),
-                    new Vector2(frame.pivot.x, frame.pivot.y),
-                ),
+                    new Vector2(frame.pivot.x, frame.pivot.y)
+                )
             );
         });
     }

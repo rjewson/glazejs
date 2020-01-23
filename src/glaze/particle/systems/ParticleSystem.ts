@@ -4,10 +4,11 @@ import { BlockParticleEngine2 } from "../engines/BlockParticle/BlockParticleEngi
 import { Active } from "../../core/components/Active";
 import { Entity } from "../../ecs/Entity";
 import { ParticleEmitter } from "../components/ParticleEmitter";
+import { IParticleEngine } from "../engines/types";
 
 export class ParticleSystem extends System {
-    private blockParticleEngine: BlockParticleEngine2;
-    constructor(blockParticleEngine: BlockParticleEngine2) {
+    private blockParticleEngine: IParticleEngine;
+    constructor(blockParticleEngine: IParticleEngine) {
         super([Position, Active, ParticleEmitter]);
         this.blockParticleEngine = blockParticleEngine;
     }

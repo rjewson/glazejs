@@ -9,7 +9,32 @@ export class BaseTexture {
     public framebuffer: WebGLFramebuffer;
     public renderbuffer: WebGLRenderbuffer;
 
+    public imageData: ImageData;
+
     private gl: WebGLRenderingContext;
+
+    public static FromImage(gl: WebGLRenderingContext, imageData: ImageData) {
+        var texture = new BaseTexture(gl, imageData.width, imageData.height);
+        if (imageData instanceof Image) {
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            context.drawImage(imageData, 0, 0);
+            texture.imageData = context.getImageData(0, 0, imageData.width, imageData.height);
+        } else {
+            texture.imageData = imageData;
+        }
+        gl.texImage2D(
+            WebGLRenderingContext.TEXTURE_2D,
+            0,
+            WebGLRenderingContext.RGBA,
+            WebGLRenderingContext.RGBA,
+            WebGLRenderingContext.UNSIGNED_BYTE,
+            imageData
+        );
+        return texture;
+    }
 
     constructor(gl: WebGLRenderingContext, width: number, height: number, floatingPonumber: boolean = false) {
         this.gl = gl;
@@ -70,19 +95,6 @@ export class BaseTexture {
             fp ? WebGLRenderingContext.FLOAT : WebGLRenderingContext.UNSIGNED_BYTE,
             null
         );
-    }
-
-    public static FromImage(gl: WebGLRenderingContext, image: ImageData) {
-        var texture = new BaseTexture(gl, image.width, image.height);
-        gl.texImage2D(
-            WebGLRenderingContext.TEXTURE_2D,
-            0,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.UNSIGNED_BYTE,
-            image
-        );
-        return texture;
     }
 
     public bind(unit: number) {

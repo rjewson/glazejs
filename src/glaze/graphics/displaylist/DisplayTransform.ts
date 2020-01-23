@@ -1,7 +1,7 @@
 import { Vector2 } from "../../geom/Vector2";
 import { Create } from "../../geom/Matrix3";
 import { AABB2 } from "../../geom/AABB2";
-import { Texture } from "../texture/Texture";
+import { SpriteTexture } from "../texture/Texture";
 
 export class DisplayTransform {
     public id: string;
@@ -27,7 +27,7 @@ export class DisplayTransform {
     public subTreeAABB: AABB2;
 
     public anchor: Vector2;
-    public texture: Texture;
+    public texture: SpriteTexture;
 
     private _visible: boolean;
     private _rotation: number;
