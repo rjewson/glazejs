@@ -15,16 +15,21 @@ export class BaseTexture {
 
     public static FromImage(gl: WebGLRenderingContext, imageData: ImageData) {
         var texture = new BaseTexture(gl, imageData.width, imageData.height);
-        if (imageData instanceof Image) {
-            var canvas = document.createElement("canvas");
-            var context = canvas.getContext("2d");
-            canvas.width = imageData.width;
-            canvas.height = imageData.height;
-            context.drawImage(imageData, 0, 0);
-            texture.imageData = context.getImageData(0, 0, imageData.width, imageData.height);
-        } else {
+        if (__IN_WORKER__) {
             texture.imageData = imageData;
+        } else {
+            if (imageData instanceof Image) {
+                var canvas = document.createElement("canvas");
+                var context = canvas.getContext("2d");
+                canvas.width = imageData.width;
+                canvas.height = imageData.height;
+                context.drawImage(imageData, 0, 0);
+                texture.imageData = context.getImageData(0, 0, imageData.width, imageData.height);
+            } else {
+                texture.imageData = imageData;
+            }
         }
+        
         gl.texImage2D(
             WebGLRenderingContext.TEXTURE_2D,
             0,

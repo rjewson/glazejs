@@ -11,6 +11,7 @@
             "autoFix":true
         }
     ],
-    "editor.fontSize": 12.5,
-    "editor.fontWeight": "400"
+    "editor.fontSize": 15.5,
+    "editor.fontWeight": "400",
+    "editor.fontFamily": "JetBrains Mono"
 }

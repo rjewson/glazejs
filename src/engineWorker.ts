@@ -5,7 +5,7 @@ let game = null;
 
 self.addEventListener(
     "message",
-    event => {
+    (event) => {
         switch (event.data.msg) {
             case "init":
                 game = new GameTestA(event.data.offscreen, new DigitalInput(event.data.buffer));

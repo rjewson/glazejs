@@ -17,8 +17,8 @@ void main(void) {
     // if (tile.x == 1.0 && tile.y == 1.0) { 
         // discard;
     // } else {
-        vec2 superSpriteOffset = floor(tile.zw * 256.0) * 256.0;
-        vec2 spriteOffset = floor(tile.xy * 256.0) * tileSize;
+        vec2 superSpriteOffset = floor(tile.zw * 255.0) * 255.0;
+        vec2 spriteOffset = floor(tile.xy * 255.0) * tileSize;
         vec2 spriteCoord = mod(pixelCoord, tileSize);
         float empty = float(all(lessThan(tile.xy, EMPTY_TILE)));
 
@@ -27,6 +27,6 @@ void main(void) {
         //    spriteCoord.x = (-1.0+(2.0* 0.0)) * (( 0.0*tileSize) - spriteCoord.x); //normal  0
         //    spriteCoord.x = (-1.0+(2.0* 1.0)) * (( 1.0*tileSize) - spriteCoord.x); //flip   1
 
-        gl_FragColor = texture2D(sprites, (superSpriteOffset + spriteOffset + spriteCoord) * inverseSpriteTextureSize) * empty;
+        gl_FragColor = texture2D(sprites, ( superSpriteOffset + spriteOffset + spriteCoord) * inverseSpriteTextureSize) * empty;
     // }
 }

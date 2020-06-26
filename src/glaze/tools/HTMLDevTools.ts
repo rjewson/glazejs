@@ -14,7 +14,7 @@ export const listenDebugButtons = (engine: Engine) => {
         const htmlDump = engineToHTML(engine, 0, 100);
         targetNode.innerHTML = htmlDump;
     });
-    document.getElementById("debugChickens").addEventListener("click", () => {
+    document.getElementById("debugChickens").addEventListener("click", (e) => {
         const player = engine.query([Player])[0];
         const position = engine.getComponentForEntity(player, Position);
 
@@ -24,6 +24,7 @@ export const listenDebugButtons = (engine: Engine) => {
 
             physics.body.addForce(new Vector2(RandomInteger(-100000, 100000), RandomInteger(-100000, -5000)));
         }
+        e.stopImmediatePropagation();
     });
     document.getElementById("debugDraw").addEventListener("click", (event: any) => {
         document.getElementById("viewDebug").style.display = event.target.checked ? "block" : "none";

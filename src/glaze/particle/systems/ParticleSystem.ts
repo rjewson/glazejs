@@ -1,6 +1,5 @@
 import { System } from "../../ecs/System";
 import { Position } from "../../core/components/Position";
-import { BlockParticleEngine2 } from "../engines/BlockParticle/BlockParticleEngine2";
 import { Active } from "../../core/components/Active";
 import { Entity } from "../../ecs/Entity";
 import { ParticleEmitter } from "../components/ParticleEmitter";

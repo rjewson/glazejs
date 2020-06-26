@@ -11,14 +11,20 @@ export class GameLoop {
     constructor() {
         this.isRunning = false;
         this.update = this.update.bind(this);
+        // addEventListener("message", event => {
+        //     console.timeStamp("My Function Call")
+        // });  
     }
 
     public update(timestamp: number) {
+        // postMessage("*");
+        // console.time("My Function Call");
         this.delta = this.prevAnimationTime == 0 ? MIN_DELTA : timestamp - this.prevAnimationTime;
         this.prevAnimationTime = timestamp;
         if (this.updateFunc != null) {
             this.updateFunc(MIN_DELTA, Math.floor(timestamp));
         }
+        // console.timeEnd("My Function Call");
         this.rafID = requestAnimationFrame(this.update);
     }
 
