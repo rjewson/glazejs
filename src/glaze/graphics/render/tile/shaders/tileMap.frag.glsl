@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 varying vec2 pixelCoord;
 varying vec2 texCoord;
@@ -17,8 +17,8 @@ void main(void) {
     // if (tile.x == 1.0 && tile.y == 1.0) { 
         // discard;
     // } else {
-        vec2 superSpriteOffset = floor(tile.zw * 255.0) * 256.0;
-        vec2 spriteOffset = floor(tile.xy * 255.0) * tileSize;
+        vec2 superSpriteOffset = floor(tile.zw * 256.0) * 256.0;
+        vec2 spriteOffset = floor(tile.xy * 256.0) * tileSize;
         vec2 spriteCoord = mod(pixelCoord, tileSize);
         float empty = float(all(lessThan(tile.xy, EMPTY_TILE)));
 

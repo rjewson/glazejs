@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 attribute vec2 position;
 attribute vec2 texture;
 

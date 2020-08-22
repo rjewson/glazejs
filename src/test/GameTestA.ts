@@ -524,7 +524,7 @@ export class GameTestA extends GlazeEngine {
         const waterContainer = this.engine.createEntity();
         this.engine.addComponentsToEntity(waterContainer, [
             this.mapPosition(22, 39),
-            new Extents(6, 14),
+            new Extents(6, 12),
             new Graphics("items", "water_container"),
             new PhysicsCollision(false, new Filter(), []),
             new Moveable(),
