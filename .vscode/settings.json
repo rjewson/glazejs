@@ -11,6 +11,11 @@
             "autoFix":true
         }
     ],
-    "editor.fontSize": 13,
-    "editor.fontFamily": "JetBrains Mono"
+    "editor.fontSize": 11,
+    "editor.fontFamily": "Menlo, 'Roboto Mono','Operator Mono', Menlo, Monaco, 'Courier New', monospace", //"SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace",
+    // "editor.fontFamily": "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif",
+    "editor.letterSpacing": -0.0,
+    //"editor.fontWeight": "500",
+    "editor.lineHeight": 18 // "Hack, Menlo, Monaco, 'Courier New', monospace"
+    //,"workbench.fontAliasing": "default",
 }

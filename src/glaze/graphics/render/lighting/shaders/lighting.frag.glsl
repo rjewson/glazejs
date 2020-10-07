@@ -4,7 +4,7 @@ const int PATH_TRACKING_SAMPLES = ${count};
 const float INV_PATH_TRACKING_SAMPLES = 1.0 / float(PATH_TRACKING_SAMPLES);
 const vec2 EMPTY_TILE = vec2(1.0, 1.0);
 const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio});
-const float BLOCK_LIGHT_TRANSMISSION = 0.5;
+const float BLOCK_LIGHT_TRANSMISSION = 0.075;
 
 uniform sampler2D uSampler;
 uniform vec2 viewOffset;

@@ -204,8 +204,8 @@ export class Body {
             this.velocity.y -= this.tangent.y * tv;
         }
 
-        this.positionCorrection.plusEquals(this.velocity);
-        this.positionCorrection.multEquals(this.dt);
+        this.positionCorrection.plusMultEquals(this.velocity, this.dt);
+        // this.positionCorrection.multEquals(this.dt);
         this.position.plusEquals(this.positionCorrection);
         this.positionCorrection.setTo(0, 0);
 

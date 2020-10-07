@@ -26,7 +26,7 @@ export class FollowPath extends Behavior
 	}
 
 	public calculate(agent:Body,params:SteeringAgentParameters,result:Vector2) {
-		if (this.loop&&this.currentIndex==this.path.length)
+		if (this.loop&&this.currentIndex===this.path.length)
 			return;
 		if (!Seek.calc(agent,params,result,this.path[this.currentIndex].position,this.seekDist)) {
 			this.currentIndex++;
