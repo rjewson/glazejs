@@ -132,8 +132,8 @@ export class Engine {
             const id = this.nextTypeId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
-            componentType.prototype[ComponentIDName] = id;
-            console.log(name + "=" + id);
+            // componentType.prototype[ComponentIDName] = id;
+            // console.log(name + "=" + id);
         }
         return name;
     }
@@ -144,7 +144,7 @@ export class Engine {
             const id = this.nextTypeId++;
             this.components.set(name, emptyNullArray(this.entityPool.capacity));
             this.componentTypes.set(name, id);
-            component.constructor.prototype[ComponentIDName] = id;
+            // component.constructor.prototype[ComponentIDName] = id;
         }
         return name;
     }

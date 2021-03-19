@@ -60,6 +60,7 @@ export class LightRenderer implements IRenderer {
     
     private backgroundLight: number;
 
+    private ext: any;
     constructor(ranges: Array<number>, layer: TileLayer) {
         this.ranges = ranges;
         this.renderSurface = this.renderSurface.bind(this);
@@ -72,6 +73,9 @@ export class LightRenderer implements IRenderer {
 
     public Init(gl: WebGLRenderingContext, camera: Camera) {
         this.gl = gl;
+
+        this.ext = gl.getExtension("EXT_blend_minmax");
+
         this.camera = camera;
         this.projection = new Vector2();
         this.indexBuffer = gl.createBuffer();
@@ -286,18 +290,26 @@ export class LightRenderer implements IRenderer {
 
     private renderSurface() {
         // this.gl.clearColor(0,0,0,0);
-        this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 0.0);
+        
+         this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 1.0);
 
-        this.gl.colorMask(true, true, true, false);
+        //this.gl.clearColor(0,0,0, 1.0);
+        //this.sprite.alpha = 1-this.backgroundLight;
+
+
+        this.gl.colorMask(true, true, true, true);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
 
-        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
-        // https://stackoverflow.com/questions/393785/how-to-setup-blending-for-additive-color-overlays
-        this.gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA); // SRC_ALPHA ONE?
-        // this.gl.blendFuncSeparate(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA,WebGLRenderingContext.ONE, WebGLRenderingContext.ONE);
+        // this.gl.blendEquation(this.ext.MAX_EXT);
+        // this.gl.blendEquation(ext.MAX_EXT);
 
+        this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
+        // SRC_ALPHA ONE https://stackoverflow.com/questions/393785/how-to-setup-blending-for-additive-color-overlays
+        // 	Blend OneMinusDstColor One https://github.com/SSS135/Light2D/blob/master/Assets/Light2D/Resources/Shaders/Light60.shader
+        this.gl.blendFunc(WebGLRenderingContext.ONE_MINUS_DST_COLOR, WebGLRenderingContext.ONE); // SRC_ALPHA ONE?
         // Source = from shader
         // Dest = target framebuffer
+
         this.gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, this.dataBuffer);
         this.gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER,this.data,WebGLRenderingContext.DYNAMIC_DRAW);
         // this.gl.bufferSubData(WebGLRenderingContext.ARRAY_BUFFER, 0, this.data);

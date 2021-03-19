@@ -17,6 +17,8 @@ import { Filter } from "../../../glaze/physics/collision/Filter";
 import { Chicken } from "../../components/Chicken";
 import { TestFilters } from "../../config/Filters";
 import { Holdable } from "../../../glaze/core/components/Holdable";
+import { Flammable } from "../../../glaze/core/components/physical/Flammable";
+import { Light } from "../../../glaze/graphics/components/Light";
 
 export class ChickenFactory {
     static states: SimpleFSMStates = {
@@ -46,6 +48,8 @@ export class ChickenFactory {
             new Holdable(),
             new Active(),
             new Viewable(),
+            new Flammable(100),
+            new Light(64, 1, 1, 1, 255, 255, 255)
         ]);
         return chicken;
     }

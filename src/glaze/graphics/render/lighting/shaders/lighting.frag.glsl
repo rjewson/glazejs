@@ -54,5 +54,5 @@ void main(void) {
         obs -= m * obsMult;
     }
     float addition = clamp(obs,0.,1.);
-    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,addition);
+    gl_FragColor = vec4(vColor.r,vColor.g,vColor.b,1.0) * addition;
 }

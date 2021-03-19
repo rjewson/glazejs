@@ -344,16 +344,6 @@ export const StaticAABBvsSweeptAABB = function(
     }
 };
 
-// const dx = aabb_position_B.x - aabb_position_A.x;
-    // const dy = aabb_position_B.y - aabb_position_A.y;
-
-    // if (dx*dx>dy*dy) {
-    //     contact.normal.x = dx>=0 ? -1: 1;
-    //     contact.normal.y = 0;
-    // } else {
-    //     contact.normal.x = 0;
-    //     contact.normal.y = dy>=0 ? -1 : 1;
-    // }
 export const AABBvsStaticSolidAABB = function(
     aabb_position_A: Vector2,
     aabb_extents_A: Vector2,
@@ -391,40 +381,6 @@ export const AABBvsStaticSolidAABB = function(
     return true;
 };
 
-// public static Stairs(aabb_position_A:Vector2,aabb_extents_A:Vector2,aabb_position_B:Vector2,aabb_extents_B:Vector2,bias:Vector2,contact:Contact):number {
-
-//      //New overlap code, handle corners better
-//      var dx = aabb_position_B.x - aabb_position_A.x;
-//      var px = (aabb_extents_B.x + aabb_extents_A.x) - Math.abs(dx);
-
-//      var dy = aabb_position_B.y - aabb_position_A.y;
-//      var py = (aabb_extents_B.y + aabb_extents_A.y) - Math.abs(dy);
-
-//      if (px<py) {
-//          contact.normal.x = dx<0 ? 1 : -1;
-//          contact.normal.y = 0;
-//      } else {
-//          contact.normal.x = 0;
-//          contact.normal.y = dy<0 ? 1 : -1;
-//      }
-
-//      contact.normal.x = 0;
-//      contact.normal.y = -1;
-
-//      var pcx = (contact.normal.x * (aabb_extents_A.x+aabb_extents_B.x) ) + aabb_position_B.x;
-//      var pcy = (contact.normal.y * (aabb_extents_A.y+aabb_extents_B.y) ) + aabb_position_B.y;
-
-//      var pdx = aabb_position_A.x - pcx;
-//      var pdy = aabb_position_A.y - pcy;
-
-//      contact.distance = pdx*contact.normal.x + pdy*contact.normal.y;
-
-//      if (px<py) {
-//          return dx<0 ? 1 : -1;
-//      }
-//      return 0;
-//  }
-
 /*
     This is seperate to avoid overcomplicating the above with too much branching
     */
@@ -449,7 +405,8 @@ export const AABBvsStaticSolidAABBFixedNormal = function(
     return true;
 };
 
-const AABBvsStaticSolidAABBSlope = function(
+/*
+export const AABBvsStaticSolidAABBSlope = function(
     aabb_position_A: Vector2,
     aabb_extents_A: Vector2,
     aabb_position_B: Vector2,
@@ -500,3 +457,69 @@ const AABBvsStaticSolidAABBSlope = function(
 
     return true;
 };
+*/
+
+// http://www.jeffreythompson.org/collision-detection/circle-rect.php
+
+export const AABBvsStaticSolidCircle = function() {
+
+};
+
+/*
+void c2CircletoAABBManifold(c2Circle A, c2AABB B, c2Manifold* m)
+{
+	m->count = 0;
+	c2v L = c2Clampv(A.p, B.min, B.max);
+	c2v ab = c2Sub(L, A.p);
+	float d2 = c2Dot(ab, ab);
+	float r2 = A.r * A.r;
+	if (d2 < r2)
+	{
+		// shallow (center of circle not inside of AABB)
+		if (d2 != 0)
+		{
+			float d = c2Sqrt(d2);
+			c2v n = c2Norm(ab);
+			m->count = 1;
+			m->depths[0] = A.r - d;
+			m->contact_points[0] = c2Add(A.p, c2Mulvs(n, d));
+			m->n = n;
+		}
+
+		// deep (center of circle inside of AABB)
+		// clamp circle's center to edge of AABB, then form the manifold
+		else
+		{
+			c2v mid = c2Mulvs(c2Add(B.min, B.max), 0.5f);
+			c2v e = c2Mulvs(c2Sub(B.max, B.min), 0.5f);
+			c2v d = c2Sub(A.p, mid);
+			c2v abs_d = c2Absv(d);
+
+			float x_overlap = e.x - abs_d.x;
+			float y_overlap = e.y - abs_d.y;
+
+			float depth;
+			c2v n;
+
+			if (x_overlap < y_overlap)
+			{
+				depth = x_overlap;
+				n = c2V(1.0f, 0);
+				n = c2Mulvs(n, d.x < 0 ? 1.0f : -1.0f);
+			}
+
+			else
+			{
+				depth = y_overlap;
+				n = c2V(0, 1.0f);
+				n = c2Mulvs(n, d.y < 0 ? 1.0f : -1.0f);
+			}
+
+			m->count = 1;
+			m->depths[0] = A.r + depth;
+			m->contact_points[0] = c2Sub(A.p, c2Mulvs(n, depth));
+			m->n = n;
+		}
+	}
+}
+*/

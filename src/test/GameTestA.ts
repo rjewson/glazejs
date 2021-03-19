@@ -477,7 +477,7 @@ export class GameTestA extends GlazeEngine {
             ]),
             new Fixed(),
             new Active(),
-            new Light(160, 1, 1, 1, 255, 255, 204, 0),
+            new Light(256, 1, 1, 1, 255, 255, 204, 0),
         ]);
 
         const turret = this.engine.createEntity();
