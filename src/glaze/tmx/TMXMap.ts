@@ -145,6 +145,7 @@ export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
                 layer.get(xp, yp, 0);
             if (source > 0) {
                 var superSet = Math.floor(source / 1024);
+                console.log("SS " + superSet);
                 var superY = Math.floor(superSet / 8);
                 var superX = superSet % 8;
 

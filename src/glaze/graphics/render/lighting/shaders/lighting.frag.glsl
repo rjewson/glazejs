@@ -28,9 +28,9 @@ void main(void) {
     float m = (INV_PATH_TRACKING_SAMPLES * d) / BLOCK_LIGHT_TRANSMISSION;
 
     // Light power model.
-    float light = 1. - d; // Linear drop off
+    //float light = 1. - d; // Linear drop off
     // float light = pow(1. - d, 5.); // Ease in
-    // float light = 1. - pow(1. - (1. - d), 3.); // Ease out
+     float light = 1. - pow(1. - (1. - d), 3.); // Ease out
 
     // Torch
     float cone = 1.;

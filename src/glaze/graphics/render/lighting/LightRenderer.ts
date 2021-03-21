@@ -14,12 +14,13 @@ import { LightGroup } from "./LightGroup";
 
 import vertexShader from "./shaders/lighting.vert.glsl";
 import fragmentShader from "./shaders/lighting.frag.glsl";
+import ambientFragmentShader from "./shaders/ambientlighting.frag.glsl";
 
 const BYTES_PER_QUAD = 8 * 4;
 const LIGHTS_PER_SIZE = 50;
 
-const fragmentShaderFactory = (count, ratio) => {
-    return fragmentShader.replace("${count}", count).replace("${ratio}", ratio);
+const fragmentShaderFactory = (shader, count, ratio) => {
+    return shader.replace("${count}", count).replace("${ratio}", ratio);
 };
 
 export class LightRenderer implements IRenderer {
@@ -91,21 +92,36 @@ export class LightRenderer implements IRenderer {
             range =>
                 new LightGroup(
                     range,
+                    range,
                     LIGHTS_PER_SIZE,
                     new ShaderWrapper(
                         gl,
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             vertexShader,
-                            fragmentShaderFactory(range / this.tileSize, 0.25)
+                            fragmentShaderFactory(fragmentShader, range / this.tileSize, 0.25)
                         )
                     )
                 )
         );
+        
         this.lightGroupsMap = new Array(this.ranges[this.ranges.length - 1]);
         this.ranges.forEach((range, i) => {
             this.lightGroupsMap[range] = this.lightGroups[i];
         });
+        this.lightGroups.unshift(new LightGroup(
+            1280/2,
+            720/2,
+            5,
+            new ShaderWrapper(
+                gl,
+                WebGLShaderUtils.CompileProgram(
+                    gl,
+                    vertexShader,
+                    fragmentShaderFactory(ambientFragmentShader, 0, 0.25)
+                )
+            )
+        ));
     }
 
     public ResizeBatch(size: number) {
@@ -152,6 +168,7 @@ export class LightRenderer implements IRenderer {
         for (const lightGroup of this.lightGroups) {
             lightGroup.reset();
         }
+        this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
@@ -165,13 +182,20 @@ export class LightRenderer implements IRenderer {
 
     public processLightsBatch() {
         let lightCount = 0;
+        const a = this.lightGroups[0].lights[0];
+        a.x = -this.camera.position.x + 1280/2;// + this.camera.viewportSize.y;
+        a.y = -this.camera.position.y + 720/2;// + 100;
         for (const lightGroup of this.lightGroups) {
+
+            const lightWidth = lightGroup.width + this.halfTileSize;
+            const lightHeight = lightGroup.height + this.halfTileSize;
+            const scaledUVWidth = lightGroup.width / this.tileSize;
+            const scaledUVHeight = lightGroup.height / this.tileSize;
+            
             for (let lightIndex = 0; lightIndex < lightGroup.activeLights; lightIndex++) {
                 const light = lightGroup.lights[lightIndex];
                 const index = lightCount * BYTES_PER_QUAD;
                 let index8 = index * 4;
-                const intensity = light.intensity + this.halfTileSize;
-                const size = light.intensity / this.tileSize;
 
                 let x = light.x;
                 let y = light.y;
@@ -190,11 +214,11 @@ export class LightRenderer implements IRenderer {
 
                 //0 bl
                 //Verts
-                this.data[index + 0] = x + this.quadVerts[0] * intensity;
-                this.data[index + 1] = y + this.quadVerts[1] * intensity;
+                this.data[index + 0] = x + this.quadVerts[0] * lightWidth;
+                this.data[index + 1] = y + this.quadVerts[1] * lightHeight;
                 //UV
-                this.data[index + 2] = this.quadVerts[0] * size;
-                this.data[index + 3] = this.quadVerts[1] * size;
+                this.data[index + 2] = this.quadVerts[0] * scaledUVWidth;
+                this.data[index + 3] = this.quadVerts[1] * scaledUVHeight;
                 //Colour
                 //this.data[index + 4] = colour;
                 this.data8[index8 + 16] = light.red;
@@ -208,11 +232,11 @@ export class LightRenderer implements IRenderer {
 
                 //1 br
                 //Verts
-                this.data[index + 8] = x + this.quadVerts[2] * intensity;
-                this.data[index + 9] = y + this.quadVerts[3] * intensity;
+                this.data[index + 8] = x + this.quadVerts[2] * lightWidth;
+                this.data[index + 9] = y + this.quadVerts[3] * lightHeight;
                 //UV
-                this.data[index + 10] = this.quadVerts[2] * size;
-                this.data[index + 11] = this.quadVerts[3] * size;
+                this.data[index + 10] = this.quadVerts[2] * scaledUVWidth;
+                this.data[index + 11] = this.quadVerts[3] * scaledUVHeight;
                 //Colour
                 //this.data[index + 12] = colour;
                 this.data8[index8 + 48] = light.red;
@@ -226,11 +250,11 @@ export class LightRenderer implements IRenderer {
 
                 //2 tr
                 //Verts
-                this.data[index + 16] = x + this.quadVerts[4] * intensity;
-                this.data[index + 17] = y + this.quadVerts[5] * intensity;
+                this.data[index + 16] = x + this.quadVerts[4] * lightWidth;
+                this.data[index + 17] = y + this.quadVerts[5] * lightHeight;
                 //UV
-                this.data[index + 18] = this.quadVerts[4] * size;
-                this.data[index + 19] = this.quadVerts[5] * size;
+                this.data[index + 18] = this.quadVerts[4] * scaledUVWidth;
+                this.data[index + 19] = this.quadVerts[5] * scaledUVHeight;
                 //Colour
                 //this.data[index + 20] = colour;
                 this.data8[index8 + 80] = light.red;
@@ -244,11 +268,11 @@ export class LightRenderer implements IRenderer {
 
                 //3
                 //Verts
-                this.data[index + 24] = x + this.quadVerts[6] * intensity;
-                this.data[index + 25] = y + this.quadVerts[7] * intensity;
+                this.data[index + 24] = x + this.quadVerts[6] * lightWidth;
+                this.data[index + 25] = y + this.quadVerts[7] * lightHeight;
                 //UV
-                this.data[index + 26] = this.quadVerts[6] * size;
-                this.data[index + 27] = this.quadVerts[7] * size;
+                this.data[index + 26] = this.quadVerts[6] * scaledUVWidth;
+                this.data[index + 27] = this.quadVerts[7] * scaledUVHeight;
                 //Colour
                 //this.data[index + 28] = colour;
                 this.data8[index8 + 112] = light.red;

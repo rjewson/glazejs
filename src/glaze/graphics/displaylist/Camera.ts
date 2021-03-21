@@ -22,11 +22,6 @@ export class Camera extends DisplayObjectContainer {
         this.worldExtentsAABB = new AABB2();
     }
 
-    private rf(v: number) {
-        return v;
-        // return Math.round(v);
-    }
-
     public Focus(x: number, y: number) {
         //Need to move the camera container the oposite way to the actual coords
         this.realPosition.x = x;
@@ -63,4 +58,10 @@ export class Camera extends DisplayObjectContainer {
         this.cameraExtentsAABB = this.worldExtentsAABB.clone();
         this.cameraExtentsAABB.expand2(width, height);
     }
+
+    private rf(v: number) {
+        return Math.floor(v);
+        return Math.round(v);
+    }
+
 }
