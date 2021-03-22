@@ -133,7 +133,7 @@ export function GetTileSet(map: TMXMap, name: string): TMXTileSet | null {
 
 export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
     //Assumes all tiles are from same set...function
-    var tileSet: TMXTileSet = null;
+    //var tileSet: TMXTileSet = null;
     var textureData = new TypedArray2D(layer.width, layer.height);
 
     for (var xp = 0; xp < layer.width; xp++) {
@@ -145,15 +145,19 @@ export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
                 layer.get(xp, yp, 0);
             if (source > 0) {
                 var superSet = Math.floor(source / 1024);
-                console.log("SS " + superSet);
-                var superY = Math.floor(superSet / 8);
-                var superX = superSet % 8;
+                //var superSet = 1;
+                // if (superSet === 8) {
+                //     debugger;
+                // }
+                //var superY = Math.floor(superSet / 8);
+                //var superX = superSet % 8;
 
                 var relativeID = source - superSet * 1024;
                 relativeID--; //Not sure why ATM
                 var y = Math.floor(relativeID / 32);
                 var x = relativeID - 32 * y;
-                var v: number = (superY << 24) | (superX << 16) | (y << 8) | x;
+                //var v: number = (superY << 24) | (superX << 16) | (y << 8) | x;
+                var v: number = (0 << 24) | (superSet << 16) | (y << 8) | x;
                 textureData.set(xp, yp, v);
             } else {
                 textureData.set(xp, yp, 0xffffffff);

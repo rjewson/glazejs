@@ -1,7 +1,7 @@
 import { Vector2 } from "../../../geom/Vector2";
 import { BaseTexture } from "../../texture/BaseTexture";
-import { TypedArray2D } from "../../../ds/TypedArray2D";
 
+const ByteToFormat = (size) => [null, null, WebGLRenderingContext.LUMINANCE_ALPHA, WebGLRenderingContext.RGB, WebGLRenderingContext.RGBA][size];
 export class TileLayer {
     public scrollScale: Vector2;
 
@@ -23,19 +23,20 @@ export class TileLayer {
         this.inverseSpriteTextureSize[1] = 1 / spriteTexture.height;
     }
 
-    public setTextureFromMap(gl: WebGLRenderingContext, data: TypedArray2D) {
+    public setTextureFromMap(gl: WebGLRenderingContext, data: Uint8Array, width: number, height: number, format: number = 4 ) {
         if (this.tileDataTexture == null) this.tileDataTexture = gl.createTexture();
         gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.tileDataTexture);
+        const type = ByteToFormat(format);
         gl.texImage2D(
             WebGLRenderingContext.TEXTURE_2D,
             0,
-            WebGLRenderingContext.RGBA,
-            data.w,
-            data.h,
+            type, //WebGLRenderingContext.RGBA,
+            width,
+            height,
             0,
-            WebGLRenderingContext.RGBA,
+            type, //WebGLRenderingContext.RGBA,
             WebGLRenderingContext.UNSIGNED_BYTE,
-            data.data8,
+            data,
         );
         gl.texParameteri(
             WebGLRenderingContext.TEXTURE_2D,
@@ -57,8 +58,8 @@ export class TileLayer {
             WebGLRenderingContext.TEXTURE_WRAP_T,
             WebGLRenderingContext.CLAMP_TO_EDGE,
         );
-        this.inverseTileDataTextureSize[0] = 1 / data.w;
-        this.inverseTileDataTextureSize[1] = 1 / data.h;
+        this.inverseTileDataTextureSize[0] = 1 / width;
+        this.inverseTileDataTextureSize[1] = 1 / height;
     }
 
     public setTexture(gl: WebGLRenderingContext, image: HTMLImageElement, repeat: boolean) {

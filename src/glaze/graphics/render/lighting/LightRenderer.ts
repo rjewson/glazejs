@@ -15,9 +15,11 @@ import { LightGroup } from "./LightGroup";
 import vertexShader from "./shaders/lighting.vert.glsl";
 import fragmentShader from "./shaders/lighting.frag.glsl";
 import ambientFragmentShader from "./shaders/ambientlighting.frag.glsl";
+import { GZE } from "../../../GZE";
 
 const BYTES_PER_QUAD = 8 * 4;
-const LIGHTS_PER_SIZE = 50;
+const LIGHTS_PER_SIZE = 500;
+const LIGHT_SCALE_FACTOR = 4;
 
 const fragmentShaderFactory = (shader, count, ratio) => {
     return shader.replace("${count}", count).replace("${ratio}", ratio);
@@ -67,7 +69,10 @@ export class LightRenderer implements IRenderer {
         this.renderSurface = this.renderSurface.bind(this);
         this.snapPosition = new Vector2(-1000, -1000);
         this.layer = layer;
-        this.tileSize = 4;
+
+        // Change this this to resize the light map resolution
+        this.tileSize = GZE.tileSize / LIGHT_SCALE_FACTOR;
+
         this.halfTileSize = this.tileSize / 2;
         this.backgroundLight = 0.0;
     }
@@ -99,7 +104,7 @@ export class LightRenderer implements IRenderer {
                         WebGLShaderUtils.CompileProgram(
                             gl,
                             vertexShader,
-                            fragmentShaderFactory(fragmentShader, range / this.tileSize, 0.25)
+                            fragmentShaderFactory(fragmentShader, range / this.tileSize, 1/LIGHT_SCALE_FACTOR)
                         )
                     )
                 )
@@ -118,7 +123,7 @@ export class LightRenderer implements IRenderer {
                 WebGLShaderUtils.CompileProgram(
                     gl,
                     vertexShader,
-                    fragmentShaderFactory(ambientFragmentShader, 0, 0.25)
+                    fragmentShaderFactory(ambientFragmentShader, 0, 1/LIGHT_SCALE_FACTOR)
                 )
             )
         ));
@@ -168,7 +173,7 @@ export class LightRenderer implements IRenderer {
         for (const lightGroup of this.lightGroups) {
             lightGroup.reset();
         }
-        this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
+        //this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
@@ -182,9 +187,9 @@ export class LightRenderer implements IRenderer {
 
     public processLightsBatch() {
         let lightCount = 0;
-        const a = this.lightGroups[0].lights[0];
-        a.x = -this.camera.position.x + 1280/2;// + this.camera.viewportSize.y;
-        a.y = -this.camera.position.y + 720/2;// + 100;
+        // const a = this.lightGroups[0].lights[0];
+        // a.x = -this.camera.position.x + 1280/2;// + this.camera.viewportSize.y;
+        // a.y = -this.camera.position.y + 720/2;// + 100;
         for (const lightGroup of this.lightGroups) {
 
             const lightWidth = lightGroup.width + this.halfTileSize;
@@ -303,29 +308,21 @@ export class LightRenderer implements IRenderer {
     public Render(clip: AABB2) {
         this.processLightsBatch();
         this.calcSnap(this.camera.position);
+
         // Temp background calc
         const percentDepth = this.camera.position.y / this.camera.worldExtentsAABB.height;
         this.Background(Math.abs(percentDepth));
         // End
+        
         this.sprite.position.copy(this.camera.halfViewportSize);
         this.sprite.position.minusEquals(this.snapPosition);
         this.surface.drawTo(this.renderSurface);
     }
 
-    private renderSurface() {
-        // this.gl.clearColor(0,0,0,0);
-        
+    private renderSurface() {        
          this.gl.clearColor(1-this.backgroundLight,1-this.backgroundLight,1-this.backgroundLight, 1.0);
-
-        //this.gl.clearColor(0,0,0, 1.0);
-        //this.sprite.alpha = 1-this.backgroundLight;
-
-
         this.gl.colorMask(true, true, true, true);
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT);
-
-        // this.gl.blendEquation(this.ext.MAX_EXT);
-        // this.gl.blendEquation(ext.MAX_EXT);
 
         this.gl.blendEquation(WebGLRenderingContext.FUNC_ADD);
         // SRC_ALPHA ONE https://stackoverflow.com/questions/393785/how-to-setup-blending-for-additive-color-overlays

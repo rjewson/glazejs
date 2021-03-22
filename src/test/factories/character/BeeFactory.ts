@@ -39,6 +39,7 @@ export class BeeFactory {
         beeBody.setBounces(0);
         beeBody.globalForceFactor = 0.0;
         beeBody.maxScalarVelocity = 200;
+        beeBody.usesStairs = false;
 
         var bee = engine.createEntity();
         engine.addComponentsToEntity(bee, [

@@ -8,9 +8,10 @@ export class Camera extends DisplayObjectContainer {
     public halfViewportSize: Vector2;
     public viewPortAABB: AABB2;
     public worldExtentsAABB: AABB2;
-    private cameraExtentsAABB: AABB2;
     public shake: Vector2;
-
+    
+    private cameraExtentsAABB: AABB2;
+    
     constructor() {
         super();
         this.id = "Camera";

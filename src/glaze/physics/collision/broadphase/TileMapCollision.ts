@@ -128,21 +128,10 @@ export class TileMapCollision {
 
                         if ((cell & STEP) == STEP && body.usesStairs) {
                             this.segment.set(body.position, body.predictedPosition);
-                            // js.Lib.debug();
-
-                            //-4,+4
-                            //+4,-4
-                            //step 8
-                            const stairstep = 4;
-                            // var stairSize = 4;
-                            // var startStair = -6;
                             for (var stair = 0; stair <2 ; stair++) {
                                 const stairOffset = STAIR_OFFSETS[stair];
-                                // const p = 8 - stair * stairstep;
                                 this.halftilePosition.copy(this.tilePosition);
                                 this.halftilePosition.plusEquals(stairOffset);
-                                // this.halftilePosition.x += p * -1;
-                                // this.halftilePosition.y += p;
                                 if (
                                     IsSegVsAABB(
                                         this.segment,
@@ -275,7 +264,7 @@ export class TileMapCollision {
         for (var y = startY; y < endY; y++) {
             for (var x = startX; x < endX; x++) {
                 var cell = this.data.get(x, y, 0);
-                if ((cell & SOLID) == SOLID) {
+                if ((cell & SOLID) == SOLID || (cell & STEP) == STEP) {
                     this.workingAABB.position.setTo(
                         x * this.tileSize + this.tileHalfSize,
                         y * this.tileSize + this.tileHalfSize

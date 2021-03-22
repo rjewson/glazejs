@@ -204,7 +204,7 @@ export class TileMapRenderer implements IRenderer {
         scrollScaleY: number,
     ): TileLayer {
         var layer = new TileLayer();
-        layer.setTextureFromMap(this.gl, data);
+        layer.setTextureFromMap(this.gl, data.data8, data.w, data.h);
         layer.setSpriteTexture(sprite);
         layer.scrollScale.x = scrollScaleX;
         layer.scrollScale.y = scrollScaleY;
@@ -227,9 +227,9 @@ export class TileMapRenderer implements IRenderer {
         var height = data[3];
         var centerX = data[4];
         var centerY = data[5];
-        var superY = Math.floor(data[6] / 8);
-        var superX = data[6] % 8;
-
+        //var superY = Math.floor(data[6] / 8);
+        //var superX = data[6] % 8;
+        var superSheet = data[6];
         this.writebuffer2.h = height;
         this.writebuffer2.w = width;
 
@@ -237,7 +237,8 @@ export class TileMapRenderer implements IRenderer {
             for (var xpos = 0; xpos < width; xpos++) {
                 var _x = startX + xpos;
                 var _y = startY + ypos;
-                var value = (superY << 24) | (superX << 16) | (_y << 8) | _x;
+                // var value = (superY << 24) | (superX << 16) | (_y << 8) | _x;
+                var value = (0 << 24) | (superSheet << 16) | (_y << 8) | _x;
                 this.writebuffer2.set(xpos, ypos, value);
             }
         }

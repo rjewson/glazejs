@@ -5,13 +5,14 @@ export class Bytes2D {
     public width: number;
     public height: number;
 
-    private numberernalWidth: number;
-
+    
     public cellSize: number;
     public invCellSize: number;
-
+    
     public bytesPerCell: number;
-
+    
+    private numberernalWidth: number;
+    
     constructor(width: number, height: number, cellSize: number, bytesPerCell: number, data?: ArrayBuffer) {
         this.initalize(width, height, cellSize, bytesPerCell, data);
     }

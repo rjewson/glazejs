@@ -67,7 +67,7 @@ export class StandardBullet {
             // new Light(64, 1, 1, 1, 255, 255, 255),
             new Viewable(),
         ]);
-        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2000);
+        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 20000);
 
         return bullet;
     }
