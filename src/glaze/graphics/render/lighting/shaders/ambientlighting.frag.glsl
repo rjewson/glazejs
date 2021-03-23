@@ -6,7 +6,7 @@ const vec2 EMPTY_TILE = vec2(1.0, 1.0);
 const float LIGHT_TO_MAP_RESOLUTION_RATIO = float(${ratio});
 const float BLOCK_LIGHT_TRANSMISSION = 0.075;
 
-const float _SamplingDist = 2.0;
+const float _SamplingDist = 1.0;
 
 uniform sampler2D uSampler;
 uniform vec2 viewOffset;
@@ -20,7 +20,7 @@ varying vec3 vArc;
 
 void main(void) {
     vec2 pos = vec2(gl_FragCoord.x - 1., resolution.y - gl_FragCoord.y);
-    vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.0); 
+    vec2 currentPos = (pos - viewOffset) - vec2(0.0,1.5); 
 
     vec2 scaledTilesSize = inverseTileTextureSize * LIGHT_TO_MAP_RESOLUTION_RATIO;
 
@@ -33,7 +33,8 @@ void main(void) {
     // v += float(all(lessThan(texture2D(uSampler, (currentPos + vec2(0, _SamplingDist)) * scaledTilesSize).xy, EMPTY_TILE)));
     // v /= 4.0;
 
-    float v = float(all(lessThan(texture2D(uSampler, (currentPos + vec2(_SamplingDist, 0)) * scaledTilesSize).xy, EMPTY_TILE)));
+    float v = float(all(lessThan(texture2D(uSampler, (currentPos + vec2(0, 0)) * scaledTilesSize).xy, EMPTY_TILE)));
+    v = max(v,float(all(lessThan(texture2D(uSampler, (currentPos + vec2(_SamplingDist, 0)) * scaledTilesSize).xy, EMPTY_TILE))));
     v = max(v,float(all(lessThan(texture2D(uSampler, (currentPos + vec2(-_SamplingDist, 0)) * scaledTilesSize).xy, EMPTY_TILE))));
     v = max(v,float(all(lessThan(texture2D(uSampler, (currentPos + vec2(0, -_SamplingDist)) * scaledTilesSize).xy, EMPTY_TILE))));
     v = max(v,float(all(lessThan(texture2D(uSampler, (currentPos + vec2(0, _SamplingDist)) * scaledTilesSize).xy, EMPTY_TILE))));

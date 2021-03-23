@@ -18,7 +18,7 @@ import ambientFragmentShader from "./shaders/ambientlighting.frag.glsl";
 import { GZE } from "../../../GZE";
 
 const BYTES_PER_QUAD = 8 * 4;
-const LIGHTS_PER_SIZE = 500;
+const LIGHTS_PER_SIZE = 100;
 const LIGHT_SCALE_FACTOR = 4;
 
 const fragmentShaderFactory = (shader, count, ratio) => {
@@ -80,8 +80,6 @@ export class LightRenderer implements IRenderer {
     public Init(gl: WebGLRenderingContext, camera: Camera) {
         this.gl = gl;
 
-        this.ext = gl.getExtension("EXT_blend_minmax");
-
         this.camera = camera;
         this.projection = new Vector2();
         this.indexBuffer = gl.createBuffer();
@@ -115,8 +113,8 @@ export class LightRenderer implements IRenderer {
             this.lightGroupsMap[range] = this.lightGroups[i];
         });
         this.lightGroups.unshift(new LightGroup(
-            1280/2,
-            720/2,
+            GZE.resolution.x/2,
+            GZE.resolution.y/2,
             5,
             new ShaderWrapper(
                 gl,
@@ -173,7 +171,7 @@ export class LightRenderer implements IRenderer {
         for (const lightGroup of this.lightGroups) {
             lightGroup.reset();
         }
-        //this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
+        this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
@@ -187,9 +185,10 @@ export class LightRenderer implements IRenderer {
 
     public processLightsBatch() {
         let lightCount = 0;
-        // const a = this.lightGroups[0].lights[0];
-        // a.x = -this.camera.position.x + 1280/2;// + this.camera.viewportSize.y;
-        // a.y = -this.camera.position.y + 720/2;// + 100;
+        const a = this.lightGroups[0].lights[0];
+        a.x = -this.camera.position.x + GZE.resolution.x/2;// + this.camera.viewportSize.y;
+        a.y = -this.camera.position.y + GZE.resolution.y/2;// + 100;
+        
         for (const lightGroup of this.lightGroups) {
 
             const lightWidth = lightGroup.width + this.halfTileSize;

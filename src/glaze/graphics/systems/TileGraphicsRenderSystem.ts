@@ -55,12 +55,13 @@ export class TileGraphicsRenderSystem extends System {
     }
 
     updateAllEntities() {
+        const updateLayer = this.tileMap.layersMap.get("Foreground1");
         while (this.updates.length > 0) {
             var entity = this.updates.pop();
             var position = this.engine.getComponentForEntity(entity, Position);
             var tileDisplay = this.engine.getComponentForEntity(entity, TileGraphics);
             if (tileDisplay.tileFrameId != "")
-                this.tileMap.updateMap(
+            updateLayer.updateMap(
                     this.map.data.Index(position.coords.x),
                     this.map.data.Index(position.coords.y),
                     this.frames.get(tileDisplay.tileFrameId),

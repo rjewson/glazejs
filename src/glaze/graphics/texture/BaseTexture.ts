@@ -1,3 +1,5 @@
+import { GZE } from "../../GZE";
+
 export class BaseTexture {
     public width: number;
     public height: number;
@@ -148,11 +150,12 @@ export class BaseTexture {
         this.gl.bindRenderbuffer(WebGLRenderingContext.RENDERBUFFER, null);
         // this.gl.viewport(v[0], v[1], v[2], v[3]);
         // this.gl.viewport(0, 0, 800, 640);
-        this.gl.viewport(0, 0, 1280, 720);
+        this.gl.viewport(0, 0, GZE.resolution.x, GZE.resolution.y);
     }
 
     public UnregisterTexture(gl: WebGLRenderingContext) {
         if (this.texture != null) {
+            //blah
         }
     }
 }

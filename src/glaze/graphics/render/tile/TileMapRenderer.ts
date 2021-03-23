@@ -37,10 +37,6 @@ export class TileMapRenderer implements IRenderer {
 
     public camera: Camera;
 
-    public writebuffer2: TypedArray2D;
-
-    public flip: boolean;
-
     constructor(tileSize: number, tileScale: number) {
         this.tileSize = tileSize;
         this.tileScale = tileScale;
@@ -70,7 +66,7 @@ export class TileMapRenderer implements IRenderer {
         // Tri
         // BL BR TR   BL TR TL
         // UV
-        // 
+        //
         //  Quad verts and UVs.  UV maps from TL 0,0 to BR 1,1
         //  Used to interpolate the coord of the fragment
         var quadVerts = new Float32Array([
@@ -98,7 +94,7 @@ export class TileMapRenderer implements IRenderer {
             // BR
             -1,
             -1,
-            
+
             0,
             1,
 
@@ -117,16 +113,9 @@ export class TileMapRenderer implements IRenderer {
         ]);
 
         gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, quadVerts, WebGLRenderingContext.STATIC_DRAW);
-        this.tilemapShader = new ShaderWrapper(
-            gl,
-            WebGLShaderUtils.CompileProgram(gl, vertexShader, fragmentShader),
-        );
+        this.tilemapShader = new ShaderWrapper(gl, WebGLShaderUtils.CompileProgram(gl, vertexShader, fragmentShader));
 
-        this.flip = false;
-
-        this.writebuffer2 = new TypedArray2D(3, 3); //Max 3x3 tileset changes
-
-        this.renderLayers.forEach(renderLayer => renderLayer.Init(gl, camera));
+        this.renderLayers.forEach((renderLayer) => renderLayer.Init(gl, camera));
     }
 
     public Resize(width: number, height: number) {
@@ -137,60 +126,14 @@ export class TileMapRenderer implements IRenderer {
         this.viewportSize.y = expandedHeight * this.tileScale;
         this.scaledViewportSize[0] = this.viewportSize.x / this.tileScale;
         this.scaledViewportSize[1] = this.viewportSize.y / this.tileScale;
-        this.renderLayers.forEach(renderLayer =>
-            renderLayer.Resize(Math.floor(expandedWidth), Math.floor(expandedHeight)),
+        this.renderLayers.forEach((renderLayer) =>
+            renderLayer.Resize(Math.floor(expandedWidth), Math.floor(expandedHeight))
         );
-    }
-
-    // public  TileScale(scale:Float) {
-    //     this.tileScale = scale;
-    //     scaledViewportSize[0] = viewportSize.x/scale;
-    //     scaledViewportSize[1] = viewportSize.y/scale;
-    // }
-
-    public SetSpriteSheet(image: HTMLImageElement) {
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.spriteSheet);
-        this.gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-        // gl.texParameteri(WebGLRenderingContext.TEXTURE_2D,WebGLRenderingContext.TEXTURE_MAG_FILTER,WebGLRenderingContext.NEAREST);
-        // gl.texParameteri(WebGLRenderingContext.TEXTURE_2D,WebGLRenderingContext.TEXTURE_MIN_FILTER,WebGLRenderingContext.NEAREST);
-        this.gl.texImage2D(
-            WebGLRenderingContext.TEXTURE_2D,
-            0,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.UNSIGNED_BYTE,
-            image,
-        );
-        if (!this.filtered) {
-            this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.NEAREST,
-            );
-            this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.NEAREST,
-            );
-        } else {
-            this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.LINEAR,
-            );
-            this.gl.texParameteri(
-                WebGLRenderingContext.TEXTURE_2D,
-                WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.LINEAR,
-            ); // Worth it to mipmap here?
-        }
-        this.inverseSpriteTextureSize[0] = 1 / image.width;
-        this.inverseSpriteTextureSize[1] = 1 / image.height;
     }
 
     public SetTileLayer(image: HTMLImageElement, layerId: String, scrollScaleX: number, scrollScaleY: number) {
-        var layer = new TileLayer();
-        layer.setTexture(this.gl, image, false);
+        var layer = new TileLayer(this.gl);
+        layer.setTexture(image, false);
         layer.scrollScale.x = scrollScaleX;
         layer.scrollScale.y = scrollScaleY;
         this.layers.push(layer);
@@ -201,10 +144,10 @@ export class TileMapRenderer implements IRenderer {
         sprite: BaseTexture,
         layerId: string,
         scrollScaleX: number,
-        scrollScaleY: number,
+        scrollScaleY: number
     ): TileLayer {
-        var layer = new TileLayer();
-        layer.setTextureFromMap(this.gl, data.data8, data.w, data.h);
+        var layer = new TileLayer(this.gl);
+        layer.setTextureFromMap(data.data8, data.w, data.h);
         layer.setSpriteTexture(sprite);
         layer.scrollScale.x = scrollScaleX;
         layer.scrollScale.y = scrollScaleY;
@@ -213,49 +156,10 @@ export class TileMapRenderer implements IRenderer {
         return layer;
     }
 
-    public SetTileRenderLayer(id:string, layers: Array<string>) {
+    public SetTileRenderLayer(id: string, layers: Array<string>) {
         var tileRenderLayer = new TileLayerRenderProxy(this, layers);
         this.renderLayers.push(tileRenderLayer);
-        this.renderLayersMap.set(id,tileRenderLayer);
-    }
-
-    public updateMap(x: number, y: number, data: Array<number>) {
-
-        var startX = data[0];
-        var startY = data[1];
-        var width = data[2];
-        var height = data[3];
-        var centerX = data[4];
-        var centerY = data[5];
-        //var superY = Math.floor(data[6] / 8);
-        //var superX = data[6] % 8;
-        var superSheet = data[6];
-        this.writebuffer2.h = height;
-        this.writebuffer2.w = width;
-
-        for (var ypos = 0; ypos < height; ypos++) {
-            for (var xpos = 0; xpos < width; xpos++) {
-                var _x = startX + xpos;
-                var _y = startY + ypos;
-                // var value = (superY << 24) | (superX << 16) | (_y << 8) | _x;
-                var value = (0 << 24) | (superSheet << 16) | (_y << 8) | _x;
-                this.writebuffer2.set(xpos, ypos, value);
-            }
-        }
-
-        var writeLayer = this.layers[2].tileDataTexture;
-        this.gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, writeLayer);
-        this.gl.texSubImage2D(
-            WebGLRenderingContext.TEXTURE_2D,
-            0,
-            x - centerX,
-            y - centerY,
-            width,
-            height,
-            WebGLRenderingContext.RGBA,
-            WebGLRenderingContext.UNSIGNED_BYTE,
-            this.writebuffer2.data8,
-        );
+        this.renderLayersMap.set(id, tileRenderLayer);
     }
 
     public Render(clip: AABB2) {
@@ -281,7 +185,7 @@ export class TileMapRenderer implements IRenderer {
             WebGLRenderingContext.FLOAT,
             false,
             16,
-            0,
+            0
         );
         this.gl.vertexAttribPointer(this.tilemapShader.attribute.texture, 2, WebGLRenderingContext.FLOAT, false, 16, 8);
 
@@ -292,9 +196,7 @@ export class TileMapRenderer implements IRenderer {
         this.gl.uniform1i(this.tilemapShader.uniform.sprites, 0);
         this.gl.uniform1i(this.tilemapShader.uniform.tiles, 1);
 
-        // for (i in renderLayer.layers) {
         for (var i = 0; i < renderLayer.layers.length; i++) {
-            // var layer = this.layers[i];
             const layer = this.layersMap.get(renderLayer.layers[i]);
             const pX = renderLayer.thisSnap.x / 2;
             const pY = renderLayer.thisSnap.y / 2;
@@ -313,21 +215,4 @@ export class TileMapRenderer implements IRenderer {
         }
         this.gl.colorMask(true, true, true, false);
     }
-
-    /*
-
-    256*8=2048
-
-    8x8 supertiles = 64 supertiles
-
-    of 
-
-    16*16 8*8 pixel tiles = 256 tiles
-
-    total = 64 * 256 = 16k tiles
-
-p.y = index % 8;
-p.x = Math.floor(index / 8);
-
-    */
 }

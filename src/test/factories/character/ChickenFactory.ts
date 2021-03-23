@@ -49,7 +49,7 @@ export class ChickenFactory {
             new Active(),
             new Viewable(),
             new Flammable(100),
-            new Light(160, 1, 1, 1, 255, 255, 255)
+            new Light(64, 1, 1, 1, 255, 255, 255)
         ]);
         return chicken;
     }
