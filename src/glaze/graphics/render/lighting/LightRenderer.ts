@@ -171,7 +171,9 @@ export class LightRenderer implements IRenderer {
         for (const lightGroup of this.lightGroups) {
             lightGroup.reset();
         }
-        this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
+
+        // Add for Ambient light
+        // this.lightGroups[0].addLight(500,2500.5, 0, 0, 0, 0, 0, 0);
     }
 
     public addUnblockedLight(x: number, y: number, intensity: number, red: number, green: number, blue: number) {}
@@ -185,10 +187,12 @@ export class LightRenderer implements IRenderer {
 
     public processLightsBatch() {
         let lightCount = 0;
-        const a = this.lightGroups[0].lights[0];
-        a.x = -this.camera.position.x + GZE.resolution.x/2;// + this.camera.viewportSize.y;
-        a.y = -this.camera.position.y + GZE.resolution.y/2;// + 100;
         
+        // Add for Ambient light
+        // const a = this.lightGroups[0].lights[0];
+        // a.x = -this.camera.position.x + GZE.resolution.x/2;// + this.camera.viewportSize.y;
+        // a.y = -this.camera.position.y + GZE.resolution.y/2;// + 100;
+
         for (const lightGroup of this.lightGroups) {
 
             const lightWidth = lightGroup.width + this.halfTileSize;

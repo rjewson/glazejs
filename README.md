@@ -8,7 +8,8 @@ Play the demo here (read the instructions) [https://rjewson.github.io/glazejs/](
 - Custom WebGL renderer with special attention to:
     - Sprites
     - Particles
-    - Tilemaps
+    - Tilemaps (Tiled format supported)
+    - Lighting
 - Custom 2D physics engine
     - Optimized for large numbers of bodies
     - Hybrid ray/AABB collision scheme ensures correct contact point calculation and 0% chance of penetration
@@ -19,6 +20,13 @@ Play the demo here (read the instructions) [https://rjewson.github.io/glazejs/](
     - FSM's
 - and more!
 
+## Lighting
+
+The engine now features a fairly feature rich lighting system.  There are point lights (circular or cone) that can be obstructed by the tile scene allowing shadows to be cast.  There is also an ambient lighing system that is in development to create overall 'world' lighting that can be updated per frame (e.g. based on depth)
+
+## Tiled format support
+
+To do
 ## Install and run
 
 1. clone this repo
