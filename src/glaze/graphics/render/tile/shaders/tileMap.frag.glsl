@@ -35,7 +35,7 @@ void main(void) {
     //bool flag2 = mod(floor(flags /dw 2.0), 2.0) > 0.;
     //bool flag3 = mod(floor(flags / 4.0), 2.0) > 0.;
 
-    float infoByte = tile.z * 255.0;
+    float infoByte = tile.z * 256.0;
     
     // extract the orientation bits
     float diagonal = mod(floor(infoByte / 32.0), 2.0);
@@ -43,12 +43,12 @@ void main(void) {
     float horizontal  = mod(floor(infoByte / 128.0), 2.0);
 
     // remove the orientation bits to get the original sheet ID
-    float superSheetID = floor(infoByte - (horizontal * 128.0) - (vertical * 64.0) - (diagonal * 32.0));
+    float superSheetID = floor(infoByte - floor(horizontal * 128.0) - floor(vertical * 64.0) - floor(diagonal * 32.0));
     vec2 superSpriteOffset = floor(vec2(mod(superSheetID, SUPER_SPRITE_SHEET_WIDTH) , superSheetID / SUPER_SPRITE_SHEET_WIDTH)) * 256.0;
 
     vec2 flip = vec2( vertical, horizontal);
 
-    vec2 spriteOffset = floor(tile.xy * 255.0) * tileSize;
+    vec2 spriteOffset = floor(tile.xy * 256.0) * tileSize;
     vec2 spriteCoord = mod(pixelCoord, tileSize); 
 
     // Flip the tile

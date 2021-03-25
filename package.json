@@ -7,7 +7,7 @@
     "build": "webpack --config webpack.prod.js",
     "buildApp": "webpack --config webpack.app.js",
     "watch": "webpack --watch",
-    "dev": "webpack-serve --hmr false ./webpack.dev.js",
+    "dev": "webpack-serve --hmr false ./webpack.dev.js --host 0.0.0.0",
     "validate-typescript": "tsc --noEmit",
     "game": "./scripts/startChrome.sh http://localhost:8000"
   },
