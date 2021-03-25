@@ -11,6 +11,10 @@ uniform vec2 inverseTileTextureSize;
 uniform float inverseTileSize;
 
 void main(void) {
+    // vec2 offset = viewOffset + (inverseTileSize / 2.0);
+    // offset -= mod(offset, inverseTileSize);
+    // pixelCoord = (texture * viewportSize) + offset;
+
     pixelCoord = (texture * viewportSize) + viewOffset;
     texCoord = pixelCoord * inverseTileTextureSize * inverseTileSize;
     gl_Position = vec4(position, 0.0, 1.0);

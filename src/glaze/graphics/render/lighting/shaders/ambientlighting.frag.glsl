@@ -45,5 +45,5 @@ void main(void) {
 	// maxLight = max(maxLight, tex2D(_MainTex, uv + half2(0, _SamplingDist)));
 
 
-    gl_FragColor = vec4(1.0,1.0,1.0,1.0) * 1.0 - v; //obsMult;
+    gl_FragColor = vec4(1.0,1.0,1.0,1.0) * v; //obsMult;
 }

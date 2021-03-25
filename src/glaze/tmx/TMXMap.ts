@@ -138,13 +138,19 @@ export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
 
     for (var xp = 0; xp < layer.width; xp++) {
         for (var yp = 0; yp < layer.height; yp++) {
-            var source =
-                (layer.get(xp, yp, 3) << 24) |
-                (layer.get(xp, yp, 2) << 16) |
-                (layer.get(xp, yp, 1) << 8) |
-                layer.get(xp, yp, 0);
+            const b4 = layer.get(xp, yp, 3);
+            const b3 = layer.get(xp, yp, 2) << 16;
+            const b2 = layer.get(xp, yp, 1) << 8;
+            const b1 = layer.get(xp, yp, 0);
+            const source = b3 | b2 | b1; // b4 | b3 | b2 | b1;
+            
+            const diagonal = b4 & 32;
+            const vertical = b4 & 128;
+            const horizontal = b4 & 64;
             if (source > 0) {
                 var superSet = Math.floor(source / 1024);
+                //debugger;
+                
                 //var superSet = 1;
                 // if (superSet === 8) {
                 //     debugger;
@@ -157,6 +163,12 @@ export function LayerToCoordTexture(layer: Bytes2D): TypedArray2D {
                 var y = Math.floor(relativeID / 32);
                 var x = relativeID - 32 * y;
                 //var v: number = (superY << 24) | (superX << 16) | (y << 8) | x;
+                if (diagonal) superSet |= 32;
+                if (vertical) superSet |= 64;
+                if (horizontal) superSet |= 128;
+                // superSet |= 64;
+                // superSet |= 128;
+
                 var v: number = (0 << 24) | (superSet << 16) | (y << 8) | x;
                 textureData.set(xp, yp, v);
             } else {

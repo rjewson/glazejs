@@ -2,6 +2,7 @@ import { DisplayObjectContainer } from "./DisplayObjectContainer";
 import { Vector2 } from "../../geom/Vector2";
 import { AABB2 } from "../../geom/AABB2";
 
+const CAMERA_TRACKING_SPEED = 0.1;
 export class Camera extends DisplayObjectContainer {
     public realPosition: Vector2;
     public viewportSize: Vector2;
@@ -36,9 +37,9 @@ export class Camera extends DisplayObjectContainer {
 
         // position.x = positionx;
         if (Math.abs(positionx - this.position.x) > 2)
-            this.position.x = this.position.x + (positionx - this.position.x) * 0.1;
+            this.position.x = this.position.x + (positionx - this.position.x) * CAMERA_TRACKING_SPEED;
         if (Math.abs(positiony - this.position.y) > 2)
-            this.position.y = this.position.y + (positiony - this.position.y) * 0.1;
+            this.position.y = this.position.y + (positiony - this.position.y) * CAMERA_TRACKING_SPEED;
         // position.y = positiony;
 
         this.position.plusEquals(this.shake);
@@ -61,6 +62,7 @@ export class Camera extends DisplayObjectContainer {
     }
 
     private rf(v: number) {
+        return v;
         return Math.floor(v);
         return Math.round(v);
     }

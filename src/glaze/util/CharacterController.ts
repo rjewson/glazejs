@@ -3,6 +3,20 @@ import { Vector2 } from "../geom/Vector2";
 import { DigitalInput } from "./DigitalInput";
 
 export class CharacterController {
+
+    public isWalking: boolean = false;
+
+    public originalFriction: number = 0;
+    public originalVelocityClamp: Vector2;
+
+    public burn: number = 0;
+
+    public left: number;
+    public right: number;
+    public up: boolean;
+    public down: number;
+    public boost: number;
+
     private body: Body;
     private input: DigitalInput;
 
@@ -23,19 +37,6 @@ export class CharacterController {
     private BOOST_FACTOR: number;
 
     private jumping: boolean = false;
-
-    public isWalking: boolean = false;
-
-    public originalFriction: number = 0;
-    public originalVelocityClamp: Vector2;
-
-    public burn: number = 0;
-
-    public left: number;
-    public right: number;
-    public up: boolean;
-    public down: number;
-    public boost: number;
 
     constructor(input: DigitalInput, body: Body, baseForce: number) {
         this.input = input;
@@ -117,9 +118,9 @@ export class CharacterController {
 
         this.isWalking = this.body.onGround && (this.left > 0 || this.right > 0);
         if (this.isWalking) {
-            // this.body.material.friction = or iginalFriction/2;
+            //this.body.material.friction = this.originalFriction/2;
         } else {
-            // this.body.material.friction = originalFriction*3;
+            //this.body.material.friction = this.originalFriction*3;
             // originalVelocityClamp
         }
 

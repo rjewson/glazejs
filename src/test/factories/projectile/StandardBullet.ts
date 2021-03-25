@@ -42,7 +42,7 @@ export class StandardBullet {
         var bulletBody = new Body(Material.LIGHTMETAL);
         bulletBody.setMass(16 + 8);
         bulletBody.setBounces(3);
-        bulletBody.globalForceFactor = 1; //0.5;
+        bulletBody.globalForceFactor = 0.8; //0.5;
         bulletBody.isBullet = true;
         bulletBody.maxScalarVelocity = 10000;
 
@@ -67,7 +67,7 @@ export class StandardBullet {
             // new Light(64, 1, 1, 1, 255, 255, 255),
             new Viewable(),
         ]);
-        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 20000);
+        Ballistics.calcProjectileVelocity(bulletBody, targetPosition, 2000);
 
         return bullet;
     }
