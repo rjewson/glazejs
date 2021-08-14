@@ -2,6 +2,8 @@
 
 A 2D WebGL game engine built with TypeScript.  The goal of the project to enable the development of large, open multiplayer 2D worlds for in-browser gaming.  Close attention has been paid to all performance aspects.
 
+Update 2021: Project is not dead, just 'real world' getting in the way.
+
 Play the demo here (read the instructions) [https://rjewson.github.io/glazejs/](https://rjewson.github.io/glazejs/)
 
 - Fully designed around the Entity-Component-System archectural pattern
