@@ -21,6 +21,14 @@ export class PhysicsUpdateSystem extends System {
 
     updateEntity(entity: Entity, position: Position, physicsBody: PhysicsBody, active: Active) {
         physicsBody.body.update(this.dt / 1000, this.globalForce, this.globalDamping);
-        position.direction.x = physicsBody.body.velocity.x > 0 ? 1 : -1;
+
+        // If the body is moving in the X direction, update the direction vector
+        // to match the direction of the velocity.
+        // Note that if the X velocity is zero, the direction will remain unchanged.
+        if (physicsBody.body.velocity.x > 0) {
+            position.direction.x = 1
+        } else if (physicsBody.body.velocity.x < 0) {
+            position.direction.x = -1
+        }
     }
 }
